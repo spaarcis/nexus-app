@@ -1,5 +1,5 @@
 import { ImgGradint, ImgLogo } from "@/assets/images/image";
-import { IconButton, IconEmail, IconfacebookButton, IconForgetPass, IconGoogleButton, IconInputBox, IconLogo, IconPoword, IconRegisterText } from "@/Icons/Icons";
+import { IcoBack, IconButton, IconEmail, IconfacebookButton, IconForgetPass, IconGoogleButton, IconInputBox, IconLogo, IconPoword, IconRegisterText } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -47,13 +47,16 @@ const ForgetPassword = () => {
 
                 }}
             />
-            <ScrollView contentContainerStyle={tw` px-5`}>
+            <ScrollView contentContainerStyle={tw` px-5 `}>
+            <TouchableOpacity style={tw`pt-6`} onPress={() => router.back()}>
+                <SvgXml xml={IcoBack} />
+            </TouchableOpacity>
                 <AlertNotificationRoot>
                     <Formik
                         initialValues={{ email: "", password: "" }}
                         onSubmit={async (values) => {
                             console.log(values);
-                            
+
                             //   try {
                             //     const res = await loginUser(values).unwrap();
                             //     if (res.status) {
@@ -105,10 +108,10 @@ const ForgetPassword = () => {
                                             style={tw` pb-14 `}
                                         >
                                             <Text style={tw`font-poppinsBlack mx-auto text-3xl text-primary`}>
-                                               Forget Password
+                                                Forget Password
                                             </Text>
-                                            <Text style={tw`text-primaryText mx-auto text-secondary font-poppins text-sm py-1`}>
-                                               Provide email address which you used to create account
+                                            <Text style={tw` mx-auto text-secondary font-poppins text-sm py-1`}>
+                                                Provide email address which you used to create account
                                             </Text>
                                         </View>
                                         <View style={tw`  rounded-t-[40px]`}>
@@ -134,24 +137,25 @@ const ForgetPassword = () => {
                                                         {errors.email}
                                                     </Text>
                                                 )}
-                                                
+
                                             </View>
                                             <TouchableOpacity
                                                 style={tw` relative mt-16`}
                                                 onPress={() => {
                                                     handleSubmit();
+                                                    router.push("/(auth)/VerifyOTP")
                                                 }}
                                             >
                                                 <SvgXml xml={IconButton} />
                                                 <Text
                                                     style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
                                                 >
-                                                   Get Code
+                                                    Get Code
                                                 </Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                   <View></View>
+                                    <View></View>
                                 </View>
                             );
                         }}

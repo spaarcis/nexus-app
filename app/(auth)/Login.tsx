@@ -1,5 +1,5 @@
 import { ImgGradint, ImgLogo } from "@/assets/images/image";
-import { IconButton, IconEmail, IconfacebookButton, IconForgetPass, IconGoogleButton, IconInputBox, IconLogo, IconPoword, IconRegisterText } from "@/Icons/Icons";
+import { IcoBack, IconButton, IconEmail, IconfacebookButton, IconForgetPass, IconGoogleButton, IconInputBox, IconLogo, IconPoword, IconRegisterText } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -31,6 +31,7 @@ const Login = () => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ backgroundColor: "#000" }}
         >
+
             {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
@@ -47,13 +48,14 @@ const Login = () => {
 
                 }}
             />
+            
             <ScrollView contentContainerStyle={tw` px-5`}>
                 <AlertNotificationRoot>
                     <Formik
                         initialValues={{ email: "", password: "" }}
                         onSubmit={async (values) => {
                             console.log(values);
-                            
+
                             //   try {
                             //     const res = await loginUser(values).unwrap();
                             //     if (res.status) {
@@ -107,7 +109,7 @@ const Login = () => {
                                             <Text style={tw`font-poppinsBlack mx-auto text-3xl text-primary`}>
                                                 Sign In
                                             </Text>
-                                            <Text style={tw`text-primaryText mx-auto text-secondary font-poppins text-sm py-1`}>
+                                            <Text style={tw` mx-auto text-secondary font-poppins text-sm py-1`}>
                                                 Access your account with correct information
                                             </Text>
                                         </View>
