@@ -24,7 +24,6 @@ import * as Yup from "yup";
 import { BlurView } from "expo-blur";
 const Createnewpassword = () => {
 
-  const [isChecked, setChecked] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showNewRePassword, setShowNewRePassword] = React.useState(false);
   const tailwind = useTailwind();
@@ -50,6 +49,9 @@ const Createnewpassword = () => {
       />
 
       <ScrollView contentContainerStyle={tw` px-5`}>
+        <TouchableOpacity style={tw`pt-6`} onPress={() => router.back()}>
+          <SvgXml xml={IcoBack} />
+        </TouchableOpacity>
         <AlertNotificationRoot>
           <Formik
             initialValues={{ password: "", rePassword: "" }}
@@ -117,7 +119,6 @@ const Createnewpassword = () => {
 
                       {/* login from */}
                       <View>
-
                         <Text style={tw`text-primary font-poppinsSemiBold text-base pl-2 pt-5 pb-2`}>New Password</Text>
                         <View style={tw` rounded-2xl relative overflow-hidden`}>
                           <SvgXml xml={IconInputBox} />
@@ -179,6 +180,7 @@ const Createnewpassword = () => {
                         style={tw` relative mt-14`}
                         onPress={() => {
                           handleSubmit();
+                          router.push("/(auth)/Login")
                         }}
                       >
                         <SvgXml xml={IconButton} />
@@ -188,8 +190,6 @@ const Createnewpassword = () => {
                           Update
                         </Text>
                       </TouchableOpacity>
-
-
                     </View>
                   </View>
                   <View>

@@ -214,18 +214,9 @@ const Register = () => {
                                                     {errors.rePassword}
                                                 </Text>
                                             )}
-                                            <View
-                                                style={tw`py-7  px-7 flex-row justify-end `}
-                                            >
-
-                                                <TouchableOpacity
-                                                    onPress={() => router.push("/(auth)/ForgetPassword")}
-                                                >
-                                                    <SvgXml xml={IconForgetPass} />
-                                                </TouchableOpacity>
-                                            </View>
+                                            
                                             <TouchableOpacity
-                                                style={tw` relative`}
+                                                style={tw` relative mt-10`}
                                                 onPress={() => {
                                                     handleSubmit();
                                                 }}

@@ -44,8 +44,6 @@ const Login = () => {
                     left: 0,
                     backgroundColor: "#000000"
 
-                    // backgroundColor: colors.primary
-
                 }}
             />
             
@@ -178,6 +176,7 @@ const Login = () => {
                                                 style={tw` relative`}
                                                 onPress={() => {
                                                     handleSubmit();
+                                                    router.push("/Main/home/home")
                                                 }}
                                             >
                                                 <SvgXml xml={IconButton} />

@@ -42,6 +42,9 @@ export default function RootLayout() {
         headerShown: false,
       }}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="(allPages)" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="Main" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

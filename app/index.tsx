@@ -10,7 +10,7 @@ import { IconLogo } from "@/Icons/Icons"
 export default function Index() {
     useEffect(() => {
         const t = setTimeout(() => {
-            router.replace("/Login")
+            router.replace("/Main/home/home")
         }, 2000)
         return () => clearTimeout(t)
     }, [])
@@ -20,7 +20,7 @@ export default function Index() {
             {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
-                resizeMode="cover" 
+                resizeMode="cover"
                 style={{
                     width: _Width,
                     height: _HIGHT,
@@ -34,7 +34,6 @@ export default function Index() {
             <View style={tw`flex-1 py-16 justify-between items-center`}>
                 <View></View>
                 <View style={tw`flex-row items-center gap-3`}>
-                    <SvgXml xml={IconLogo} />
                     <Image
                         source={ImgLogo}
                         resizeMode="contain"
@@ -43,6 +42,7 @@ export default function Index() {
                             height: 76
                         }}
                     />
+                    <SvgXml xml={IconLogo} />
                 </View>
                 <ActivityIndicator color="#cdd3ff" size="large" />
             </View>
