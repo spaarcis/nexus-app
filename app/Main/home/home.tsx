@@ -1,21 +1,22 @@
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native'
-import React from 'react'
-import { useNavigation } from 'expo-router';
+import { ImgGradint, nextStation, profileImg } from '@/assets/images/image';
+import { CarouselCard } from '@/components/shear/Carousel';
+import { IconButton, IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
 import tw from '@/lib/tailwind';
-import { ImgGradint, profileImg } from '@/assets/images/image';
 import { _HIGHT, _Width } from '@/utils/utils';
+import { BlurView } from 'expo-blur';
+import { Image } from "expo-image";
+import { useNavigation } from 'expo-router';
+import React from 'react';
+import { ImageBackground, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SvgXml } from 'react-native-svg';
-import { IconButton, IconDower, IconExploreBanner, IconHand, IconLoction, IconNotification } from '@/Icons/Icons';
-import { Image } from "expo-image"
-import { BlurView } from 'expo-blur';
 
 const Home = () => {
 
     const navigation = useNavigation();
 
     return (
-        <View>  {/* Background Image */}
+        <View style={tw` flex-1`}>  {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
                 resizeMode="cover"
@@ -56,32 +57,79 @@ const Home = () => {
                     </View>
                 </View>
                 {/* Explore banner */}
-                <View style={tw`text-primary overflow-hidden rounded-2xl`}>
+                <View style={tw`text-primary overflow-hidden rounded-2xl mt-10`}>
                     <BlurView style={tw` p-5`} intensity={10} tint="light">
                         <Text style={tw`text-primary text-xl font-poppinsSemiBold text-center`}>
                             Explore Gaming Rooms.
                             Find setups near you by game, time or location.</Text>
 
-                        {/* <TouchableOpacity
-                            style={tw` relative`}
-
+                        <TouchableOpacity
+                            style={tw` mt-4`}
                         >
                             <SvgXml xml={IconButton} width={330} />
-                            <View style={tw`flex-row`}>
 
-                                <SvgXml xml={IconExploreBanner} width={330} />
-                                <Text
-                                    style={tw`text-primary  flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-                                >
-                                    Explore
-                                </Text>
-
-                            </View>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                     </BlurView>
                 </View>
-            </ScrollView>
+                {/* Carousel  Popular Zone  */}
+                <View style={tw`flex-row items-center justify-between pt-6 `}>
+                    <Text style={tw`text-primary text-lg font-poppinsBold`}>
+                        Popular Zone
+                    </Text>
+                    <TouchableOpacity>
+                        <SvgXml xml={IconSeaall} />
+                    </TouchableOpacity>
+                </View>
+                <CarouselCard />
+                <View style={[tw``, {
+                    width: _Width * 0.3
+                }]}>
+                </View>
+                <Text style={tw`text-primary py-3 text-lg font-poppinsBold`}>
+                    Your Next Station
+                </Text>
+                {/* Your Next Station */}
+                <View>
+                    <BlurView style={tw` p-5 border rounded-3xl overflow-hidden flex-row items-center gap-4`} intensity={10} tint="light">
+                        <Image source={nextStation} style={[tw`h-20 w-20 rounded-2xl`, {
 
+                        }]}></Image>
+                        <View style={tw`flex-1 items-start  justify-center`}>
+                            <Text style={tw`text-white font-bold text-lg`}>
+                                Mumba Esport House
+                            </Text>
+
+                            {/* Date and Time */}
+                            <View style={tw`flex-row items-center mt-2 gap-2`}>
+                                <SvgXml xml={IconCleander} />
+                                <Text style={tw`text-white ml-2`}>9 June, 2025</Text>
+                                <SvgXml xml={IconTime} />
+                                <Text style={tw`text-white ml-1`}>10:00 AM</Text>
+                            </View>
+
+                            {/* Duration and Location */}
+                            <View style={tw`flex-row items-center mt-2 gap-2`}>
+                                <SvgXml xml={Iconhoure} />
+                                <Text style={tw`text-white ml-2`}>2 - Hour</Text>
+                                <SvgXml xml={IconLoction} />
+                                <Text style={tw`text-white ml-1`}>New York, USA</Text>
+                            </View>
+                        </View>
+                    </BlurView>
+                </View>
+                {/* Carousel Newly Added */}
+                <View style={tw`flex-row items-center justify-between`}>
+                    <Text style={tw`text-primary py-3 text-lg font-poppinsBold`}>
+                        Newly Added
+                    </Text>
+                    <TouchableOpacity>
+                        <SvgXml xml={IconSeaall} />
+                    </TouchableOpacity>
+                </View>
+                <View style={tw`mb-32`}>
+                    <CarouselCard />
+                </View>
+            </ScrollView>
         </View>
     )
 }

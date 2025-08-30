@@ -1,16 +1,17 @@
-import React, { useEffect } from "react"
-import { View, Text, Image, ActivityIndicator, ImageBackground } from "react-native"
-import { router } from "expo-router"
-import tw from "@/lib/tailwind"
 import { ImgGradint, ImgLogo } from "@/assets/images/image"
-import { _HIGHT, _Width } from "@/utils/utils"
-import { SvgXml } from "react-native-svg"
 import { IconLogo } from "@/Icons/Icons"
+import tw from "@/lib/tailwind"
+import { _HIGHT, _Width } from "@/utils/utils"
+import { router } from "expo-router"
+import React, { useEffect } from "react"
+import { ActivityIndicator, Image, ImageBackground, View } from "react-native"
+import { SvgXml } from "react-native-svg"
 
 export default function Index() {
     useEffect(() => {
         const t = setTimeout(() => {
-            router.replace("/Main/home/home")
+            // router.replace("/Main/home/home")
+            router.replace("/(auth)/Login")
         }, 2000)
         return () => clearTimeout(t)
     }, [])

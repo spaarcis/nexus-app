@@ -1,6 +1,5 @@
 ;
 import tw from "@/lib/tailwind";
-import { _HIGHT } from "@/utils/utils";
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -8,7 +7,6 @@ import {
 import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { Text, TouchableOpacity, View } from "react-native";
-import { SvgXml } from "react-native-svg";
 
 
 function CustomDrawerContent(props: DrawerContentComponentProps) {
@@ -67,7 +65,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           style={tw`flex-row items-center p-4 rounded-lg bg-[#FFDDDD]`}
           onPress={() => {
             props.navigation.closeDrawer();
-            // router.push("/auth/login");
+            router.push("/(auth)/Login");
           }}
         >
           {/* <SvgXml xml={IconLogout} /> */}
