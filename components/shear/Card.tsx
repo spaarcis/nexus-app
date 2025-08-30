@@ -13,8 +13,8 @@ export const Card = ({ item }: any) => {
     console.log("Card item 👉", item);
 
     return (
-        <TouchableOpacity style={tw`py-3`}>
-            <View style={tw`relative`}>
+        <TouchableOpacity style={tw`py-3 `}>
+            <View style={tw`relative `}>
                 {/* Background Image */}
                 <Image
                     source={cardImg}
@@ -36,7 +36,7 @@ export const Card = ({ item }: any) => {
                 </View>
 
                 {/* Title + Location bottom-left */}
-                <View style={tw`absolute left-5 bottom-5`}>
+                <View style={tw`absolute left-5 bottom-5 `}>
                     <Text style={tw`text-primary text-base font-poppinsSemiBold`}>
                         {item.title}
                     </Text>
