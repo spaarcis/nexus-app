@@ -15,7 +15,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     <DrawerContentScrollView
       showsVerticalScrollIndicator={false}
       {...props}
-      style={tw`bg-base-light dark:bg-base-dark`}
+      style={tw``}
     >
       {/* Header Section */}
       <View style={tw`flex-row items-center justify-between pb-5`}>

@@ -1,6 +1,6 @@
 import { ImgGradint, nextStation, profileImg } from '@/assets/images/image';
 import { CarouselCard } from '@/components/shear/Carousel';
-import { IconButton, IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
+import { IconButtonExp, IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
 import tw from '@/lib/tailwind';
 import { _HIGHT, _Width } from '@/utils/utils';
 import { BlurView } from 'expo-blur';
@@ -66,7 +66,7 @@ const Home = () => {
                         <TouchableOpacity
                             style={tw` mt-4`}
                         >
-                            <SvgXml xml={IconButton} width={330} />
+                            <SvgXml xml={IconButtonExp} width={330} />
 
                         </TouchableOpacity>
                     </BlurView>

@@ -1,0 +1,86 @@
+[
+  {
+    "id": 1,
+    "title": "Alpha Esport Zone",
+    "rating": "4.5",
+    "location": "Los Angeles, USA"
+  },
+  {
+    "id": 2,
+    "title": "Galaxy Gaming Hub",
+    "rating": "4.8",
+    "location": "New York, USA"
+  },
+  {
+    "id": 3,
+    "title": "Battle Arena",
+    "rating": "4.2",
+    "location": "Toronto, Canada"
+  },
+  {
+    "id": 4,
+    "title": "VR World",
+    "rating": "4.7",
+    "location": "London, UK"
+  },
+  {
+    "id": 5,
+    "title": "Next Level Esports",
+    "rating": "4.3",
+    "location": "Berlin, Germany"
+  },
+  {
+    "id": 6,
+    "title": "CyberX Gaming",
+    "rating": "4.6",
+    "location": "Paris, France"
+  },
+  {
+    "id": 7,
+    "title": "Arena Xtreme",
+    "rating": "4.1",
+    "location": "Sydney, Australia"
+  },
+  {
+    "id": 8,
+    "title": "PlayNation Zone",
+    "rating": "4.9",
+    "location": "Tokyo, Japan"
+  },
+  {
+    "id": 9,
+    "title": "GameX Universe",
+    "rating": "4.4",
+    "location": "Seoul, South Korea"
+  },
+  {
+    "id": 10,
+    "title": "Virtual Titans",
+    "rating": "4.2",
+    "location": "Dubai, UAE"
+  },
+  {
+    "id": 11,
+    "title": "Pro Gamers Hub",
+    "rating": "4.6",
+    "location": "Mumbai, India"
+  },
+  {
+    "id": 12,
+    "title": "Legends Arena",
+    "rating": "4.7",
+    "location": "Singapore"
+  },
+  {
+    "id": 13,
+    "title": "Infinity Esports",
+    "rating": "4.3",
+    "location": "Kuala Lumpur, Malaysia"
+  },
+  {
+    "id": 14,
+    "title": "PowerPlay Zone",
+    "rating": "4.8",
+    "location": "Bangkok, Thailand"
+  }
+]
