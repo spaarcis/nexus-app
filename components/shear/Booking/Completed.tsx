@@ -1,10 +1,18 @@
+import data from "@/lib/bookingCard.json"
 import React from 'react'
-import { Text, View } from 'react-native'
+import { FlatList, View } from 'react-native'
+import BookingCard from './BookingCard'
 
 const Completed = () => {
     return (
         <View>
-            <Text>Completed</Text>
+           <FlatList
+                data={data}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <BookingCard data={item} />
+                )}
+            />
         </View>
     )
 }

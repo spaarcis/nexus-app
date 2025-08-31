@@ -7,7 +7,9 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 
-const BookingCard = () => {
+const BookingCard = (data: any) => {
+    console.log(data);
+    
     return (
         <View style={tw`mb-4`}>
             <BlurView style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`} intensity={10} tint="light">
