@@ -1,13 +1,10 @@
+import ThemeProvider from '@/context/ThemeProvider';
+import tw from '@/lib/tailwind';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useDeviceContext } from 'twrnc';
-import tw from '@/lib/tailwind';
-import ThemeProvider from '@/context/ThemeProvider';
-import { ImageBackground } from 'react-native';
-import { ImgGradint } from '@/assets/images/image';
-import { _HIGHT, _Width } from '@/utils/utils';
 
 export default function RootLayout() {
 
@@ -45,6 +42,9 @@ export default function RootLayout() {
         <Stack.Screen name="(allPages)" />
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="Main" />
+        <Stack.Screen name="details/roomDetails/[id]" />
+        {/* <Stack.Screen name="" /> */}
+
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

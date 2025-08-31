@@ -3,6 +3,7 @@ import { IconLoction, IconStar } from '@/Icons/Icons'
 import tw from '@/lib/tailwind'
 import { _HIGHT, _Width } from '@/utils/utils'
 import { Image } from 'expo-image'
+import { router } from 'expo-router'
 import React from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
@@ -10,8 +11,12 @@ import { SvgXml } from 'react-native-svg'
 export const Card = ({ item }: any) => {
     if (!item) return null; // extra safety
 
+
     return (
-        <TouchableOpacity style={tw`py-3 `}>
+        <TouchableOpacity style={tw``} onPress={() => router.push({
+            pathname: "/details/roomDetails/[id]",
+            params: { id: item.id }
+        })}>
             <View style={tw`relative `}>
                 {/* Background Image */}
                 <Image

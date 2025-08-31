@@ -100,6 +100,7 @@ const Home = () => {
                         <SvgXml xml={IconSeaall} />
                     </TouchableOpacity>
                 </View>
+
                 <View style={tw`mb-32`}>
                     <CarouselCard />
                 </View>

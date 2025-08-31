@@ -423,5 +423,23 @@ export const IconFilter= `<svg width="24" height="24" viewBox="0 0 24 24" fill="
 </svg>
 
 `;
+export const IconUpload= `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 12V3.85L4.4 6.45L3 5L8 0L13 5L11.6 6.45L9 3.85V12H7ZM2 16C1.45 16 0.979333 15.8043 0.588 15.413C0.196666 15.0217 0.000666667 14.5507 0 14V11H2V14H14V11H16V14C16 14.55 15.8043 15.021 15.413 15.413C15.0217 15.805 14.5507 16.0007 14 16H2Z" fill="url(#paint0_linear_209_1537)"/>
+<defs>
+<linearGradient id="paint0_linear_209_1537" x1="0" y1="8" x2="16" y2="8" gradientUnits="userSpaceOnUse">
+<stop stop-color="#6523E7"/>
+<stop offset="0.5" stop-color="#023CE3" stop-opacity="0.8"/>
+<stop offset="1" stop-color="#6523E7"/>
+</linearGradient>
+</defs>
+</svg>
+
+`;
+export const IconEdit= `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 19H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5 15V11L15 1L19 5L9 15H5Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M12 4L16 8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`;
 
 
