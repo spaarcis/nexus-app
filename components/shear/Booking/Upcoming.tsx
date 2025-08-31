@@ -10,7 +10,7 @@ const Upcoming = () => {
                 data={data}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
-                    <BookingCard/>
+                    <BookingCard data={item} />
                 )}
             />
         </View>
