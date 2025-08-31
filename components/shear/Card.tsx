@@ -10,8 +10,6 @@ import { SvgXml } from 'react-native-svg'
 export const Card = ({ item }: any) => {
     if (!item) return null; // extra safety
 
-    console.log("Card item 👉", item);
-
     return (
         <TouchableOpacity style={tw`py-3 `}>
             <View style={tw`relative `}>
