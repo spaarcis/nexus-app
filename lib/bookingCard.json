@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "title": "Mumba Esport House",
+    "date": "2025-06-09",
+    "time": "10:00 AM",
+    "duration": "2 Hours",
+    "location": "New York, USA",
+    "image": "https://picsum.photos/200/200?random=1"
+  },
+  {
+    "id": 2,
+    "title": "Cyber Arena Tournament",
+    "date": "2025-06-12",
+    "time": "03:00 PM",
+    "duration": "4 Hours",
+    "location": "Los Angeles, USA",
+    "image": "https://picsum.photos/200/200?random=2"
+  },
+  {
+    "id": 3,
+    "title": "Pixel Gaming Lounge",
+    "date": "2025-06-15",
+    "time": "06:00 PM",
+    "duration": "3 Hours",
+    "location": "Chicago, USA",
+    "image": "https://picsum.photos/200/200?random=3"
+  },
+  {
+    "id": 4,
+    "title": "Nexus Battle Zone",
+    "date": "2025-06-18",
+    "time": "08:30 PM",
+    "duration": "5 Hours",
+    "location": "San Francisco, USA",
+    "image": "https://picsum.photos/200/200?random=4"
+  },
+  {
+    "id": 5,
+    "title": "Alpha Strike Hub",
+    "date": "2025-06-20",
+    "time": "11:00 AM",
+    "duration": "2 Hours",
+    "location": "Miami, USA",
+    "image": "https://picsum.photos/200/200?random=5"
+  },
+  {
+    "id": 6,
+    "title": "Shadow Ops Esport",
+    "date": "2025-06-22",
+    "time": "01:00 PM",
+    "duration": "3 Hours",
+    "location": "Dallas, USA",
+    "image": "https://picsum.photos/200/200?random=6"
+  },
+  {
+    "id": 7,
+    "title": "Arena X Gaming Fest",
+    "date": "2025-06-25",
+    "time": "04:00 PM",
+    "duration": "6 Hours",
+    "location": "Seattle, USA",
+    "image": "https://picsum.photos/200/200?random=7"
+  },
+  {
+    "id": 8,
+    "title": "Warzone Elite Club",
+    "date": "2025-06-28",
+    "time": "07:30 PM",
+    "duration": "3 Hours",
+    "location": "Boston, USA",
+    "image": "https://picsum.photos/200/200?random=8"
+  },
+  {
+    "id": 9,
+    "title": "Esport Galaxy Hub",
+    "date": "2025-07-01",
+    "time": "05:00 PM",
+    "duration": "4 Hours",
+    "location": "Las Vegas, USA",
+    "image": "https://picsum.photos/200/200?random=9"
+  },
+  {
+    "id": 10,
+    "title": "Battlefield Nexus",
+    "date": "2025-07-04",
+    "time": "02:00 PM",
+    "duration": "2 Hours",
+    "location": "Houston, USA",
+    "image": "https://picsum.photos/200/200?random=10"
+  }
+]

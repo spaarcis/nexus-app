@@ -13,7 +13,6 @@ import { SvgXml } from 'react-native-svg'
 const Explore = () => {
 
 
-
     return (
         <View style={tw`flex-1`}>
             <ImageBackground

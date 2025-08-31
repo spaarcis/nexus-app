@@ -14,11 +14,7 @@ const tabs = ["Upcoming", "Completed", "Canceled"];
 
 const Bookings = () => {
   const [currentPage, setCurrentPage] = useState("Upcoming");
-
-  // Animated value for underline
   const underlineX = useRef(new Animated.Value(0)).current;
-
-  // calculate tab width (divide screen width by tab count)
   const tabWidth = _Width / tabs.length ;
 
   useEffect(() => {
