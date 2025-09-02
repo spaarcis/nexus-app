@@ -11,7 +11,8 @@ export default function Index() {
     useEffect(() => {
         const t = setTimeout(() => {
             // router.replace("/Main/home/home")
-            router.replace("/Main/home/home")
+            router.replace("/(allPages)/filter")
+            // router.replace("/Main/home/home")
         }, 2000)
         return () => clearTimeout(t)
     }, [])

@@ -6,6 +6,7 @@ import data from "@/lib/data.json"
 import tw from '@/lib/tailwind'
 import { _HIGHT, _Width } from '@/utils/utils'
 import { ImageBackground } from 'expo-image'
+import { router } from 'expo-router'
 import React from 'react'
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
@@ -51,6 +52,7 @@ const Explore = () => {
                     {/* Filter Button */}
                     <TouchableOpacity
                         style={tw`ml-3 p-3 rounded-full bg-white/10`}
+                        onPress={()=>router.push("/(allPages)/filter")}
                     >
                         <SvgXml xml={IconFilter} />
                     </TouchableOpacity>
