@@ -143,7 +143,7 @@ const roomDetails = () => {
                 <View style={tw`mb-4 `}>
                     <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Date</Text>
                     <TouchableOpacity
-                        style={tw`bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
                         onPress={() => setDateModalVisible(true)}
                     >
                         <Text style={tw`text-gray-400`}>
@@ -157,7 +157,7 @@ const roomDetails = () => {
                 <View style={tw`mb-4`}>
                     <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Starting time</Text>
                     <TouchableOpacity
-                        style={tw`bg-gray-800 bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        style={tw`bg-gray-800 bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
                         onPress={() => setTimeModalVisible(true)}
                     >
                         <Text style={tw`text-gray-400`}>
@@ -174,7 +174,7 @@ const roomDetails = () => {
                     </Text>
 
                     <TouchableOpacity
-                        style={tw`bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
                         onPress={() => setShowDurationDropdown(!showDurationDropdown)}
                     >
                         <Text style={tw`text-gray-400`}>{selectedDuration}</Text>
@@ -209,6 +209,7 @@ const roomDetails = () => {
                 <TouchableOpacity
                     style={tw` relative mb-4`}
                     onPress={() => {
+                        router.push("/(allPages)/seatPosotion")
                     }}
                 >
                     <SvgXml xml={IconButton} />
