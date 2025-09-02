@@ -1,10 +1,11 @@
 "use client"
 
 import { ImgGradint } from "@/assets/images/image"
-import { IconLoction, IconStar, IconTime } from "@/Icons/Icons"
+import { IconButton, IconLoction, IconStar, IconTime } from "@/Icons/Icons"
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
+import DateTimePicker from "@react-native-community/datetimepicker"
 import { BlurView } from "expo-blur"
 import { ImageBackground } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
@@ -15,10 +16,34 @@ import { SvgXml } from "react-native-svg"
 const roomDetails = () => {
     const { id } = useLocalSearchParams()
     const router = useRouter()
+
     const [selectedRoom, setSelectedRoom] = useState("VIP")
     const [selectedDate, setSelectedDate] = useState("")
     const [selectedTime, setSelectedTime] = useState("00:00")
-    const [selectedDuration, setSelectedDuration] = useState("Select")
+    const [dateModalVisible, setDateModalVisible] = useState(false)
+    const [timeModalVisible, setTimeModalVisible] = useState(false)
+    const [selectedDuration, setSelectedDuration] = useState("Select Duration");
+    const [showDurationDropdown, setShowDurationDropdown] = useState(false);
+
+    const durations = ["1 hour", "2 hour", "3 hour", "4 hour", "5 hour", "6 hour", "7 hour", "8 hour"];
+
+    // handle date change
+    const handleDateChange = (event: any, date?: Date) => {
+        if (date) {
+            const formatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+            setSelectedDate(formatted)
+        }
+        setDateModalVisible(false)
+    }
+    // handle time change
+    const handleTimeChange = (event: any, time?: Date) => {
+        if (time) {
+            const hours = time.getHours().toString().padStart(2, "0")
+            const minutes = time.getMinutes().toString().padStart(2, "0")
+            setSelectedTime(`${hours}:${minutes}`)
+        }
+        setTimeModalVisible(false)
+    }
 
     return (
         <View style={tw`flex-1`}>
@@ -47,8 +72,8 @@ const roomDetails = () => {
                         <Text style={tw`text-primary font-poppinsMedium`}>Contact</Text>
                     </TouchableOpacity>
                 </View>
-                <BlurView style={tw`p-4 rounded-3xl overflow-hidden  gap-4`} intensity={10} tint="light">
 
+                <BlurView style={tw`p-4 rounded-3xl overflow-hidden gap-4`} intensity={10} tint="light">
                     {/* Gaming Room Image */}
                     <View style={tw`mb-6`}>
                         <Image
@@ -63,24 +88,23 @@ const roomDetails = () => {
 
                     {/* Room Info */}
                     <View style={tw`mb-6`}>
-                        <Text style={tw`text-primary text-2xl font-poppinsBold mb-2`}>Alpha Esport Zone</Text>
+                        <Text style={tw`text-primary text-2xl font-poppinsBold mb-4`}>Alpha Esport Zone</Text>
 
                         <View style={tw`flex-row items-center mb-2`}>
-                           <SvgXml xml={IconLoction}/>
+                            <SvgXml xml={IconLoction} />
                             <Text style={tw`text-gray-400 font-poppins ml-1`}>Los Angeles, USA</Text>
                             <View style={tw`flex-row items-center ml-auto`}>
-                                <SvgXml xml={IconStar}/>
+                                <SvgXml xml={IconStar} />
                                 <Text style={tw`text-primary ml-1 font-poppins`}>4.6</Text>
                             </View>
                         </View>
 
                         <View style={tw`flex-row items-center gap-1`}>
-                           <SvgXml xml={IconTime}/>
+                            <SvgXml xml={IconTime} />
                             <Text style={tw`text-gray-400 ml-1 font-poppins`}>Operating Hours</Text>
                             <Text style={tw`text-primary ml-auto font-poppins`}>10:00 AM - 09:00 PM</Text>
                         </View>
                     </View>
-
                 </BlurView>
 
                 {/* Room Selection */}
@@ -90,13 +114,13 @@ const roomDetails = () => {
                     </Text>
 
                     <FlatList
-                        data={["VIP", "Bootcamp", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5", "PS5"]}
+                        data={["VIP", "Bootcamp", "PS5", "PS5"]}
                         keyExtractor={(item, index) => index.toString()}
                         horizontal
                         renderItem={({ item: room }) => (
                             <TouchableOpacity
                                 onPress={() => setSelectedRoom(room)}
-                                style={tw`flex-1 mr-12 py-3  rounded-lg  ${selectedRoom === room
+                                style={tw`flex-1 mr-12 py-3 rounded-lg ${selectedRoom === room
                                     ? "border-blue-500 bg-opacity-20"
                                     : "border-gray-600"
                                     }`}
@@ -115,12 +139,16 @@ const roomDetails = () => {
                         showsHorizontalScrollIndicator={false}
                     />
                 </View>
-
                 {/* Date Selection */}
-                <View style={tw`mb-4`}>
+                <View style={tw`mb-4 `}>
                     <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Date</Text>
-                    <TouchableOpacity style={tw`bg-gray-800 p-4 rounded-lg flex-row justify-between items-center`}>
-                        <Text style={tw`text-gray-400`}>DD/MM/YYYY</Text>
+                    <TouchableOpacity
+                        style={tw`bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        onPress={() => setDateModalVisible(true)}
+                    >
+                        <Text style={tw`text-gray-400`}>
+                            {selectedDate ? selectedDate : "DD/MM/YYYY"}
+                        </Text>
                         <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
                     </TouchableOpacity>
                 </View>
@@ -128,21 +156,90 @@ const roomDetails = () => {
                 {/* Starting Time */}
                 <View style={tw`mb-4`}>
                     <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Starting time</Text>
-                    <TouchableOpacity style={tw`bg-gray-800 p-4 rounded-lg flex-row justify-between items-center`}>
-                        <Text style={tw`text-gray-400`}>00:00</Text>
+                    <TouchableOpacity
+                        style={tw`bg-gray-800 bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        onPress={() => setTimeModalVisible(true)}
+                    >
+                        <Text style={tw`text-gray-400`}>
+                            {selectedTime ? selectedTime : "00:00"}
+                        </Text>
                         <Ionicons name="time-outline" size={20} color="#9CA3AF" />
                     </TouchableOpacity>
                 </View>
 
                 {/* Duration */}
-                <View style={tw`mb-8`}>
-                    <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Duration</Text>
-                    <TouchableOpacity style={tw`bg-gray-800 p-4 rounded-lg flex-row justify-between items-center`}>
-                        <Text style={tw`text-gray-400`}>Select</Text>
+                <View style={tw`mb-8 `}>
+                    <Text style={tw`text-primary text-lg font-semibold mb-3`}>
+                        Duration
+                    </Text>
+
+                    <TouchableOpacity
+                        style={tw`bg-white/10 p-4 rounded-lg flex-row justify-between items-center`}
+                        onPress={() => setShowDurationDropdown(!showDurationDropdown)}
+                    >
+                        <Text style={tw`text-gray-400`}>{selectedDuration}</Text>
                         <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
                     </TouchableOpacity>
+
+                    {/* Dropdown */}
+                    {showDurationDropdown && (
+                        <View style={tw`bg-white/10  mt-2 rounded-lg`}>
+                            <ScrollView
+                                style={tw`max-h-60`}   
+                                nestedScrollEnabled={true} 
+                                showsVerticalScrollIndicator={true} 
+                            >
+                                {durations.map((duration) => (
+                                    <TouchableOpacity
+                                        key={duration}
+                                        style={tw`p-3 border-b border-gray-700`}
+                                        onPress={() => {
+                                            setSelectedDuration(duration);
+                                            setShowDurationDropdown(false);
+                                        }}
+                                    >
+                                        <Text style={tw`text-white`}>{duration}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
+                    )}
                 </View>
+
+                <TouchableOpacity
+                    style={tw` relative mb-4`}
+                    onPress={() => {
+                    }}
+                >
+                    <SvgXml xml={IconButton} />
+                    <Text
+                        style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
+                    >
+                        Check Availability
+                    </Text>
+                </TouchableOpacity>
             </ScrollView>
+
+            {/* Date Picker Modal */}
+            {dateModalVisible && (
+                <DateTimePicker
+                    value={new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={handleDateChange}
+                />
+            )}
+            {/* Time Picker Modal */}
+            {timeModalVisible && (
+                <DateTimePicker
+                    value={new Date()}
+                    mode="time"
+                    is24Hour={true}
+                    display="default"
+                    onChange={handleTimeChange}
+                />
+            )}
+
         </View>
     )
 }

@@ -1,5 +1,5 @@
 import { ImgGradint, profileImg } from '@/assets/images/image';
-import BookingCard from '@/components/shear/Booking/BookingCard';
+import BookingCard from '@/components/Booking/BookingCard';
 import { CarouselCard } from '@/components/shear/Carousel';
 import { IconButtonExp, IconDower, IconHand, IconLoction, IconNotification, IconSeaall } from '@/Icons/Icons';
 import tw from '@/lib/tailwind';

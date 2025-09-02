@@ -1,7 +1,8 @@
 import { ImgGradint } from "@/assets/images/image";
-import Canceled from "@/components/shear/Booking/Canceled";
-import Completed from "@/components/shear/Booking/Completed";
-import Upcoming from "@/components/shear/Booking/Upcoming";
+import Canceled from "@/components/Booking/Canceled";
+import Completed from "@/components/Booking/Completed";
+import Upcoming from "@/components/Booking/Upcoming";
+
 import tw from "@/lib/tailwind";
 import { _HIGHT, _Width } from "@/utils/utils";
 import MaskedView from "@react-native-masked-view/masked-view";

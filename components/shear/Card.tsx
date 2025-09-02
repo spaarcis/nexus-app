@@ -13,7 +13,7 @@ export const Card = ({ item }: any) => {
 
 
     return (
-        <TouchableOpacity style={tw``} onPress={() => router.push({
+        <TouchableOpacity style={tw`mb-6`} onPress={() => router.push({
             pathname: "/details/roomDetails/[id]",
             params: { id: item.id }
         })}>
@@ -30,7 +30,6 @@ export const Card = ({ item }: any) => {
                     ]}
                 />
 
-                {/* Rating top-right */}
                 <View style={tw`flex-row items-center justify-end gap-2 absolute right-5 top-5`}>
                     <SvgXml xml={IconStar} />
                     <Text style={tw`text-primary font-poppinsMedium text-base`}>

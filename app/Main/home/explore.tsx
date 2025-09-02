@@ -30,21 +30,21 @@ const Explore = () => {
             {/* Content */}
             <View style={tw`px-5 pt-10`}>
                 {/* Title */}
-                <Text style={tw`text-white text-2xl font-bold mb-5`}>
+                <Text style={tw`text-white text-2xl font-poppinsBold mb-5`}>
                     Explore Gaming Zone
                 </Text>
 
                 {/* Search Bar with Filter */}
-                <View style={tw`flex-row items-center`}>
+                <View style={tw`flex-row items-center mb-5`}>
                     {/* Search Input */}
                     <View
-                        style={tw`flex-row items-center flex-1 bg-white/10 rounded-3xl px-4 py-3`}
+                        style={tw`flex-row items-center flex-1 bg-white/10 rounded-3xl px-4 py-2 `}
                     >
                         <SvgXml xml={IconSearch} />
                         <TextInput
                             placeholder="Search by location"
                             placeholderTextColor="#B0B0B0"
-                            style={tw`ml-2 text-white flex-1`}
+                            style={tw`ml-1 text-white flex-1`}
                         />
                     </View>
 
