@@ -54,7 +54,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
           style={tw`flex-row items-center p-4 rounded-lg bg-primary dark:bg-darkPrimary`}
           onPress={() => {
             props.navigation.closeDrawer();
-            // router.push("/change-password");
+            router.push("/(auth)/ChangePassword");
           }}
         >
           {/* <SvgXml xml={colorScheme === "dark" ? IconSettingDark : IconSetting} /> */}

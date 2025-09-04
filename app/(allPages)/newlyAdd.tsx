@@ -28,7 +28,7 @@ const newlyAdd = () => {
                 <Ionicons name="chevron-back" size={24} color="white" />
                 <Text style={tw`text-primary text-lg ml-1`}>Back</Text>
             </TouchableOpacity>
-            <View style={tw`mb-11`}>
+            <View style={tw`mb-52`}>
                 <FlatList
                     data={data}
                     keyExtractor={(item: any) => item.id.toString()}
