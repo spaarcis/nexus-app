@@ -1,14 +1,30 @@
 import { ImgGradint } from "@/assets/images/image"
-import { IconA1, IconButton, IconCleander, IconContact, Iconhoure, IconLoction, IconTime, IconVIP } from "@/Icons/Icons"
+import { IconA1, IconButton, IconCleander, IconContact, IconDone, Iconhoure, IconLoction, IconStar, IconTime, IconVIP } from "@/Icons/Icons"
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
 import { ImageBackground } from "expo-image"
 import { router } from "expo-router"
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { useState } from "react"
+import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const BookingsDetails = () => {
+    const [isModalVisible, setIsModalVisible] = useState(false)
+    const [rating, setRating] = useState(0)
+    const [reviewText, setReviewText] = useState("")
+
+    const renderStars = () => {
+        return Array.from({ length: 5 }, (_, index) => (
+            <TouchableOpacity key={index} onPress={() => setRating(index + 1)} style={tw`mr-2`}>
+                <Ionicons
+                    name={index < rating ? "star" : "star-outline"}
+                    size={32}
+                    color={index < rating ? "#FFA500" : "#6B7280"}
+                />
+            </TouchableOpacity>
+        ))
+    }
     return (
         <View style={tw`flex-1`}>
             <ImageBackground
@@ -54,7 +70,7 @@ const BookingsDetails = () => {
                             <SvgXml xml={IconLoction} />
                             <Text style={tw`text-gray-400 font-poppins ml-1`}>Los Angeles, USA</Text>
                             <View style={tw`flex-row items-center ml-auto`}>
-                                <Ionicons name="star" size={16} color="#FCD34D" />
+                                <SvgXml xml={IconStar} />
                                 <Text style={tw`text-white font-poppins ml-1`}>4.5</Text>
                             </View>
                         </View>
@@ -114,7 +130,7 @@ const BookingsDetails = () => {
 
                 <TouchableOpacity
                     style={tw` relative mb-8`}
-
+                    onPress={() => setIsModalVisible(true)}
                 >
                     <SvgXml xml={IconButton} />
                     <Text
@@ -123,6 +139,62 @@ const BookingsDetails = () => {
                         Rating & Review
                     </Text>
                 </TouchableOpacity>
+                <Modal
+                    visible={isModalVisible}
+                    transparent={true}
+                    animationType="fade"
+                    onRequestClose={() => setIsModalVisible(false)}
+                >
+                    <View style={tw`flex-1 bg-black/70 justify-center items-center px-5`}>
+                        <View style={tw`bg-black/40 shadow-lg shadow-[#A7BEFE] rounded-2xl p-8 w-full max-w-sm`}>
+                            {/* Modal Header */}
+                            <View style={tw`flex-row items-center justify-between mb-6`}>
+                                <Text style={tw`text-white text-xl font-semibold`}>Ratings & Review</Text>
+                                <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+                                    <Ionicons name="close" size={24} color="#EF4444" />
+                                </TouchableOpacity>
+                            </View>
+                            {/* Rating Section */}
+                            <View style={tw`mb-6`}>
+                                <Text style={tw`text-white text-lg font-medium mb-3`}>Rating</Text>
+                                <View style={tw`flex-row`}>{renderStars()}</View>
+                            </View>
+
+                            {/* Review Section */}
+                            <View style={tw`mb-8`}>
+                                <Text style={tw`text-white text-lg font-medium mb-3`}>Review</Text>
+                                <TextInput
+                                    style={tw`bg-[#5E5E5E33] rounded-xl p-4  text-white min-h-24 text-base`}
+                                    placeholder="Additional Sentence"
+                                    placeholderTextColor="#6B7280"
+                                    multiline={true}
+                                    textAlignVertical="top"
+                                    value={reviewText}
+                                    onChangeText={setReviewText}
+                                />
+                            </View>
+
+                            {/* Action Buttons */}
+                            <View style={tw`gap-3`}>
+                                <TouchableOpacity
+                                    style={tw`bg-[#5E5E5E33] rounded-full py-3 items-center`}
+                                    onPress={() => setIsModalVisible(false)}
+                                >
+                                    <Text style={tw`text-red-500 text-lg font-medium`}>Cancel</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={tw` relative`}
+                                    onPress={() => {
+                                        router.push("/Main/Home/home")
+                                    }}
+                                >
+                                    <SvgXml xml={IconDone} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </ScrollView>
         </View>
     )
