@@ -74,11 +74,15 @@ const Home = () => {
                     </BlurView>
                 </View>
                 {/* Carousel  Popular Zone  */}
-                <View style={tw`flex-row items-center justify-between pt-6 `}>
+                <View style={tw`flex-row items-center justify-between pt-6 pb-5 `}>
                     <Text style={tw`text-primary text-lg font-poppinsBold`}>
                         Popular Zone
                     </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push("/(allPages)/popularZone")
+                        }}
+                    >
                         <SvgXml xml={IconSeaall} />
                     </TouchableOpacity>
                 </View>
@@ -120,11 +124,15 @@ const Home = () => {
                     </BlurView>
                 </View>
                 {/* Carousel Newly Added */}
-                <View style={tw`flex-row items-center justify-between`}>
+                <View style={tw`flex-row items-center justify-between pb-5`}>
                     <Text style={tw`text-primary py-3 text-lg font-poppinsBold`}>
                         Newly Added
                     </Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            router.push("/(allPages)/afterFilterPage")
+                        }}
+                    >
                         <SvgXml xml={IconSeaall} />
                     </TouchableOpacity>
                 </View>

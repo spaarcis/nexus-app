@@ -8,6 +8,8 @@ const _layout = () => {
             <Stack.Screen name='afterFilterPage' />
             <Stack.Screen name='seatPosotion' />
             <Stack.Screen name='notifications' />
+            <Stack.Screen name='popularZone' />
+            <Stack.Screen name='newlyAdd' />
         </Stack>
     )
 }
