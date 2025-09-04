@@ -31,8 +31,8 @@ const afterFilterPage = () => {
            <View style={tw``}>
                     <FlatList
                         data={data}
-                        keyExtractor={(item: any) => item.id.toString()} // string এ convert করলাম
-                        renderItem={({ item }) => <Card item={item} />}
+                        keyExtractor={(item: any) => item.id.toString()} 
+                        renderItem={({ item }) =>  <Card item={item} />}
                         showsVerticalScrollIndicator={false}
                     />
                 </View>

@@ -3,7 +3,9 @@ import { IconAvailable, IconButton } from '@/Icons/Icons'
 import tw from '@/lib/tailwind'
 import { _HIGHT, _Width } from '@/utils/utils'
 import { Ionicons } from '@expo/vector-icons'
+import MaskedView from '@react-native-masked-view/masked-view'
 import { ImageBackground } from 'expo-image'
+import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
@@ -14,7 +16,7 @@ const seatPosotion = () => {
     const [showPromoModal, setShowPromoModal] = useState(false);
     const [showRoomDropdown, setShowRoomDropdown] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('Select');
-    
+
     const seats = [
         { id: 'PC 1', available: true },
         { id: 'PC 2', available: false },
@@ -71,7 +73,7 @@ const seatPosotion = () => {
                         <SvgXml xml={IconAvailable} />
                     </TouchableOpacity>
                 </View>
-                
+
                 {/* Gaming Lounge Banner */}
                 <View style={tw`mb-6 rounded-2xl overflow-hidden h-48`}>
                     <ImageBackground
@@ -87,14 +89,14 @@ const seatPosotion = () => {
                 {/* Select Room */}
                 <View style={tw`mb-6`}>
                     <Text style={tw`text-white text-lg font-poppinsBold mb-3`}>Select Room</Text>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={() => setShowRoomDropdown(!showRoomDropdown)}
                         style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
                     >
                         <Text style={tw`text-gray-400 text-base font-poppins`}>{selectedRoom}</Text>
                         <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
                     </TouchableOpacity>
-                    
+
                     {/* Room Dropdown */}
                     {showRoomDropdown && (
                         <View style={tw`bg-gray-900/95 rounded-2xl mt-2 border border-gray-700 overflow-hidden`}>
@@ -117,7 +119,7 @@ const seatPosotion = () => {
                 {/* Available Seat */}
                 <View style={tw`mb-6`}>
                     <Text style={tw`text-white text-lg font-poppinsBold mb-4`}>Available Seat</Text>
-                    
+
                     {/* All 10 seats in proper grid */}
                     <View style={tw`flex-row flex-wrap justify-between`}>
                         {seats.map((seat, index) => (
@@ -128,10 +130,10 @@ const seatPosotion = () => {
                                 disabled={!seat.available}
                             >
                                 <View style={tw`w-12 h-12 rounded-full border-2 items-center justify-center mb-2 ${!seat.available
-                                        ? 'border-red-500'
-                                        : selectedSeat === seat.id
-                                            ? ' border-secondaryGreen'
-                                            : 'bg-gray-800/80 border-gray-600'
+                                    ? 'border-red-500'
+                                    : selectedSeat === seat.id
+                                        ? ' border-secondaryGreen'
+                                        : 'bg-gray-800/80 border-gray-600'
                                     }`}>
                                     <Ionicons
                                         name="desktop-outline"
@@ -140,16 +142,16 @@ const seatPosotion = () => {
                                             !seat.available
                                                 ? '#EF4444'
                                                 : selectedSeat === seat.id
-                                                ? '#FFFFFF'
-                                                : '#9CA3AF'
+                                                    ? '#FFFFFF'
+                                                    : '#9CA3AF'
                                         }
                                     />
                                 </View>
                                 <Text style={tw`text-xs font-poppinsMedium ${!seat.available
-                                        ? 'text-red-400'
-                                        : selectedSeat === seat.id
-                                            ? 'text-secondaryGreen'
-                                            : 'text-gray-400'
+                                    ? 'text-red-400'
+                                    : selectedSeat === seat.id
+                                        ? 'text-secondaryGreen'
+                                        : 'text-gray-400'
                                     }`}>
                                     {seat.id}
                                 </Text>
@@ -163,30 +165,53 @@ const seatPosotion = () => {
                     <View style={tw`flex-row justify-between items-center mb-4`}>
                         <Text style={tw`text-white text-lg font-poppinsBold`}>Payment Details</Text>
                         <TouchableOpacity onPress={() => setShowPromoModal(true)}>
-                            <Text style={tw`text-blue-400 text-sm font-poppinsMedium`}>Apply promo</Text>
+                            <MaskedView
+                                maskElement={
+                                    <Text
+                                        style={[
+                                            tw`text-base font-poppinsBold`,
+                                            { backgroundColor: "transparent" },
+                                        ]}
+                                    >
+                                         Apply promo
+                                    </Text>
+                                }
+                            >
+
+                                <LinearGradient
+                                    colors={["#6523E7", "#023CE3", "#6523E7"]}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 0 }}
+                                >
+                                    <Text
+                                        style={[tw`text-base font-poppinsBold`, { opacity: 0 }]}
+                                    >
+                                        Apply promo
+                                    </Text>
+                                </LinearGradient>
+                            </MaskedView>
                         </TouchableOpacity>
                     </View>
 
-                    <View style={tw`bg-gray-900/80 rounded-xl p-4 border border-gray-800`}>
+                    <View >
                         <View style={tw`flex-row justify-between items-center mb-3`}>
                             <Text style={tw`text-gray-300 text-base font-poppins`}>To pay:</Text>
                             <Text style={tw`text-white text-base font-poppinsBold`}>€ 5604</Text>
                         </View>
-                        
+
                         <View style={tw`flex-row justify-between items-center mb-4`}>
                             <Text style={tw`text-gray-300 text-base font-poppins`}>Promo Code:</Text>
                             <Text style={tw`text-white text-base font-poppinsBold`}>SAD564</Text>
                         </View>
-                        
+
                         <View style={tw`h-px bg-gray-700 mb-4`} />
-                        
+
                         <View style={tw`flex-row justify-between items-center`}>
                             <Text style={tw`text-white text-lg font-poppinsBold`}>Total:</Text>
                             <Text style={tw`text-white text-xl font-poppinsBold`}>€ 4500</Text>
                         </View>
                     </View>
                 </View>
-
                 {/* Promo Code Modal */}
                 {showPromoModal && (
                     <View style={tw`absolute inset-0 bg-black/80 flex-1 justify-center items-center px-4`}>
@@ -197,7 +222,7 @@ const seatPosotion = () => {
                                     <Ionicons name="close" size={24} color="white" />
                                 </TouchableOpacity>
                             </View>
-                            
+
                             {/* Promo Code Options */}
                             <View style={tw`mb-6`}>
                                 {promoCodes.map((promo, index) => (
@@ -213,10 +238,10 @@ const seatPosotion = () => {
                                     </TouchableOpacity>
                                 ))}
                             </View>
-                            
+
                             {/* Modal Buttons */}
                             <View style={tw`flex-row gap-3`}>
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     onPress={() => setShowPromoModal(false)}
                                     style={tw`flex-1 py-3 rounded-full border border-gray-600`}
                                 >
@@ -234,14 +259,14 @@ const seatPosotion = () => {
 
                 {/* footer confirm btn */}
                 <TouchableOpacity
-                    style={tw`relative mb-8`}
+                    style={tw`relative mb-8 mt-16`}
                     onPress={() => {
 
                     }}
                 >
                     <SvgXml xml={IconButton} />
                     <Text
-                        style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
+                        style={tw`text-primary absolute flex w-full    text-center  text-lg py-[14px] font-poppinsBold`}
                     >
                         Confirm Booking
                     </Text>

@@ -7,6 +7,7 @@ const _layout = () => {
             <Stack.Screen name='filter' />
             <Stack.Screen name='afterFilterPage' />
             <Stack.Screen name='seatPosotion' />
+            <Stack.Screen name='notifications' />
         </Stack>
     )
 }

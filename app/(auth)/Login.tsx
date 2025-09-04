@@ -174,7 +174,7 @@ const Login = () => {
                                                 style={tw` relative`}
                                                 onPress={() => {
                                                     handleSubmit();
-                                                    router.push("/Main/home/home")
+                                                    router.push("/Main/Home/home")
                                                 }}
                                             >
                                                 <SvgXml xml={IconButton} />
