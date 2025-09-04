@@ -10,6 +10,9 @@ const _layout = () => {
             <Stack.Screen name='notifications' />
             <Stack.Screen name='popularZone' />
             <Stack.Screen name='newlyAdd' />
+            <Stack.Screen name='favoriteZone' />
+            <Stack.Screen name='terms_conditions' />
+            <Stack.Screen name='privacy_policy' />
         </Stack>
     )
 }

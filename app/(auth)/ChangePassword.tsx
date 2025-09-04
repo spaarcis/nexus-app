@@ -82,7 +82,7 @@ const ChangePassword = () => {
 
                   {/* Title Section */}
                   <View style={tw`mb-12`}>
-                    <Text style={tw`font-poppinsBlack text-3xl text-primary mb-3`}>Change Your Password</Text>
+                    <Text style={tw`font-poppinsBold text-3xl text-primary mb-3`}>Change Your Password</Text>
                     <Text style={tw`text-secondary font-poppins text-sm`}>
                       You have to fill current password section for change the password.
                     </Text>
