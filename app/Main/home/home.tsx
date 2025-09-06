@@ -50,7 +50,7 @@ const Home = () => {
                             <TouchableOpacity onPress={() => router.push("/(allPages)/notifications")}>
                                 <SvgXml xml={IconNotification} />
                             </TouchableOpacity>
-                            <Image source={profileImg} height={40} width={40} />
+                            <Image source={profileImg}  style={tw`w-11 h-11`} />
                         </View>
                     </View>
                     <View style={tw`flex-row gap-3 mt-2  items-center px-7`}>
@@ -67,6 +67,7 @@ const Home = () => {
 
                         <TouchableOpacity
                             style={tw` mt-4`}
+                            onPress={()=> router.push("/Main/Home/explore")}
                         >
                             <SvgXml xml={IconButtonExp} width={330} />
 
