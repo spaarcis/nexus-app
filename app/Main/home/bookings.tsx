@@ -16,7 +16,7 @@ const tabs = ["Upcoming", "Completed", "Canceled"];
 const Bookings = () => {
   const [currentPage, setCurrentPage] = useState("Upcoming");
   const underlineX = useRef(new Animated.Value(0)).current;
-  const tabWidth = _Width / tabs.length ;
+  const tabWidth = _Width / tabs.length;
 
   useEffect(() => {
     const index = tabs.indexOf(currentPage);

@@ -8,12 +8,13 @@ import { Text, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 
 const BookingCard = (data: any) => {
-    console.log(data, "booking");
-
     return (
         <TouchableOpacity onPress={() => router.push({
             pathname: "/details/BookingsDetails/[id]",
-            params: { id: data?.data?.id }
+            params: {
+                id: data?.data?.id,
+                status: data?.status
+            },
         })} style={tw`mb-4`}>
             <BlurView style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`} intensity={10} tint="light">
                 <Image source={{ uri: data?.data?.image }} style={[tw`h-20 w-20 rounded-2xl`, {

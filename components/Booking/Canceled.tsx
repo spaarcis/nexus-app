@@ -10,7 +10,7 @@ const Canceled = () => {
                 data={data}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
-                    <BookingCard data={item} />
+                    <BookingCard data={item} status="Canceled"/>
                 )}
             />
         </View>

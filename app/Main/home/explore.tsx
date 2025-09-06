@@ -62,7 +62,7 @@ const Explore = () => {
                 <View style={tw``}>
                     <FlatList
                         data={data}
-                        keyExtractor={(item: any) => item.id.toString()} // string এ convert করলাম
+                        keyExtractor={(item: any) => item.id.toString()} 
                         renderItem={({ item }) => <Card item={item} />}
                         showsVerticalScrollIndicator={false}
                     />

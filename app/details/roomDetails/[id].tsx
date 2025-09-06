@@ -10,7 +10,7 @@ import { BlurView } from "expo-blur"
 import { ImageBackground } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const roomDetails = () => {
@@ -239,7 +239,11 @@ const roomDetails = () => {
                     onChange={handleTimeChange}
                 />
             )}
-
+            <Modal>
+                <View>
+                
+                </View>
+            </Modal>
         </View>
     )
 }

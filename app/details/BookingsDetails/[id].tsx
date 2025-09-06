@@ -3,19 +3,19 @@ import { IconA1, IconButton, IconCleander, IconContact, IconDone, Iconhoure, Ico
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useEffect, useState } from "react"
 import { Image, ImageBackground, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const BookingsDetails = () => {
+    const { id, status } = useLocalSearchParams();
     const [isModalVisible, setIsModalVisible] = useState(false)
     const [rating, setRating] = useState(0)
     const [reviewText, setReviewText] = useState("")
+    console.log(status, "status", id, "id");
 
-    // Improved rating functionality
     const handleRating = (selectedRating: number) => {
-        // Toggle rating if same star is clicked again
         setRating(selectedRating === rating ? 0 : selectedRating)
     }
 
@@ -23,9 +23,9 @@ const BookingsDetails = () => {
         return Array.from({ length: 5 }, (_, index) => {
             const starValue = index + 1
             const isFilled = starValue <= rating
-            
+
             return (
-                <TouchableOpacity 
+                <TouchableOpacity
                     key={index}
                     onPress={() => handleRating(starValue)}
                     style={tw`mr-2 p-1`}
@@ -164,18 +164,52 @@ const BookingsDetails = () => {
                         </View>
                     </View>
                 </View>
-
-                <TouchableOpacity
-                    style={tw` relative mb-8`}
-                    onPress={() => setIsModalVisible(true)}
-                >
-                    <SvgXml xml={IconButton} />
-                    <Text
-                        style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
+                {status === "Completed" ? (
+                    <TouchableOpacity
+                        style={tw`relative mb-8`}
+                        onPress={() => setIsModalVisible(true)}
                     >
-                        Rating & Review
-                    </Text>
-                </TouchableOpacity>
+                        <SvgXml xml={IconButton} />
+                        <Text
+                            style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
+                        >
+                            Rating & Review
+                        </Text>
+                    </TouchableOpacity>
+                ) : status === "Upcoming" ? (
+                    <View>
+                        <TouchableOpacity
+                            style={tw`bg-[#171823] mb-4 rounded-full`}
+                            // onPress={() => handleCancelBooking()}
+                        >
+                        
+                            <Text
+                                style={tw`text-primary  flex w-full text-center text-lg py-[14px] font-poppinsBold`}
+                            >
+                                Cancel the booking!
+                            </Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={tw`relative mb-8`}
+                            // onPress={() => handleReschedule()}
+                        >
+                            <SvgXml xml={IconButton} />
+                            <Text
+                                style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
+                            >
+                                Reschedule
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                ) : status === "Canceled" ? (
+                    <View style={tw`mb-8`}>
+                        
+                    </View>
+                ) : null}
+
+
+
                 <Modal
                     visible={isModalVisible}
                     transparent={true}
