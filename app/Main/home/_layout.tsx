@@ -1,14 +1,13 @@
 
-import { IconBookings, IconBookingsActive, IconExplore, IconExploreActive, IconHome, IconHomeActive, IconProfiles, IconProfilesActive, IconTabBarCard } from "@/Icons/Icons";
+import { IconBookings, IconBookingsActive, IconExplore, IconExploreActive, IconHome, IconHomeActive, IconProfiles, IconProfilesActive } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { _Width } from "@/utils/utils";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useLinkBuilder } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
-import { LinearGradient } from "expo-linear-gradient";
-import { router, Tabs } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Tabs } from "expo-router";
+import React, { useRef, useState } from "react";
+import { Animated, Dimensions, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 const icons = {
@@ -44,54 +43,55 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         <View
             style={tw`flex-row absolute bottom-10 w-full justify-center items-center  bg-transparent `}
         >
-            {/* <SvgXml xml={IconTabBarCard} /> */}
-            <View style={tw`flex-row bg-[#312c44] opacity-70 gap-5 p-7 w-80 rounded-full `}>
-                {state.routes.map((route, index) => {
-                    const { options } = descriptors[route.key];
-                    const isFocused = state.index === index;
+            <View>
+                <BlurView style={tw`flex-row justify-between w-80 p-5 rounded-full overflow-hidden gap-6`} intensity={100} tint="dark">
+                    {state.routes.map((route, index) => {
+                        const { options } = descriptors[route.key];
+                        const isFocused = state.index === index;
 
-                    const onPress = () => {
-                        const event = navigation.emit({
-                            type: "tabPress",
-                            target: route.key,
-                            canPreventDefault: true,
-                        });
+                        const onPress = () => {
+                            const event = navigation.emit({
+                                type: "tabPress",
+                                target: route.key,
+                                canPreventDefault: true,
+                            });
 
-                        if (!isFocused && !event.defaultPrevented) {
-                            navigation.navigate(route.name);
+                            if (!isFocused && !event.defaultPrevented) {
+                                navigation.navigate(route.name);
+                            }
+                        };
+
+                        const onLongPress = () => {
+                            navigation.emit({
+                                type: "tabLongPress",
+                                target: route.key,
+                            });
+                        };
+
+                        if (route.name === "add") {
+                            return (
+                                <View key="add"  />
+                            );
                         }
-                    };
 
-                    const onLongPress = () => {
-                        navigation.emit({
-                            type: "tabLongPress",
-                            target: route.key,
-                        });
-                    };
+                        const iconSet = icons[route.name];
 
-                    if (route.name === "add") {
                         return (
-                            <View key="add" style={tw`flex-1`} />
+                            <TouchableOpacity
+                                key={route.name}
+                                accessibilityState={isFocused ? { selected: true } : {}}
+                                accessibilityLabel={options.tabBarAccessibilityLabel}
+                                testID={options.tabBarButtonTestID}
+                                href={buildHref(route.name)}
+                                onPress={onPress}
+                                onLongPress={onLongPress}
+                                style={tw` flex-row  justify-center items-center ${isFocused ? "bg-black  p-2 rounded-full " : ""}`}
+                            >
+                                <SvgXml xml={isFocused ? iconSet.active : iconSet.inactive} />
+                            </TouchableOpacity>
                         );
-                    }
-
-                    const iconSet = icons[route.name];
-
-                    return (
-                        <TouchableOpacity
-                            key={route.name}
-                            accessibilityState={isFocused ? { selected: true } : {}}
-                            accessibilityLabel={options.tabBarAccessibilityLabel}
-                            testID={options.tabBarButtonTestID}
-                            href={buildHref(route.name)}
-                            onPress={onPress}
-                            onLongPress={onLongPress}
-                            style={tw`flex-1 relative justify-center items-center ${isFocused ? "bg-black  p-2 rounded-full " : ""}`}
-                        >
-                            <SvgXml xml={isFocused ? iconSet.active : iconSet.inactive} />
-                        </TouchableOpacity>
-                    );
-                })}
+                    })}
+                </BlurView>
             </View>
         </View>
     );
