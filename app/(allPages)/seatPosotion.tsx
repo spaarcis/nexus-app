@@ -17,6 +17,7 @@ const seatPosotion = () => {
     const [showRoomDropdown, setShowRoomDropdown] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('Select');
 
+    const roomOptions = ['VIP', 'NON VIP', 'Semi VIP', 'PS5', 'Common'];
     const seats = [
         { id: 'PC 1', available: true },
         { id: 'PC 2', available: false },
@@ -31,8 +32,6 @@ const seatPosotion = () => {
         { id: 'PC 11', available: true },
         { id: 'PC 12', available: true },
     ];
-
-    const roomOptions = ['VIP', 'NON VIP', 'Semi VIP', 'PS5', 'Common'];
     const promoCodes = [
         { code: 'SAD564', expiry: '12/25/25' },
         { code: 'SAD564', expiry: '12/25/25' },

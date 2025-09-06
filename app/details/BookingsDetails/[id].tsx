@@ -3,10 +3,9 @@ import { IconA1, IconButton, IconCleander, IconContact, IconDone, Iconhoure, Ico
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
-import { ImageBackground } from "expo-image"
 import { router } from "expo-router"
-import { useState } from "react"
-import { Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { useEffect, useState } from "react"
+import { Image, ImageBackground, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const BookingsDetails = () => {
@@ -14,17 +13,55 @@ const BookingsDetails = () => {
     const [rating, setRating] = useState(0)
     const [reviewText, setReviewText] = useState("")
 
-    const renderStars = () => {
-        return Array.from({ length: 5 }, (_, index) => (
-            <TouchableOpacity key={index} onPress={() => setRating(index + 1)} style={tw`mr-2`}>
-                <Ionicons
-                    name={index < rating ? "star" : "star-outline"}
-                    size={32}
-                    color={index < rating ? "#FFA500" : "#6B7280"}
-                />
-            </TouchableOpacity>
-        ))
+    // Improved rating functionality
+    const handleRating = (selectedRating: number) => {
+        // Toggle rating if same star is clicked again
+        setRating(selectedRating === rating ? 0 : selectedRating)
     }
+
+    const renderStars = () => {
+        return Array.from({ length: 5 }, (_, index) => {
+            const starValue = index + 1
+            const isFilled = starValue <= rating
+            
+            return (
+                <TouchableOpacity 
+                    key={index}
+                    onPress={() => handleRating(starValue)}
+                    style={tw`mr-2 p-1`}
+                    activeOpacity={0.7}
+                >
+                    <Ionicons
+                        name={isFilled ? "star" : "star-outline"}
+                        size={32}
+                        color={isFilled ? "#FFA500" : "#6B7280"}
+                    />
+                </TouchableOpacity>
+            )
+        })
+    }
+
+    const handleSubmitReview = () => {
+        if (rating > 0) {
+            // Here you would typically send the rating and review to your backend
+            console.log("Rating:", rating)
+            console.log("Review:", reviewText)
+            setIsModalVisible(false)
+            router.push("/Main/Home/home")
+        } else {
+            // Optional: Show error message if no rating is selected
+            alert("Please select a rating before submitting")
+        }
+    }
+
+    // Reset form when modal opens/closes
+    useEffect(() => {
+        if (!isModalVisible) {
+            setRating(0)
+            setReviewText("")
+        }
+    }, [isModalVisible])
+
     return (
         <View style={tw`flex-1`}>
             <ImageBackground
@@ -156,8 +193,10 @@ const BookingsDetails = () => {
                             </View>
                             {/* Rating Section */}
                             <View style={tw`mb-6`}>
-                                <Text style={tw`text-white text-lg font-medium mb-3`}>Rating</Text>
-                                <View style={tw`flex-row`}>{renderStars()}</View>
+                                <Text style={tw`text-white text-lg font-medium mb-3`}>
+                                    Rating {rating > 0 ? `(${rating}/5)` : ''}
+                                </Text>
+                                <View style={tw`flex-row justify-center`}>{renderStars()}</View>
                             </View>
 
                             {/* Review Section */}
@@ -165,7 +204,7 @@ const BookingsDetails = () => {
                                 <Text style={tw`text-white text-lg font-medium mb-3`}>Review</Text>
                                 <TextInput
                                     style={tw`bg-[#5E5E5E33] rounded-xl p-4  text-white min-h-24 text-base`}
-                                    placeholder="Additional Sentence"
+                                    placeholder="Share your experience..."
                                     placeholderTextColor="#6B7280"
                                     multiline={true}
                                     textAlignVertical="top"
@@ -184,10 +223,9 @@ const BookingsDetails = () => {
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    style={tw` relative`}
-                                    onPress={() => {
-                                        router.push("/Main/Home/home")
-                                    }}
+                                    style={tw`relative ${rating === 0 ? 'opacity-50' : ''}`}
+                                    onPress={handleSubmitReview}
+                                    disabled={rating === 0}
                                 >
                                     <SvgXml xml={IconDone} />
                                 </TouchableOpacity>

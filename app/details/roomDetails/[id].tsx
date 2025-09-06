@@ -10,7 +10,7 @@ import { BlurView } from "expo-blur"
 import { ImageBackground } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useState } from "react"
-import { FlatList, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const roomDetails = () => {
@@ -24,7 +24,9 @@ const roomDetails = () => {
     const [timeModalVisible, setTimeModalVisible] = useState(false)
     const [selectedDuration, setSelectedDuration] = useState("Select Duration");
     const [showDurationDropdown, setShowDurationDropdown] = useState(false);
+    const [showRoomDropdown, setShowRoomDropdown] = useState(false);
 
+    const roomOptions = ['VIP', 'NON VIP', 'Semi VIP', 'PS5', 'Common'];
     const durations = ["1 hour", "2 hour", "3 hour", "4 hour", "5 hour", "6 hour", "7 hour", "8 hour"];
 
     // handle date change
@@ -106,39 +108,36 @@ const roomDetails = () => {
                         </View>
                     </View>
                 </BlurView>
-
-                {/* Room Selection */}
+                {/* Select Room */}
                 <View style={tw`mb-6`}>
-                    <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-4`}>
-                        Room of this gaming center:
-                    </Text>
+                    <Text style={tw`text-white text-lg font-poppinsBold mb-3`}>Select Room</Text>
+                    <TouchableOpacity
+                        onPress={() => setShowRoomDropdown(!showRoomDropdown)}
+                        style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
+                    >
+                        <Text style={tw`text-gray-400 text-base font-poppins`}>{selectedRoom}</Text>
+                        <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
+                    </TouchableOpacity>
 
-                    <FlatList
-                        data={["VIP", "Bootcamp", "PS5", "PS5"]}
-                        keyExtractor={(item, index) => index.toString()}
-                        horizontal
-                        renderItem={({ item: room }) => (
-                            <TouchableOpacity
-                                onPress={() => setSelectedRoom(room)}
-                                style={tw`flex-1 mr-12 py-3 rounded-lg ${selectedRoom === room
-                                    ? "border-blue-500 bg-opacity-20"
-                                    : "border-gray-600"
-                                    }`}
-                            >
-                                <View style={tw`flex-row items-center justify-center`}>
-                                    <View
-                                        style={tw`w-4 h-4 rounded-full border-2 mr-2 ${selectedRoom === room
-                                            ? "border-blue-500 bg-blue-500"
-                                            : "border-gray-400"
-                                            }`}
-                                    />
-                                    <Text style={tw`text-primary`}>{room}</Text>
-                                </View>
-                            </TouchableOpacity>
-                        )}
-                        showsHorizontalScrollIndicator={false}
-                    />
+                    {/* Room Dropdown */}
+                    {showRoomDropdown && (
+                        <View style={tw`bg-gray-900/95 rounded-2xl mt-2 border border-gray-700 overflow-hidden`}>
+                            {roomOptions.map((room, index) => (
+                                <TouchableOpacity
+                                    key={room}
+                                    onPress={() => {
+                                        setSelectedRoom(room);
+                                        setShowRoomDropdown(false);
+                                    }}
+                                    style={tw`p-4 ${index !== roomOptions.length - 1 ? 'border-b border-gray-700' : ''}`}
+                                >
+                                    <Text style={tw`text-white text-base font-poppins`}>{room}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
                 </View>
+
                 {/* Date Selection */}
                 <View style={tw`mb-4 `}>
                     <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>Date</Text>
@@ -185,9 +184,9 @@ const roomDetails = () => {
                     {showDurationDropdown && (
                         <View style={tw`bg-white/10  mt-2 rounded-lg`}>
                             <ScrollView
-                                style={tw`max-h-60`}   
-                                nestedScrollEnabled={true} 
-                                showsVerticalScrollIndicator={true} 
+                                style={tw`max-h-60`}
+                                nestedScrollEnabled={true}
+                                showsVerticalScrollIndicator={true}
                             >
                                 {durations.map((duration) => (
                                     <TouchableOpacity

@@ -16,7 +16,7 @@ const Home = () => {
     const navigation = useNavigation();
 
     return (
-        <View style={tw` flex-1`}>  {/* Background Image */}
+        <View style={tw` flex-1`}>  
             <ImageBackground
                 source={ImgGradint}
                 resizeMode="cover"
@@ -50,7 +50,9 @@ const Home = () => {
                             <TouchableOpacity onPress={() => router.push("/(allPages)/notifications")}>
                                 <SvgXml xml={IconNotification} />
                             </TouchableOpacity>
-                            <Image source={profileImg}  style={tw`w-11 h-11`} />
+                            <TouchableOpacity onPress={()=> router.push("/Main/Home/Profile")}>
+                                <Image source={profileImg} style={tw`w-11 h-11`} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View style={tw`flex-row gap-3 mt-2  items-center px-7`}>
@@ -67,10 +69,9 @@ const Home = () => {
 
                         <TouchableOpacity
                             style={tw` mt-4`}
-                            onPress={()=> router.push("/Main/Home/explore")}
+                            onPress={() => router.push("/Main/Home/explore")}
                         >
                             <SvgXml xml={IconButtonExp} width={330} />
-
                         </TouchableOpacity>
                     </BlurView>
                 </View>
