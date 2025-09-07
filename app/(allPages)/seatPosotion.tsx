@@ -296,13 +296,12 @@ const seatPosotion = () => {
                 onRequestClose={() => setSuccessModalVisible(false)}
             >
                 <View style={tw`flex-1 justify-center items-center bg-black/70 p-5`}>
-                    <View style={tw`bg-primaryBlack rounded-2xl border border-[#0c8ce9]   p-6 w-full max-w-md`}>
+                    <View style={tw`bg-primaryBlack rounded-2xl border border-[#0c8ce9]  p-6 w-full max-w-md`}>
                         <View style={tw`absolute top-0 left-0 right-0 items-center`}>
                             <Image
-                                source={require('@/assets/images/confirm.gif')}
-                                style={tw`w-full h-full`}
+                               source={require('../../assets/images/confirm.gif')}
+                                style={tw`w-44 h-44`}
                             />
-
                         </View>
                         {/* Success Content */}
                         <View style={tw`mt-40 items-center`}>
