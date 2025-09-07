@@ -21,7 +21,6 @@ function CustomDrawerContent(props: CustomDrawerProps) {
       {/* Background Image */}
       <ImageBackground
         source={ImgGradint}
-        resizeMode="cover"
         style={{
           width: _Width,
           height: _HIGHT,
@@ -32,7 +31,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
         }}
       />
       {/* Header Section */}
-      <View style={tw`flex-row items-center justify-between px-6 pt-5 pb-10`}>
+      <View style={tw`flex-row items-center justify-between px-6 pt-5 `}>
         <View style={tw`flex-row items-center gap-3`}>
           <SvgXml xml={IconLogoIcon} />
           <SvgXml xml={IconLogo} />
@@ -41,9 +40,10 @@ function CustomDrawerContent(props: CustomDrawerProps) {
           <Text style={tw`text-red-500 text-xl font-bold`}>✕</Text>
         </TouchableOpacity>
       </View>
+
       <View style={tw`flex-col justify-between h-full`}>
         {/* User Profile Section */}
-        <View style={tw`px-6 mb-8`}>
+        <View style={tw`px-6 py-12`}>
           <View style={tw`flex-row items-center mb-4`}>
             <View style={tw`w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden`}>
               <Image source={profileImg} style={tw`w-full h-full`} />
@@ -62,7 +62,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
           {/* Menu Items */}
           <View style={tw`flex-col gap-4`}>
             <TouchableOpacity
-              style={tw`flex-row items-center py-3`}
+              style={tw`flex-row items-center py-1`}
               onPress={() => {
                 props.navigation.closeDrawer()
                 router.push("/(allPages)/favoriteZone");
@@ -72,7 +72,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={tw`flex-row items-center py-3`}
+              style={tw`flex-row items-center py-1`}
               onPress={() => {
                 props.navigation.closeDrawer()
                 router.push("/(auth)/ChangePassword")
@@ -82,7 +82,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={tw`flex-row items-center py-3`}
+              style={tw`flex-row items-center py-1`}
               onPress={() => {
                 props.navigation.closeDrawer()
                 router.push("/(allPages)/terms_conditions");
@@ -92,7 +92,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={tw`flex-row items-center py-3`}
+              style={tw`flex-row items-center py-1`}
               onPress={() => {
                 props.navigation.closeDrawer()
                 router.push("/(allPages)/privacy_policy");
@@ -102,7 +102,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={tw`flex-row items-center py-3`}
+              style={tw`flex-row items-center py-1`}
               onPress={() => {
                 props.navigation.closeDrawer()
                 props.onDeleteAccount()
@@ -114,7 +114,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
         </View>
 
         {/* Log Out Button */}
-        <View style={tw`flex-1 justify-end px-6 pb-8`}>
+        <View style={tw`flex-1 justify-end px-6 mt-20`}>
           <TouchableOpacity
             style={tw`flex-row items-center py-4 gap-3`}
             onPress={() => {
@@ -168,24 +168,24 @@ const DrawerLayout = () => {
 
   return (
     <>
-      <Drawer 
+      <Drawer
         drawerContent={(props) => (
-          <CustomDrawerContent 
-            {...props} 
-            onDeleteAccount={() => setShowDeleteModal(true)} 
+          <CustomDrawerContent
+            {...props}
+            onDeleteAccount={() => setShowDeleteModal(true)}
           />
-        )} 
+        )}
         screenOptions={{ headerShown: false }}
       >
         <Drawer.Screen
-          name="home"
+          name="Homes"
           options={{
             drawerLabel: "Home",
             title: "overview",
           }}
         />
       </Drawer>
-      
+
       <DeleteAccountModal
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

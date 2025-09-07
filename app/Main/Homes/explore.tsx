@@ -1,6 +1,5 @@
 import { ImgGradint } from '@/assets/images/image'
 import { Card } from '@/components/shear/Card'
-import { CarouselCard } from '@/components/shear/Carousel'
 import { IconFilter, IconSearch } from '@/Icons/Icons'
 import data from "@/lib/data.json"
 import tw from '@/lib/tailwind'
@@ -66,9 +65,6 @@ const Explore = () => {
                         renderItem={({ item }) => <Card item={item} />}
                         showsVerticalScrollIndicator={false}
                     />
-                </View>
-                 <View style={tw` pb-[600px]`}>
-                    <CarouselCard />
                 </View>
             </View>
         </View>

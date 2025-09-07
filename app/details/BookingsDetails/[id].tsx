@@ -1,5 +1,6 @@
 import { ImgGradint } from "@/assets/images/image"
-import { IconA1, IconButton, IconCleander, IconContact, IconDone, Iconhoure, IconLoction, IconStar, IconTime, IconVIP } from "@/Icons/Icons"
+import CustomButton from "@/components/shear/CustomButton"
+import { IconA1, IconCleander, IconContact, Iconhoure, IconLoction, IconStar, IconTime, IconVIP } from "@/Icons/Icons"
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
@@ -47,7 +48,7 @@ const BookingsDetails = () => {
             console.log("Rating:", rating)
             console.log("Review:", reviewText)
             setIsModalVisible(false)
-            router.push("/Main/Home/home")
+            router.push("/Main/Homes/Home")
         } else {
             // Optional: Show error message if no rating is selected
             alert("Please select a rating before submitting")
@@ -97,7 +98,6 @@ const BookingsDetails = () => {
                                 uri: "https://picsum.photos/200/200?random=2",
                             }}
                             style={tw`w-full h-48 rounded-2xl`}
-                            resizeMode="cover"
                         />
                     </View>
                     <View style={tw`mb-6`}>
@@ -166,45 +166,33 @@ const BookingsDetails = () => {
                 </View>
                 {status === "Completed" ? (
                     <TouchableOpacity
-                        style={tw`relative mb-8`}
+                        style={tw` mb-8`}
                         onPress={() => setIsModalVisible(true)}
                     >
-                        <SvgXml xml={IconButton} />
-                        <Text
-                            style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-                        >
-                            Rating & Review
-                        </Text>
+                        <CustomButton title={"Rating & Review"}/>
+                            
+                        
                     </TouchableOpacity>
                 ) : status === "Upcoming" ? (
                     <View>
                         <TouchableOpacity
                             style={tw`bg-[#171823] mb-4 rounded-full`}
-                            // onPress={() => handleCancelBooking()}
+                        // onPress={() => handleCancelBooking()}
                         >
-                        
+
                             <Text
                                 style={tw`text-primary  flex w-full text-center text-lg py-[14px] font-poppinsBold`}
                             >
                                 Cancel the booking!
                             </Text>
                         </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={tw`relative mb-8`}
-                            // onPress={() => handleReschedule()}
-                        >
-                            <SvgXml xml={IconButton} />
-                            <Text
-                                style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-                            >
-                                Reschedule
-                            </Text>
+                        <TouchableOpacity onPress={()=> router.push("/details/RoomDetails/[id]")}   style={tw`relative mb-8`}>
+                            <CustomButton title={"Reschedule"}/>
                         </TouchableOpacity>
                     </View>
                 ) : status === "Canceled" ? (
                     <View style={tw`mb-8`}>
-                        
+
                     </View>
                 ) : null}
 
@@ -261,7 +249,7 @@ const BookingsDetails = () => {
                                     onPress={handleSubmitReview}
                                     disabled={rating === 0}
                                 >
-                                    <SvgXml xml={IconDone} />
+                                   <CustomButton title={"Done"} />
                                 </TouchableOpacity>
                             </View>
                         </View>

@@ -1,7 +1,8 @@
 "use client"
 
 import { ImgGradint } from "@/assets/images/image"
-import { IconButton, IconInputBox, IconPoword } from "@/Icons/Icons"
+import CustomButton from "@/components/shear/CustomButton"
+import { IconInputBox, IconPoword } from "@/Icons/Icons"
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import Entypo from "@expo/vector-icons/Entypo"
@@ -9,14 +10,14 @@ import { router } from "expo-router"
 import { Formik } from "formik"
 import React from "react"
 import {
-    ImageBackground,
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native"
 import { AlertNotificationRoot } from "react-native-alert-notification"
 import { SvgXml } from "react-native-svg"
@@ -34,7 +35,6 @@ const ChangePassword = () => {
       {/* Background Image */}
       <ImageBackground
         source={ImgGradint}
-        resizeMode="cover"
         style={{
           width: _Width,
           height: _HIGHT,
@@ -82,7 +82,7 @@ const ChangePassword = () => {
 
                   {/* Title Section */}
                   <View style={tw`mb-12`}>
-                    <Text style={tw`font-poppinsBold text-3xl text-primary mb-3`}>Change Your Password</Text>
+                    <Text style={tw`font-poppinsBold text-2xl text-primary mb-3`}>Change Your Password</Text>
                     <Text style={tw`text-secondary font-poppins text-sm`}>
                       You have to fill current password section for change the password.
                     </Text>
@@ -170,17 +170,13 @@ const ChangePassword = () => {
 
                     {/* Update Button */}
                     <TouchableOpacity
-                      style={tw`relative mt-10`}
+                      style={tw` mt-10`}
                       onPress={() => {
                         handleSubmit()
+                        router.push("/Main/Homes/Home")
                       }}
                     >
-                      <SvgXml xml={IconButton} />
-                      <Text
-                        style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-                      >
-                        Update
-                      </Text>
+                      <CustomButton title={"Update"} />
                     </TouchableOpacity>
                   </View>
                 </View>

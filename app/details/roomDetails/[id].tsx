@@ -1,21 +1,21 @@
 "use client"
 
 import { ImgGradint } from "@/assets/images/image"
-import { IconButton, IconLoction, IconStar, IconTime } from "@/Icons/Icons"
+import CustomButton from "@/components/shear/CustomButton"
+import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons"
 import tw from "@/lib/tailwind"
 import { _HIGHT, _Width } from "@/utils/utils"
 import { Ionicons } from "@expo/vector-icons"
 import DateTimePicker from "@react-native-community/datetimepicker"
 import { BlurView } from "expo-blur"
 import { ImageBackground } from "expo-image"
-import { useLocalSearchParams, useRouter } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useState } from "react"
-import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 const roomDetails = () => {
     const { id } = useLocalSearchParams()
-    const router = useRouter()
 
     const [selectedRoom, setSelectedRoom] = useState("VIP")
     const [selectedDate, setSelectedDate] = useState("")
@@ -70,8 +70,8 @@ const roomDetails = () => {
                         <Text style={tw`text-primary text-lg ml-1`}>Back</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={tw`bg-blue-600 px-4 py-2 rounded-full`}>
-                        <Text style={tw`text-primary font-poppinsMedium`}>Contact</Text>
+                    <TouchableOpacity style={tw`flex-row items-center`}>
+                        <SvgXml xml={IconContact} />
                     </TouchableOpacity>
                 </View>
 
@@ -110,7 +110,7 @@ const roomDetails = () => {
                 </BlurView>
                 {/* Select Room */}
                 <View style={tw`mb-6`}>
-                    <Text style={tw`text-white text-lg font-poppinsBold mb-3`}>Select Room</Text>
+                    <Text style={tw`text-white text-lg font-poppinsBold my-3`}>Select Room</Text>
                     <TouchableOpacity
                         onPress={() => setShowRoomDropdown(!showRoomDropdown)}
                         style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
@@ -211,12 +211,7 @@ const roomDetails = () => {
                         router.push("/(allPages)/seatPosotion")
                     }}
                 >
-                    <SvgXml xml={IconButton} />
-                    <Text
-                        style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-                    >
-                        Check Availability
-                    </Text>
+                   <CustomButton title={"Check Availability"}/>
                 </TouchableOpacity>
             </ScrollView>
 
@@ -239,11 +234,7 @@ const roomDetails = () => {
                     onChange={handleTimeChange}
                 />
             )}
-            <Modal>
-                <View>
-                
-                </View>
-            </Modal>
+
         </View>
     )
 }

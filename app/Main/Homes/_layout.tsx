@@ -11,7 +11,7 @@ import { Animated, Dimensions, StyleSheet, TouchableOpacity, View } from "react-
 import { SvgXml } from "react-native-svg";
 
 const icons = {
-    home: {
+    Home: {
         active: IconHomeActive,
         inactive: IconHome,
     },
@@ -44,7 +44,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             style={tw`flex-row absolute bottom-10 w-full justify-center items-center  bg-transparent `}
         >
             <View>
-                <BlurView style={tw`flex-row justify-between w-80 p-5 rounded-full overflow-hidden gap-6`} intensity={100} tint="dark">
+                <BlurView style={tw`flex-row justify-between w-80 p-5 rounded-full overflow-hidden gap-6`} intensity={80} tint="dark">
                     {state.routes.map((route, index) => {
                         const { options } = descriptors[route.key];
                         const isFocused = state.index === index;
@@ -103,7 +103,7 @@ const TabLayout = () => {
             screenOptions={{ headerShown: false }}
             tabBar={(props) => <CustomTabBar {...props} />}
         >
-            <Tabs.Screen name="home" />
+            <Tabs.Screen name="Home" />
             <Tabs.Screen name="explore" />
             <Tabs.Screen name="bookings" />
             <Tabs.Screen name="Profile" />

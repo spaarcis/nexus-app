@@ -1,14 +1,15 @@
 import { ImgGradint } from '@/assets/images/image'
-import { IconAvailable, IconButton } from '@/Icons/Icons'
+import CustomButton from '@/components/shear/CustomButton'
+import { IconAvailable } from '@/Icons/Icons'
 import tw from '@/lib/tailwind'
 import { _HIGHT, _Width } from '@/utils/utils'
 import { Ionicons } from '@expo/vector-icons'
 import MaskedView from '@react-native-masked-view/masked-view'
-import { ImageBackground } from 'expo-image'
+import { Image, ImageBackground } from 'expo-image'
 import { LinearGradient } from 'expo-linear-gradient'
 import { router } from 'expo-router'
 import React, { useState } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { SvgXml } from 'react-native-svg'
 
 const seatPosotion = () => {
@@ -16,8 +17,11 @@ const seatPosotion = () => {
     const [showPromoModal, setShowPromoModal] = useState(false);
     const [showRoomDropdown, setShowRoomDropdown] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState('Select');
+    const [successModalVisible, setSuccessModalVisible] = useState(false)
+    const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
 
-    const roomOptions = ['VIP', 'NON VIP', 'Semi VIP', 'PS5', 'Common'];
+
+    const roomOptions = ['VIP', 'NON VIP', 'Semi VIP', 'PS5', 'Common', 'Common', 'Common', 'Common', 'Common', 'Common'];
     const seats = [
         { id: 'PC 1', available: true },
         { id: 'PC 2', available: false },
@@ -33,9 +37,9 @@ const seatPosotion = () => {
         { id: 'PC 12', available: true },
     ];
     const promoCodes = [
+        { code: 'SAD563', expiry: '12/25/25' },
         { code: 'SAD564', expiry: '12/25/25' },
-        { code: 'SAD564', expiry: '12/25/25' },
-        { code: 'SAD564', expiry: '12/25/25' },
+        { code: 'SAD565', expiry: '12/25/25' },
     ];
 
     const handleSeatPress = (seatId: string, available: boolean) => {
@@ -43,6 +47,7 @@ const seatPosotion = () => {
             setSelectedSeat(selectedSeat === seatId ? null : seatId);
         }
     };
+
 
     return (
         <View style={tw`flex-1`}>
@@ -96,21 +101,26 @@ const seatPosotion = () => {
                         <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
                     </TouchableOpacity>
 
-                    {/* Room Dropdown */}
                     {showRoomDropdown && (
                         <View style={tw`bg-gray-900/95 rounded-2xl mt-2 border border-gray-700 overflow-hidden`}>
-                            {roomOptions.map((room, index) => (
-                                <TouchableOpacity
-                                    key={room}
-                                    onPress={() => {
-                                        setSelectedRoom(room);
-                                        setShowRoomDropdown(false);
-                                    }}
-                                    style={tw`p-4 ${index !== roomOptions.length - 1 ? 'border-b border-gray-700' : ''}`}
-                                >
-                                    <Text style={tw`text-white text-base font-poppins`}>{room}</Text>
-                                </TouchableOpacity>
-                            ))}
+                            <ScrollView
+                                style={tw`max-h-60`} // Fixed height for 5 items
+                                nestedScrollEnabled={true}
+                                showsVerticalScrollIndicator={true}
+                            >
+                                {roomOptions.map((room, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => {
+                                            setSelectedRoom(room);
+                                            setShowRoomDropdown(false);
+                                        }}
+                                        style={tw`p-4 ${index !== roomOptions.length - 1 ? 'border-b border-gray-700' : ''}`}
+                                    >
+                                        <Text style={tw`text-white text-base font-poppins`}>{room}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
                         </View>
                     )}
                 </View>
@@ -142,7 +152,7 @@ const seatPosotion = () => {
                                                 ? '#EF4444'
                                                 : selectedSeat === seat.id
                                                     ? '#FFFFFF'
-                                                    : '#9CA3AF'
+                                                    : '#FFFFFF'
                                         }
                                     />
                                 </View>
@@ -172,7 +182,7 @@ const seatPosotion = () => {
                                             { backgroundColor: "transparent" },
                                         ]}
                                     >
-                                         Apply promo
+                                        Apply promo
                                     </Text>
                                 }
                             >
@@ -214,28 +224,34 @@ const seatPosotion = () => {
                 {/* Promo Code Modal */}
                 {showPromoModal && (
                     <View style={tw`absolute inset-0 bg-black/80 flex-1 justify-center items-center px-4`}>
-                        <View style={tw`bg-gray-900 rounded-2xl p-6 w-full max-w-sm`}>
+                        <View style={tw`bg-primaryBlack border border-[#0c8ce9] rounded-2xl p-6 w-full max-w-sm`}>
                             <View style={tw`flex-row justify-between items-center mb-6`}>
                                 <Text style={tw`text-white text-lg font-poppinsBold`}>Your promo code</Text>
                                 <TouchableOpacity onPress={() => setShowPromoModal(false)}>
                                     <Ionicons name="close" size={24} color="white" />
                                 </TouchableOpacity>
                             </View>
-
                             {/* Promo Code Options */}
                             <View style={tw`mb-6`}>
-                                {promoCodes.map((promo, index) => (
-                                    <TouchableOpacity
-                                        key={index}
-                                        style={tw`flex-row items-center justify-between py-3 ${index !== promoCodes.length - 1 ? 'border-b border-gray-700' : ''}`}
-                                    >
-                                        <View style={tw`flex-row items-center`}>
-                                            <View style={tw`w-5 h-5 rounded-full border-2 border-gray-500 mr-3`} />
-                                            <Text style={tw`text-white text-base font-poppins`}>{promo.code}</Text>
-                                        </View>
-                                        <Text style={tw`text-gray-400 text-sm font-poppins`}>Exp in {promo.expiry}</Text>
-                                    </TouchableOpacity>
-                                ))}
+                                {promoCodes.map((promo, index) => {
+                                    const isSelected = selectedPromo === promo.code; // check select হয়েছে কিনা
+                                    return (
+                                        <TouchableOpacity
+                                            key={index}
+                                            onPress={() => setSelectedPromo(promo.code)} // শুধু একটা সিলেক্ট হবে
+                                            style={tw`flex-row items-center justify-between py-3 ${index !== promoCodes.length - 1 ? 'border-b border-gray-700' : ''}`}
+                                        >
+                                            <View style={tw`flex-row items-center`}>
+                                                {/* Radio Circle */}
+                                                <View
+                                                    style={tw`w-5 h-5 rounded-full border-2 mr-3 ${isSelected ? 'border-[#0c8ce9] bg-[#0c8ce9]' : 'border-gray-500'}`}
+                                                />
+                                                <Text style={tw`text-white text-base font-poppins`}>{promo.code}</Text>
+                                            </View>
+                                            <Text style={tw`text-gray-400 text-sm font-poppins`}>Exp in {promo.expiry}</Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
                             </View>
 
                             {/* Modal Buttons */}
@@ -244,35 +260,70 @@ const seatPosotion = () => {
                                     onPress={() => setShowPromoModal(false)}
                                     style={tw`flex-1 py-3 rounded-full border border-gray-600`}
                                 >
-                                    <Text style={tw`text-white text-center font-poppinsMedium`}>Cancel</Text>
+                                    <Text style={tw`text-white text-center text-lg font-poppinsBlack`}>Cancel</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={tw`flex-1 bg-purple-600 py-3 rounded-full`}>
-                                    <Text style={tw`text-white text-center font-poppinsMedium`}>Apply</Text>
+                                <TouchableOpacity
+                                    style={tw`flex-1`}
+                                    onPress={() => {
+                                        if (selectedPromo) {
+                                            console.log("Applied Promo:", selectedPromo);
+                                            // এখানে তুমি promo apply করার logic লিখবে
+                                        }
+                                        setShowPromoModal(false);
+                                    }}
+                                >
+                                    <CustomButton title={"Apply"} />
                                 </TouchableOpacity>
                             </View>
                         </View>
                     </View>
                 )}
-
-
-
                 {/* footer confirm btn */}
                 <TouchableOpacity
-                    style={tw`relative mb-8 mt-16`}
+                    style={tw` mb-8 mt-16`}
                     onPress={() => {
-
+                        setSuccessModalVisible(true)
                     }}
                 >
-                    <SvgXml xml={IconButton} />
-                    <Text
-                        style={tw`text-primary absolute flex w-full    text-center  text-lg py-[14px] font-poppinsBold`}
-                    >
-                        Confirm Booking
-                    </Text>
+                    <CustomButton title={"Confirm Booking"} />
                 </TouchableOpacity>
-
             </ScrollView>
+            {/* Success Modal */}
+            <Modal
+                visible={successModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setSuccessModalVisible(false)}
+            >
+                <View style={tw`flex-1 justify-center items-center bg-black/70 p-5`}>
+                    <View style={tw`bg-primaryBlack rounded-2xl border border-[#0c8ce9]   p-6 w-full max-w-md`}>
+                        <View style={tw`absolute top-0 left-0 right-0 items-center`}>
+                            <Image
+                                source={require('@/assets/images/confirm.gif')}
+                                style={tw`w-full h-full`}
+                            />
 
+                        </View>
+                        {/* Success Content */}
+                        <View style={tw`mt-40 items-center`}>
+                            <Text style={tw`text-white text-2xl font-bold mb-2`}>Successful</Text>
+                            <Text style={tw`text-gray-300 text-center mb-6`}>
+                                Your successfully confirm the booking.
+                            </Text>
+
+                            <TouchableOpacity
+                                style={tw`mb-4 w-full`}
+                                onPress={() => {
+                                    setSuccessModalVisible(false)
+                                    router.push("/")
+                                }}
+                            >
+                                <CustomButton title="Back to Home" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View >
     )
 }

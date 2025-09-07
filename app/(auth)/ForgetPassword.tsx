@@ -31,7 +31,6 @@ const ForgetPassword = () => {
             {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
-                resizeMode="cover"
                 style={{
                     width: _Width,
                     height: _HIGHT,

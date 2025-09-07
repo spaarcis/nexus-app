@@ -1,6 +1,7 @@
 import { ImgGradint, nextStation, profileImg } from '@/assets/images/image';
 import { CarouselCard } from '@/components/shear/Carousel';
-import { IconButtonExp, IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
+import CustomButton from '@/components/shear/CustomButton';
+import { IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
 import tw from '@/lib/tailwind';
 import { _HIGHT, _Width } from '@/utils/utils';
 import { BlurView } from 'expo-blur';
@@ -19,7 +20,6 @@ const Home = () => {
         <View style={tw` flex-1`}>
             <ImageBackground
                 source={ImgGradint}
-                resizeMode="cover"
                 style={{
                     width: _Width,
                     height: _HIGHT,
@@ -50,7 +50,7 @@ const Home = () => {
                             <TouchableOpacity onPress={() => router.push("/(allPages)/notifications")}>
                                 <SvgXml xml={IconNotification} />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => router.push("/Main/Home/Profile")}>
+                            <TouchableOpacity onPress={() => router.push("/Main/Homes/Profile")}>
                                 <Image source={profileImg} style={tw`w-11 h-11`} />
                             </TouchableOpacity>
                         </View>
@@ -69,9 +69,9 @@ const Home = () => {
 
                         <TouchableOpacity
                             style={tw` mt-4`}
-                            onPress={() => router.push("/Main/Home/explore")}
+                            onPress={() => router.push("/Main/Homes/explore")}
                         >
-                            <SvgXml xml={IconButtonExp} width={330} />
+                            <CustomButton title={"Explore"}  />
                         </TouchableOpacity>
                     </BlurView>
                 </View>

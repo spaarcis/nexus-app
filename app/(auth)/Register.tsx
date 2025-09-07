@@ -1,5 +1,5 @@
-import { ImgGradint, ImgLogo } from "@/assets/images/image";
-import { IconButton, IconEmail, IconfacebookButton, IconForgetPass, IconGoogleButton, IconInputBox, IconLogo, IconPoword, IconProfile, IconRegisterText, IconSignText } from "@/Icons/Icons";
+import { ImgGradint } from "@/assets/images/image";
+import { IconButton, IconEmail, IconfacebookButton, IconGoogleButton, IconInputBox, IconPoword, IconProfile, IconRegisterText } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -7,7 +7,6 @@ import { router } from "expo-router";
 import { Formik } from "formik";
 import React from "react";
 import {
-    Image,
     ImageBackground,
     KeyboardAvoidingView,
     Platform,
@@ -17,11 +16,10 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import { ALERT_TYPE, AlertNotificationRoot, Toast } from "react-native-alert-notification";
-import { useTailwind } from 'tailwind-rn';
+import { AlertNotificationRoot } from "react-native-alert-notification";
 import { SvgXml } from "react-native-svg";
+import { useTailwind } from 'tailwind-rn';
 import * as Yup from "yup";
-import { BlurView } from "expo-blur";
 const Register = () => {
     const [showNewPassword, setShowNewPassword] = React.useState(false);
     const [showNewRePassword, setShowNewRePassword] = React.useState(false);
@@ -35,7 +33,6 @@ const Register = () => {
             {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
-                resizeMode="cover"
                 style={{
                     width: _Width,
                     height: _HIGHT,

@@ -10,8 +10,8 @@ import { SvgXml } from "react-native-svg"
 export default function Index() {
     useEffect(() => {
         const t = setTimeout(() => {
-            router.replace("/Main/Home/home")
-            // router.replace("/(allPages)/seatPosotion")
+            // router.replace("/Main/Homes/Home")
+            router.replace("/(allPages)/seatPosotion")
             // router.replace("/Main/home/home")
         }, 2000)
         return () => clearTimeout(t)
@@ -22,7 +22,7 @@ export default function Index() {
             {/* Background Image */}
             <ImageBackground
                 source={ImgGradint}
-                resizeMode="cover"
+              
                 style={{
                     width: _Width,
                     height: _HIGHT,

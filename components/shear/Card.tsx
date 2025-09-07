@@ -14,7 +14,7 @@ export const Card = ({ item }: any) => {
 
     return (
         <TouchableOpacity style={tw`mb-6`} onPress={() => router.push({
-            pathname: "/details/roomDetails/[id]",
+            pathname: "/details/RoomDetails/[id]",
             params: { id: item.id }
         })}>
             <View style={tw`relative `}>
