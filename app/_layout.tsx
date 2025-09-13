@@ -1,13 +1,14 @@
-import ThemeProvider from '@/context/ThemeProvider';
-import tw from '@/lib/tailwind';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-import { useDeviceContext } from 'twrnc';
+import ThemeProvider from "@/context/ThemeProvider";
+import tw from "@/lib/tailwind";
+import store from "@/redux/store";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import "react-native-reanimated";
+import { Provider } from "react-redux";
+import { useDeviceContext } from "twrnc";
 
 export default function RootLayout() {
-
   const [loaded] = useFonts({
     PoppinsBlack: require("@/assets/fonts/Poppins-Black.ttf"),
     PoppinsBlackItalic: require("@/assets/fonts/Poppins-BlackItalic.ttf"),
@@ -35,18 +36,21 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <Stack screenOptions={{
-        headerShown: false,
-      }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="(allPages)" />
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="Main" />
-        <Stack.Screen name="details/RoomDetails/[id]" />
-        <Stack.Screen name="details/BookingsDetails/[id]" />
-      </Stack>
+      <Provider store={store}>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="(allPages)" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="Main" />
+          <Stack.Screen name="details/RoomDetails/[id]" />
+          <Stack.Screen name="details/BookingsDetails/[id]" />
+        </Stack>
+      </Provider>
       <StatusBar style="auto" />
     </ThemeProvider>
-
   );
 }

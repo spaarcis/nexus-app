@@ -21,20 +21,20 @@ const BookingCard = (data: any) => {
 
                 }]}></Image>
                 <View style={tw`flex-1 items-start  justify-center`}>
-                    <Text style={tw`text-white font-bold text-lg`}>
+                    <Text style={tw`text-white font-bold text-base`}>
                         {data.data?.title}
                     </Text>
 
                     {/* Date and Time */}
-                    <View style={tw`flex-row items-center mt-2 gap-2`}>
+                    <View style={tw`flex-row items-center mt-2 gap-1`}>
                         <SvgXml xml={IconCleander} />
-                        <Text style={tw`text-white ml-2`}>9 June, 2025</Text>
+                        <Text style={tw`text-white font-poppins ml-1`}>9 June, 2025</Text>
                         <SvgXml xml={IconTime} />
                         <Text style={tw`text-white ml-1`}> {data.data?.time}</Text>
                     </View>
 
                     {/* Duration and Location */}
-                    <View style={tw`flex-row items-center mt-2 gap-2`}>
+                    <View style={tw`flex-row items-center mt-2 gap-1`}>
                         <SvgXml xml={Iconhoure} />
                         <Text style={tw`text-white ml-2`}> {data.data?.duration}</Text>
                         <SvgXml xml={IconLoction} />

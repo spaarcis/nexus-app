@@ -8,7 +8,7 @@ import { ImageBackground } from "expo-image"
 import { router } from "expo-router"
 import { Drawer } from "expo-router/drawer"
 import { useState } from "react"
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native"
+import { Image, Text, TouchableOpacity, View } from "react-native"
 import { SvgXml } from "react-native-svg"
 
 interface CustomDrawerProps extends DrawerContentComponentProps {
@@ -142,21 +142,21 @@ const DrawerLayout = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      Alert.alert(
-        'Account Deleted',
-        'Your account has been successfully deleted.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              setShowDeleteModal(false);
+      // Alert.alert(
+      //   'Account Deleted',
+      //   'Your account has been successfully deleted.',
+      //   [
+      //     {
+      //       text: 'OK',
+      //       onPress: () => {
+      //         setShowDeleteModal(false);
               router.push("/(auth)/Login");
-            }
-          }
-        ]
-      );
+      //       }
+      //     }
+      //   ]
+      // );
     } catch (error) {
-      Alert.alert('Error', 'Failed to delete account. Please try again.');
+      // Alert.alert('Error', 'Failed to delete account. Please try again.');
     }
   };
 

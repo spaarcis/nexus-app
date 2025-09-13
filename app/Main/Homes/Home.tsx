@@ -1,7 +1,7 @@
 import { ImgGradint, nextStation, profileImg } from '@/assets/images/image';
 import { CarouselCard } from '@/components/shear/Carousel';
 import CustomButton from '@/components/shear/CustomButton';
-import { IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconTime } from '@/Icons/Icons';
+import { IconCleander, IconDower, IconHand, Iconhoure, IconLoction, IconNotification, IconSeaall, IconsExplore, IconTime } from '@/Icons/Icons';
 import tw from '@/lib/tailwind';
 import { _HIGHT, _Width } from '@/utils/utils';
 import { BlurView } from 'expo-blur';
@@ -68,10 +68,11 @@ const Home = () => {
                             Find setups near you by game, time or location.</Text>
 
                         <TouchableOpacity
-                            style={tw` mt-4`}
+                            style={tw` relative mt-4`}
                             onPress={() => router.push("/Main/Homes/explore")}
                         >
-                            <CustomButton title={"Explore"}  />
+                            <CustomButton />
+                                <SvgXml style={tw`absolute right-[30%] top-4`} xml={IconsExplore} />
                         </TouchableOpacity>
                     </BlurView>
                 </View>
@@ -115,7 +116,7 @@ const Home = () => {
                                 </Text>
 
                                 {/* Date and Time */}
-                                <View style={tw`flex-row items-center mt-2 gap-2`}>
+                                <View style={tw`flex-row items-center mt-1 gap-1`}>
                                     <SvgXml xml={IconCleander} />
                                     <Text style={tw`text-white ml-2`}>9 June, 2025</Text>
                                     <SvgXml xml={IconTime} />
@@ -123,7 +124,7 @@ const Home = () => {
                                 </View>
 
                                 {/* Duration and Location */}
-                                <View style={tw`flex-row items-center mt-2 gap-2`}>
+                                <View style={tw`flex-row items-center mt-1 gap-1`}>
                                     <SvgXml xml={Iconhoure} />
                                     <Text style={tw`text-white ml-2`}>2 - Hour</Text>
                                     <SvgXml xml={IconLoction} />
