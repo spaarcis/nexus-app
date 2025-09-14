@@ -12,7 +12,7 @@ export const authSlice = api.injectEndpoints({
           "Content-Type": "multipart/form-data",
         },
       }),
-      invalidatesTags: ["user", "account"],
+      invalidatesTags: ["user"],
     }),
     verifyOtp: builder.mutation<any, { email: string; otp: string }>({
       query: (data) => ({
@@ -20,7 +20,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["user", "account"],
+      invalidatesTags: ["user"],
     }),
     loginUser: builder.mutation<any, any>({
       query: (data) => ({
@@ -28,7 +28,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["user", "account"],
+      invalidatesTags: ["user"],
     }),
     forgotPassword: builder.mutation<any, any>({
       query: (data) => ({

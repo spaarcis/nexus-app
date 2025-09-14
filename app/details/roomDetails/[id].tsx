@@ -31,7 +31,7 @@ const roomDetails = () => {
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone] = useAdd_to_favorite_zoneMutation();
 
-  const [selectedRoom, setSelectedRoom] = useState("VIP");
+  const [selectedRoom, setSelectedRoom] = useState();
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("00:00");
   const [dateModalVisible, setDateModalVisible] = useState(false);
@@ -39,9 +39,7 @@ const roomDetails = () => {
   const [selectedDuration, setSelectedDuration] = useState("Select Duration");
   const [showDurationDropdown, setShowDurationDropdown] = useState(false);
   const [showRoomDropdown, setShowRoomDropdown] = useState(false);
-  const [favorite, setFavorite] = useState(false);
 
-  const roomOptions = ["VIP", "NON VIP", "Semi VIP", "PS5", "Common"];
   const durations = [
     "1 hour",
     "2 hour",
@@ -73,7 +71,7 @@ const roomDetails = () => {
     setTimeModalVisible(false);
   };
   if (isLoading) {
-    <View style={tw`flex-1 justify-center items-center bg-white`}>
+    <View style={tw`flex-1 justify-center items-center `}>
       <ActivityIndicator size="large" color="#0c8ce9" />
       <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
         Loading...
@@ -82,8 +80,8 @@ const roomDetails = () => {
   }
   if (!details?.data) {
     return (
-      <View style={tw`flex-1 justify-center items-center bg-white`}>
-        <Text>No data available</Text>
+      <View style={tw`flex-1 justify-center items-center `}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
       </View>
     );
   }
@@ -98,6 +96,7 @@ const roomDetails = () => {
     closing_time,
     address,
   } = details?.data;
+  console.log(rooms);
 
   return (
     <View style={tw`flex-1`}>
@@ -195,29 +194,32 @@ const roomDetails = () => {
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
-          {/* Room Dropdown */}
           {showRoomDropdown && (
-            <View
-              style={tw`bg-gray-900/95 rounded-2xl mt-2 border border-gray-700 overflow-hidden`}
-            >
-              {roomOptions.map((room, index) => (
-                <TouchableOpacity
-                  key={room}
-                  onPress={() => {
-                    setSelectedRoom(room);
-                    setShowRoomDropdown(false);
-                  }}
-                  style={tw`p-4 ${
-                    index !== roomOptions.length - 1
-                      ? "border-b border-gray-700"
-                      : ""
-                  }`}
-                >
-                  <Text style={tw`text-white text-base font-poppins`}>
-                    {room}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+            <View style={tw`bg-white/10 mt-2 rounded-lg`}>
+              <ScrollView
+                style={tw`max-h-60`}
+                nestedScrollEnabled={true}
+                showsVerticalScrollIndicator={true}
+              >
+                {rooms.map((roomItem: any, index: any) => (
+                  <TouchableOpacity
+                    key={roomItem.id}
+                    onPress={() => {
+                      setSelectedRoom(roomItem.name);
+                      setShowRoomDropdown(false);
+                    }}
+                    style={tw`p-4 ${
+                      index !== rooms.length - 1
+                        ? "border-b border-gray-700"
+                        : ""
+                    }`}
+                  >
+                    <Text style={tw`text-white text-base font-poppins`}>
+                      {roomItem.name}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
             </View>
           )}
         </View>
