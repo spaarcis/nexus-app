@@ -61,13 +61,11 @@ const Login = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             onSubmit={async (values) => {
-              console.log(values);
-
               try {
                 const res = await loginUser(values).unwrap();
                 if (res.status) {
-                  AsyncStorage.setItem("token", res?.data?.access_token);
                   router.push("/Main/Homes/Home");
+                  AsyncStorage.setItem("token", res?.data?.access_token);
                   router.push({
                     pathname: "/Toaster",
                     params: { res: res.message },

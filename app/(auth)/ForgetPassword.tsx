@@ -52,8 +52,6 @@ const ForgetPassword = () => {
           <Formik
             initialValues={{ email: "" }}
             onSubmit={async (values) => {
-              console.log(values);
-
               const data = {
                 email: values.email,
               };

@@ -79,7 +79,6 @@ const Register = () => {
 
               try {
                 const res = await registerUser(payload).unwrap();
-                console.log(res, "reanimated");
 
                 if (res.status === "success") {
                   setTimeout(() => {

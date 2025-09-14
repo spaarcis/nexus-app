@@ -31,6 +31,21 @@ export const authSlice = api.injectEndpoints({
       }),
       providesTags: ["home"],
     }),
+    game_zone_details: builder.query({
+      query: ({ id }) => ({
+        url: `/game-zone-details/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["home", "favorite"],
+    }),
+    add_to_favorite_zone: builder.mutation({
+      query: (data) => ({
+        url: `/add-to-favorite-zone`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["home", "favorite"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -40,4 +55,6 @@ export const {
   usePopular_zoneQuery,
   useNext_stationQuery,
   useNewly_addedQuery,
+  useGame_zone_detailsQuery,
+  useAdd_to_favorite_zoneMutation,
 } = authSlice;

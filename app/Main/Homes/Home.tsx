@@ -1,5 +1,7 @@
 import { ImgGradint, nextStation, profileImg } from "@/assets/images/image";
 import { CarouselCard } from "@/components/shear/Carousel";
+import CustomButton from "@/components/shear/CustomButton";
+import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
 import {
   IconCleander,
   IconDower,
@@ -12,7 +14,10 @@ import {
   IconTime,
 } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
-import { usePopular_zoneQuery } from "@/redux/apiSlices/home/homeSlice";
+import {
+  useNewly_addedQuery,
+  usePopular_zoneQuery,
+} from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -24,9 +29,8 @@ import { SvgXml } from "react-native-svg";
 
 const Home = () => {
   const navigation = useNavigation();
-
-  const { data: populer, isLoading } = usePopular_zoneQuery({});
-
+  const { data: populer, isLoading: populerLoading } = usePopular_zoneQuery({});
+  const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
   return (
     <View style={tw` flex-1`}>
       <ImageBackground
@@ -98,6 +102,7 @@ const Home = () => {
                 })
               }
             >
+              <CustomButton />
               <SvgXml
                 style={tw`absolute right-[30%] top-4`}
                 xml={IconsExplore}
@@ -118,7 +123,12 @@ const Home = () => {
             <SvgXml xml={IconSeaall} />
           </TouchableOpacity>
         </View>
-        <CarouselCard />
+        {populerLoading ? (
+          <CardSkeleton />
+        ) : (
+          <CarouselCard data={populer?.data?.data} />
+        )}
+
         <View
           style={[
             tw``,
@@ -192,7 +202,11 @@ const Home = () => {
         </View>
 
         <View style={tw`mb-32`}>
-          <CarouselCard />
+          {newlyLoading ? (
+            <CardSkeleton />
+          ) : (
+            <CarouselCard data={newlyData?.data.data} />
+          )}
         </View>
       </ScrollView>
     </View>

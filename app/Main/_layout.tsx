@@ -1,15 +1,18 @@
-import { ImgGradint, profileImg } from "@/assets/images/image"
-import DeleteAccountModal from "@/components/shear/DeleteAccountModal"
-import { IconLogo, IconLogoIcon, IconLogout } from "@/Icons/Icons"
-import tw from "@/lib/tailwind"
-import { _HIGHT, _Width } from "@/utils/utils"
-import { type DrawerContentComponentProps, DrawerContentScrollView } from "@react-navigation/drawer"
-import { ImageBackground } from "expo-image"
-import { router } from "expo-router"
-import { Drawer } from "expo-router/drawer"
-import { useState } from "react"
-import { Image, Text, TouchableOpacity, View } from "react-native"
-import { SvgXml } from "react-native-svg"
+import { ImgGradint, profileImg } from "@/assets/images/image";
+import DeleteAccountModal from "@/components/shear/DeleteAccountModal";
+import { IconLogo, IconLogoIcon, IconLogout } from "@/Icons/Icons";
+import tw from "@/lib/tailwind";
+import { _HIGHT, _Width } from "@/utils/utils";
+import {
+  type DrawerContentComponentProps,
+  DrawerContentScrollView,
+} from "@react-navigation/drawer";
+import { ImageBackground } from "expo-image";
+import { router } from "expo-router";
+import { Drawer } from "expo-router/drawer";
+import { useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { SvgXml } from "react-native-svg";
 
 interface CustomDrawerProps extends DrawerContentComponentProps {
   onDeleteAccount: () => void;
@@ -17,7 +20,11 @@ interface CustomDrawerProps extends DrawerContentComponentProps {
 
 function CustomDrawerContent(props: CustomDrawerProps) {
   return (
-    <DrawerContentScrollView showsVerticalScrollIndicator={false} {...props} style={tw`bg-slate-900 flex-1`}>
+    <DrawerContentScrollView
+      showsVerticalScrollIndicator={false}
+      {...props}
+      style={tw`bg-slate-900 flex-1`}
+    >
       {/* Background Image */}
       <ImageBackground
         source={ImgGradint}
@@ -27,7 +34,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
           position: "absolute",
           top: 0,
           left: 0,
-          backgroundColor: "#000000"
+          backgroundColor: "#000000",
         }}
       />
       {/* Header Section */}
@@ -36,7 +43,10 @@ function CustomDrawerContent(props: CustomDrawerProps) {
           <SvgXml xml={IconLogoIcon} />
           <SvgXml xml={IconLogo} />
         </View>
-        <TouchableOpacity onPress={() => props?.navigation?.closeDrawer()} style={tw`p-2`}>
+        <TouchableOpacity
+          onPress={() => props?.navigation?.closeDrawer()}
+          style={tw`p-2`}
+        >
           <Text style={tw`text-red-500 text-xl font-bold`}>✕</Text>
         </TouchableOpacity>
       </View>
@@ -45,11 +55,15 @@ function CustomDrawerContent(props: CustomDrawerProps) {
         {/* User Profile Section */}
         <View style={tw`px-6 py-12`}>
           <View style={tw`flex-row items-center mb-4`}>
-            <View style={tw`w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden`}>
+            <View
+              style={tw`w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden`}
+            >
               <Image source={profileImg} style={tw`w-full h-full`} />
             </View>
             <View>
-              <Text style={tw`text-white text-lg font-semibold`}>Christiano Ronaldo</Text>
+              <Text style={tw`text-white text-lg font-semibold`}>
+                Christiano Ronaldo
+              </Text>
               <Text style={tw`text-gray-400 text-sm`}>sul234@gmail.com</Text>
             </View>
           </View>
@@ -64,7 +78,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             <TouchableOpacity
               style={tw`flex-row items-center py-1`}
               onPress={() => {
-                props.navigation.closeDrawer()
+                props.navigation.closeDrawer();
                 router.push("/(allPages)/favoriteZone");
               }}
             >
@@ -74,8 +88,8 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             <TouchableOpacity
               style={tw`flex-row items-center py-1`}
               onPress={() => {
-                props.navigation.closeDrawer()
-                router.push("/(auth)/ChangePassword")
+                props.navigation.closeDrawer();
+                router.push("/(auth)/ChangePassword");
               }}
             >
               <Text style={tw`text-gray-300 text-base`}>Change Password</Text>
@@ -84,17 +98,19 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             <TouchableOpacity
               style={tw`flex-row items-center py-1`}
               onPress={() => {
-                props.navigation.closeDrawer()
+                props.navigation.closeDrawer();
                 router.push("/(allPages)/terms_conditions");
               }}
             >
-              <Text style={tw`text-gray-300 text-base`}>Terms & Conditions</Text>
+              <Text style={tw`text-gray-300 text-base`}>
+                Terms & Conditions
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={tw`flex-row items-center py-1`}
               onPress={() => {
-                props.navigation.closeDrawer()
+                props.navigation.closeDrawer();
                 router.push("/(allPages)/privacy_policy");
               }}
             >
@@ -104,8 +120,8 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             <TouchableOpacity
               style={tw`flex-row items-center py-1`}
               onPress={() => {
-                props.navigation.closeDrawer()
-                props.onDeleteAccount()
+                props.navigation.closeDrawer();
+                props.onDeleteAccount();
               }}
             >
               <Text style={tw`text-red-500 text-base`}>Delete Account</Text>
@@ -118,8 +134,8 @@ function CustomDrawerContent(props: CustomDrawerProps) {
           <TouchableOpacity
             style={tw`flex-row items-center py-4 gap-3`}
             onPress={() => {
-              props.navigation.closeDrawer()
-              router.push("/(auth)/Login")
+              props.navigation.closeDrawer();
+              router.push("/(auth)/Login");
             }}
           >
             <SvgXml xml={IconLogout} />
@@ -128,7 +144,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
         </View>
       </View>
     </DrawerContentScrollView>
-  )
+  );
 }
 
 const DrawerLayout = () => {
@@ -136,11 +152,7 @@ const DrawerLayout = () => {
 
   const handleDeleteAccount = async (password: string) => {
     try {
-      // Add your delete account API call here
-      console.log('Deleting account with password:', password);
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Alert.alert(
       //   'Account Deleted',
@@ -150,7 +162,7 @@ const DrawerLayout = () => {
       //       text: 'OK',
       //       onPress: () => {
       //         setShowDeleteModal(false);
-              router.push("/(auth)/Login");
+      router.push("/(auth)/Login");
       //       }
       //     }
       //   ]
@@ -193,7 +205,7 @@ const DrawerLayout = () => {
         onForgotPassword={handleForgotPassword}
       />
     </>
-  )
-}
+  );
+};
 
-export default DrawerLayout
+export default DrawerLayout;
