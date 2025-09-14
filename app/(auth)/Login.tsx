@@ -10,8 +10,10 @@ import {
   IconRegisterText,
 } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useLoginUserMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Formik } from "formik";
 import React from "react";
@@ -33,6 +35,9 @@ const Login = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [isChecked, setChecked] = React.useState(false);
   const tailwind = useTailwind();
+
+  const [loginUser] = useLoginUserMutation();
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -58,35 +63,28 @@ const Login = () => {
             onSubmit={async (values) => {
               console.log(values);
 
-              //   try {
-              //     const res = await loginUser(values).unwrap();
-              //     if (res.status) {
-              //       AsyncStorage.setItem("token", res?.data?.access_token);
-              //       Toast.show({
-              //         type: ALERT_TYPE.SUCCESS,
-              //         title: 'Success',
-              //         textBody: res?.message,
-              //         autoClose: 2000,
-              //       });
-              //       setTimeout(() => {
-              //         router?.push(`/home/(tabs)/landingPage`);
-              //       }, 1000);
-              //     } else {
-              //       Toast.show({
-              //         type: ALERT_TYPE.DANGER,
-              //         title: 'Waring',
-              //         textBody: res?.message?.email?.[0] || "Something went wrong!",
-              //         autoClose: 2000,
-              //       });
-              //     }
-
-              //   } catch (error: any) {
-              //     Toast.show({
-              //       type: ALERT_TYPE.WARNING,
-              //       title: 'Waring',
-              //       textBody: error?.message,
-              //     });
-              //   }
+              try {
+                const res = await loginUser(values).unwrap();
+                if (res.status) {
+                  AsyncStorage.setItem("token", res?.data?.access_token);
+                  router.push("/Main/Homes/Home");
+                  router.push({
+                    pathname: "/Toaster",
+                    params: { res: res.message },
+                  });
+                  setTimeout(() => {}, 2000);
+                } else {
+                  router.push({
+                    pathname: "/Toaster",
+                    params: { res: res?.message?.email?.[0] },
+                  });
+                }
+              } catch (error: any) {
+                router.push({
+                  pathname: "/Toaster",
+                  params: { res: error?.message },
+                });
+              }
             }}
             validationSchema={Yup.object({
               email: Yup.string().email().required("email is required"),
@@ -201,7 +199,6 @@ const Login = () => {
                         style={tw` relative`}
                         onPress={() => {
                           handleSubmit();
-                          router.push("/Main/Homes/Home");
                         }}
                       >
                         <SvgXml xml={IconButton} />

@@ -48,6 +48,13 @@ export default function RootLayout() {
           <Stack.Screen name="Main" />
           <Stack.Screen name="details/RoomDetails/[id]" />
           <Stack.Screen name="details/BookingsDetails/[id]" />
+          <Stack.Screen
+            name="Toaster"
+            options={{
+              sheetAllowedDetents: "fitToContents",
+              presentation: "formSheet",
+            }}
+          />
         </Stack>
       </Provider>
       <StatusBar style="auto" />
