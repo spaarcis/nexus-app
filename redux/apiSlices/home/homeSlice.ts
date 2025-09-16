@@ -46,6 +46,14 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["home", "favorite"],
     }),
+    edit_profile: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/edit-profile`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -57,4 +65,5 @@ export const {
   useNewly_addedQuery,
   useGame_zone_detailsQuery,
   useAdd_to_favorite_zoneMutation,
+  useEdit_profileMutation,
 } = authSlice;

@@ -79,7 +79,7 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: ["user", "home", "favorite"],
+  tagTypes: ["user", "home", "favorite", "TermsConPrivacyPol"],
 });
 
 export const imageUrl = "http://157.245.63.191/";

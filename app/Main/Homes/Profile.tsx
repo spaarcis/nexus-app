@@ -1,12 +1,17 @@
 import { ImgGradint } from "@/assets/images/image";
 import { IconButton, IconEdit, IconUpload } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import {
+  useEdit_profileMutation,
+  useUser_profileQuery,
+} from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -21,8 +26,10 @@ import { SvgXml } from "react-native-svg";
 const Profile = () => {
   const [image, setImage] = useState<string | null>(null);
   const [fullName, setFullName] = useState("Siva Rohitha");
+  const { data: user, isLoading } = useUser_profileQuery({});
+  const [edit_profile] = useEdit_profileMutation();
+
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
@@ -34,6 +41,40 @@ const Profile = () => {
       setImage(result.assets[0].uri);
     }
   };
+  const handleEditProfile = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("name", fullName);
+      console.log(formData);
+
+      if (image) {
+        formData.append("avatar", {
+          uri: image,
+          type: "image/jpeg",
+          name: "profile.jpg",
+        } as any);
+      }
+      const res = await edit_profile(formData).unwrap();
+      console.log("Profile updated:", res);
+      alert("Profile updated successfully!");
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
+  };
+  useEffect(() => {
+    if (user?.data?.name) {
+      setFullName(user.data.name);
+    }
+  }, [user]);
+  if (isLoading) {
+    <View style={tw`flex-1 justify-center items-center `}>
+      <ActivityIndicator size="large" color="#0c8ce9" />
+      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+        Loading...
+      </Text>
+    </View>;
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -63,14 +104,13 @@ const Profile = () => {
           <View style={tw`items-center mb-8`}>
             <View style={tw`relative`}>
               <Image
-                source={{
-                  uri:
-                    image ||
-                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-                }}
+                source={
+                  user?.data?.avatar || {
+                    uri: image,
+                  }
+                }
                 style={tw`w-24 h-24 rounded-full`}
               />
-
               <TouchableOpacity
                 style={tw`absolute -bottom-1 -right-1 bg-primary w-8 h-8 rounded-full items-center justify-center border-2 border-white`}
                 onPress={pickImage}
@@ -79,7 +119,6 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
           </View>
-
           {/* Basic Information Section */}
           <View style={tw`mb-6`}>
             <Text style={tw`text-white text-lg font-medium mb-4`}>
@@ -95,12 +134,10 @@ const Profile = () => {
                 </Text>
               </View>
               <TextInput
-                value="Siva Rohitha"
+                value={fullName}
                 style={tw`text-primary text-base py-3 border-b border-secondary`}
                 placeholderTextColor="#9CA3AF"
-                onChangeText={(text) => {
-                  setFullName(text);
-                }}
+                onChangeText={(text) => setFullName(text)}
               />
               <View style={tw`absolute right-0 bottom-3`}>
                 <SvgXml xml={IconEdit} />
@@ -115,18 +152,18 @@ const Profile = () => {
                 </Text>
               </View>
               <Text style={tw`text-primary  text-base py-3  border-secondary`}>
-                ronaldoSiva@gmail.com
+                {user?.data?.email}
               </Text>
             </View>
           </View>
         </View>
         <TouchableOpacity
           style={tw` relative mx-auto mt-28`}
-          onPress={() => {}}
+          onPress={handleEditProfile}
         >
           <SvgXml xml={IconButton} />
           <Text
-            style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
+            style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
           >
             Edit profile
           </Text>
