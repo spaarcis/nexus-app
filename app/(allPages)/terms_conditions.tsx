@@ -1,10 +1,16 @@
 import { ImgGradint } from "@/assets/images/image";
-import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/TermsConPrivacyPol/authTermsConPrivacyPol";
+import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/DowerAllApi/authTermsConPrivacyPol";
 
 import { _HIGHT, _Width } from "@/utils/utils";
 import { ImageBackground } from "expo-image";
 import { router } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import RenderHtml from "react-native-render-html";
 import { SvgXml } from "react-native-svg";
 import tw from "twrnc";
@@ -24,10 +30,12 @@ const DocumentIcon = `
 </svg>
 `;
 
-const TermsConditions = ({ navigation }: any) => {
-  const { data: termsData, error } = useTermsConPrivacyPolQuery(
-    encodeURIComponent("Terms & Conditions")
-  );
+const TermsConditions = () => {
+  const {
+    data: termsData,
+    error,
+    isLoading,
+  } = useTermsConPrivacyPolQuery(encodeURIComponent("Terms & Conditions"));
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -40,6 +48,14 @@ const TermsConditions = ({ navigation }: any) => {
   console.log("termsData==>", termsData);
   console.log("error==>", error);
 
+  if (isLoading) {
+    <View style={tw`flex-1 justify-center items-center `}>
+      <ActivityIndicator size="large" color="#0c8ce9" />
+      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+        Loading...
+      </Text>
+    </View>;
+  }
   return (
     <View style={tw`flex-1`}>
       <ImageBackground
@@ -76,7 +92,7 @@ const TermsConditions = ({ navigation }: any) => {
         <Text style={tw`text-gray-400 text-sm font-poppinsRegular mb-4`}>
           Updated{" "}
           {termsData?.data[0]?.updated_at
-            ? formatDate(termsData.data[0].updated_at)
+            ? formatDate(termsData?.data[0]?.updated_at)
             : "Loading..."}
         </Text>
       </View>
@@ -85,7 +101,7 @@ const TermsConditions = ({ navigation }: any) => {
       <ScrollView style={tw`flex-1 px-6`} showsVerticalScrollIndicator={false}>
         <RenderHtml
           contentWidth={_Width}
-          source={{ html: termsData.data[0].text }}
+          source={{ html: termsData?.data[0]?.text }}
           tagsStyles={{
             body: {
               color: "white",

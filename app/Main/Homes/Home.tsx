@@ -57,7 +57,7 @@ const Home = () => {
               >
                 <SvgXml xml={IconDower} />
               </TouchableOpacity>
-              <Text style={tw`text-primary font-poppinsSemiBold text-3xl`}>
+              <Text style={tw`text-primary font-poppinsSemiBold text-2xl`}>
                 Hi, Suuu
               </Text>
               <SvgXml xml={IconHand} />
@@ -75,7 +75,7 @@ const Home = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={tw`flex-row gap-3 mt-2  items-center px-7`}>
+          <View style={tw`flex-row gap-3 mt-1  items-center px-7`}>
             <SvgXml xml={IconLoction} />
             <Text style={tw`text-secondary font-poppins `}>
               Los Angles, USA
@@ -83,12 +83,12 @@ const Home = () => {
           </View>
         </View>
         {/* Explore banner */}
-        <View style={tw`text-primary  overflow-hidden rounded-2xl mt-10`}>
+        <View style={tw`text-primary overflow-hidden rounded-[40px] mt-10`}>
           <BlurView style={tw` p-5`} intensity={10} tint="light">
             <Text
-              style={tw`text-primary text-xl font-poppinsSemiBold text-center`}
+              style={tw`text-primary text-lg font-poppinsSemiBold text-center`}
             >
-              Explore Gaming Rooms. Find setups near you by game, time or
+              Explore Gaming Rooms. Easily find setups nearby by game, time or
               location.
             </Text>
 
@@ -111,7 +111,7 @@ const Home = () => {
           </BlurView>
         </View>
         {/* Carousel  Popular Zone  */}
-        <View style={tw`flex-row items-center justify-between pt-6 pb-5 `}>
+        <View style={tw`flex-row items-center justify-between pt-3 pb-3 `}>
           <Text style={tw`text-primary text-lg font-poppinsBold`}>
             Popular Zone
           </Text>
@@ -137,7 +137,7 @@ const Home = () => {
             },
           ]}
         ></View>
-        <Text style={tw`text-primary py-3 text-lg font-poppinsBold`}>
+        <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
           Your Next Station
         </Text>
         {/* Your Next Station */}
@@ -152,7 +152,7 @@ const Home = () => {
                 },
               })
             }
-            style={tw`mb-4`}
+            style={tw`mb-2`}
           >
             <BlurView
               style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
@@ -188,8 +188,8 @@ const Home = () => {
           </TouchableOpacity>
         </View>
         {/* Carousel Newly Added */}
-        <View style={tw`flex-row items-center justify-between pb-5`}>
-          <Text style={tw`text-primary py-3 text-lg font-poppinsBold`}>
+        <View style={tw`flex-row items-center justify-between `}>
+          <Text style={tw`text-primary pb-3 text-lg font-poppinsBold`}>
             Newly Added
           </Text>
           <TouchableOpacity

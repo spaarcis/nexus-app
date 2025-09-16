@@ -1,10 +1,16 @@
 import { ImgGradint } from "@/assets/images/image";
-import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/TermsConPrivacyPol/authTermsConPrivacyPol";
+import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/DowerAllApi/authTermsConPrivacyPol";
 
 import { _HIGHT, _Width } from "@/utils/utils";
 import { ImageBackground } from "expo-image";
 import { router } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import RenderHtml from "react-native-render-html";
 import { SvgXml } from "react-native-svg";
 import tw from "twrnc";
@@ -25,9 +31,11 @@ const DocumentIcon = `
 `;
 
 const PrivacyPolicy = () => {
-  const { data: termsData, error } = useTermsConPrivacyPolQuery(
-    encodeURIComponent("Privacy Policy")
-  );
+  const {
+    data: termsData,
+    error,
+    isLoading,
+  } = useTermsConPrivacyPolQuery(encodeURIComponent("Privacy Policy"));
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -39,7 +47,14 @@ const PrivacyPolicy = () => {
   };
   console.log("termsData==>", termsData);
   console.log("error==>", error);
-
+  if (isLoading) {
+    <View style={tw`flex-1 justify-center items-center `}>
+      <ActivityIndicator size="large" color="#0c8ce9" />
+      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+        Loading...
+      </Text>
+    </View>;
+  }
   return (
     <View style={tw`flex-1`}>
       <ImageBackground
