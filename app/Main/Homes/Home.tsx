@@ -1,8 +1,10 @@
-import { ImgGradint, profileImg } from "@/assets/images/image";
+import { ImgGradint } from "@/assets/images/image";
 import { CarouselCard } from "@/components/shear/Carousel";
 import CustomButton from "@/components/shear/CustomButton";
+import { BokCardSkeleton } from "@/components/skeleton/BokCardSkeleton";
 import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
 import {
+  IconAvaterBorder,
   IconCleander,
   IconDower,
   IconHand,
@@ -18,6 +20,7 @@ import {
   useNewly_addedQuery,
   useNext_stationQuery,
   usePopular_zoneQuery,
+  useUser_profileQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { BlurView } from "expo-blur";
@@ -34,7 +37,13 @@ const Home = () => {
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
   const { data: nextStation, isLoading: nextStationLoading } =
     useNext_stationQuery({});
-  console.log(nextStation);
+  const { data: user, isLoading } = useUser_profileQuery({});
+  if (isLoading) {
+    <View>
+      <Text>loading...</Text>
+    </View>;
+  }
+  console.log(user);
 
   return (
     <View style={tw` flex-1`}>
@@ -63,7 +72,7 @@ const Home = () => {
                 <SvgXml xml={IconDower} />
               </TouchableOpacity>
               <Text style={tw`text-primary font-poppinsSemiBold text-2xl`}>
-                Hi, Suuu
+                Hi, {user?.data?.name?.split(" ")[0] ?? "User"}
               </Text>
               <SvgXml xml={IconHand} />
             </View>
@@ -75,15 +84,20 @@ const Home = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => router.push("/Main/Homes/Profile")}
+                style={tw`relative  `}
               >
-                <Image source={profileImg} style={tw`w-11 h-11`} />
+                <SvgXml xml={IconAvaterBorder} />
+                <Image
+                  source={user?.data?.avatar}
+                  style={tw`w-9 left-1 top-1 rounded-full h-9 absolute `}
+                />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={tw`flex-row gap-3 mt-1  items-center px-7`}>
+          <View style={tw`flex-row gap-3  items-center px-7`}>
             <SvgXml xml={IconLoction} />
             <Text style={tw`text-secondary font-poppins `}>
-              Los Angles, USA
+              {user?.data?.address ?? "Location not available"}
             </Text>
           </View>
         </View>
@@ -99,13 +113,7 @@ const Home = () => {
 
             <TouchableOpacity
               style={tw` relative mt-4`}
-              // onPress={() => router.push("/Main/Homes/explore")}
-              onPress={() =>
-                router.push({
-                  pathname: "/Toaster",
-                  params: { res: "this is a massage" },
-                })
-              }
+              onPress={() => router.push("/Main/Homes/explore")}
             >
               <CustomButton />
               <SvgXml
@@ -145,61 +153,66 @@ const Home = () => {
         <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
           Your Next Station
         </Text>
+
         {/* Your Next Station */}
-        <View style={tw`mb-4`}>
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/details/BookingsDetails/[id]",
-                params: {
-                  id: 4,
-                  status: "Upcoming",
-                },
-              })
-            }
-            style={tw`mb-2`}
-          >
-            <BlurView
-              style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
-              intensity={10}
-              tint="light"
+        {populerLoading ? (
+          <BokCardSkeleton />
+        ) : (
+          <View style={tw`mb-4`}>
+            <TouchableOpacity
+              onPress={() =>
+                router.push({
+                  pathname: "/details/BookingsDetails/[id]",
+                  params: {
+                    id: 4,
+                    status: "Upcoming",
+                  },
+                })
+              }
+              style={tw`mb-2`}
             >
-              <Image
-                source={nextStation?.data?.room?.photo}
-                style={[tw`h-20 w-20 rounded-2xl`, {}]}
-              ></Image>
-              <View style={tw`flex-1 items-start  justify-center`}>
-                <Text style={tw`text-white font-bold text-lg`}>
-                  {nextStation?.data?.room?.name}
-                </Text>
+              <BlurView
+                style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
+                intensity={10}
+                tint="light"
+              >
+                <Image
+                  source={nextStation?.data?.room?.photo}
+                  style={[tw`h-20 w-20 rounded-2xl`, {}]}
+                ></Image>
+                <View style={tw`flex-1 items-start  justify-center`}>
+                  <Text style={tw`text-white font-bold text-lg`}>
+                    {nextStation?.data?.room?.name}
+                  </Text>
 
-                {/* Date and Time */}
-                <View style={tw`flex-row items-center mt-1 gap-1`}>
-                  <SvgXml xml={IconCleander} />
-                  <Text style={tw`text-white ml-2`}>
-                    {nextStation?.data?.booking_date}
-                  </Text>
-                  <SvgXml xml={IconTime} />
-                  <Text style={tw`text-white ml-1`}>
-                    {nextStation?.data?.starting_time}
-                  </Text>
-                </View>
+                  {/* Date and Time */}
+                  <View style={tw`flex-row items-center mt-1 gap-1`}>
+                    <SvgXml xml={IconCleander} />
+                    <Text style={tw`text-white ml-2`}>
+                      {nextStation?.data?.booking_date}
+                    </Text>
+                    <SvgXml xml={IconTime} />
+                    <Text style={tw`text-white ml-1`}>
+                      {nextStation?.data?.starting_time}
+                    </Text>
+                  </View>
 
-                {/* Duration and Location */}
-                <View style={tw`flex-row items-center mt-1 gap-1`}>
-                  <SvgXml xml={Iconhoure} />
-                  <Text style={tw`text-white ml-2`}>
-                    {nextStation?.data?.duration} Hour
-                  </Text>
-                  <SvgXml xml={IconLoction} />
-                  <Text style={tw`text-white ml-1`}>
-                    {nextStation?.data?.provider?.address}
-                  </Text>
+                  {/* Duration and Location */}
+                  <View style={tw`flex-row items-center mt-1 gap-1`}>
+                    <SvgXml xml={Iconhoure} />
+                    <Text style={tw`text-white ml-2`}>
+                      {nextStation?.data?.duration} Hour
+                    </Text>
+                    <SvgXml xml={IconLoction} />
+                    <Text style={tw`text-white ml-1`}>
+                      {nextStation?.data?.provider?.address}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            </BlurView>
-          </TouchableOpacity>
-        </View>
+              </BlurView>
+            </TouchableOpacity>
+          </View>
+        )}
         {/* Carousel Newly Added */}
         <View style={tw`flex-row items-center justify-between `}>
           <Text style={tw`text-primary pb-3 text-lg font-poppinsBold`}>
