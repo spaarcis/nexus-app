@@ -11,8 +11,8 @@ export const authSlice = api.injectEndpoints({
       providesTags: ["home"],
     }),
     popular_zone: builder.query({
-      query: () => ({
-        url: `/popular-zone`,
+      query: ({ page }) => ({
+        url: `/popular-zone?page=${page}`,
         method: "GET",
       }),
       providesTags: ["home"],
@@ -61,6 +61,7 @@ export const authSlice = api.injectEndpoints({
 export const {
   useUser_profileQuery,
   usePopular_zoneQuery,
+  useLazyPopular_zoneQuery,
   useNext_stationQuery,
   useNewly_addedQuery,
   useGame_zone_detailsQuery,

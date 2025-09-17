@@ -20,6 +20,7 @@ import { SvgXml } from "react-native-svg";
 
 const Explore = () => {
   const [text, setText] = useState("");
+  // pagenation start
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -82,6 +83,7 @@ const Explore = () => {
   useEffect(() => {
     loadPosts(1, true);
   }, []);
+  // pagenation end
   const handleSearch = (value: string) => {
     setText(value);
     setPage(1);
