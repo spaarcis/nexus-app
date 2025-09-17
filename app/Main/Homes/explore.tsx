@@ -19,6 +19,7 @@ import {
 import { SvgXml } from "react-native-svg";
 
 const Explore = () => {
+  const [text, setText] = useState("");
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -33,7 +34,10 @@ const Explore = () => {
       if ((isLoading || isFetching || loadingMore) && !isRefresh) return;
       setLoadingMore(true);
 
-      const res = await fetchExploreData({ page: pageNum }).unwrap();
+      const res = await fetchExploreData({
+        page: pageNum,
+        search: text,
+      }).unwrap();
       const responseData = res?.data || {};
       const newPosts = responseData?.data || [];
       const pagination = responseData?.pagination || {};
@@ -78,6 +82,12 @@ const Explore = () => {
   useEffect(() => {
     loadPosts(1, true);
   }, []);
+  const handleSearch = (value: string) => {
+    setText(value);
+    setPage(1);
+    setHasMore(true);
+    loadPosts(1, true);
+  };
 
   return (
     <View style={tw`flex-1`}>
@@ -107,9 +117,11 @@ const Explore = () => {
           >
             <SvgXml xml={IconSearch} />
             <TextInput
-              placeholder="Search by location"
+              placeholder="Search by gaming zone name"
               placeholderTextColor="#B0B0B0"
+              value={text}
               style={tw`ml-1 text-white flex-1`}
+              onChangeText={(val) => handleSearch(val)}
             />
           </View>
 
