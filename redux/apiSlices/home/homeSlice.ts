@@ -25,8 +25,8 @@ export const authSlice = api.injectEndpoints({
       providesTags: ["home"],
     }),
     newly_added: builder.query({
-      query: () => ({
-        url: `/newly-added`,
+      query: ({ page }) => ({
+        url: `/newly-added?page=${page}`,
         method: "GET",
       }),
       providesTags: ["home"],
@@ -65,6 +65,7 @@ export const {
   useNext_stationQuery,
   useNewly_addedQuery,
   useGame_zone_detailsQuery,
+  useLazyNewly_addedQuery,
   useAdd_to_favorite_zoneMutation,
   useEdit_profileMutation,
 } = authSlice;
