@@ -1,4 +1,4 @@
-import { ImgGradint, nextStation, profileImg } from "@/assets/images/image";
+import { ImgGradint, profileImg } from "@/assets/images/image";
 import { CarouselCard } from "@/components/shear/Carousel";
 import CustomButton from "@/components/shear/CustomButton";
 import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
@@ -16,6 +16,7 @@ import {
 import tw from "@/lib/tailwind";
 import {
   useNewly_addedQuery,
+  useNext_stationQuery,
   usePopular_zoneQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -31,6 +32,10 @@ const Home = () => {
   const navigation = useNavigation();
   const { data: populer, isLoading: populerLoading } = usePopular_zoneQuery({});
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
+  const { data: nextStation, isLoading: nextStationLoading } =
+    useNext_stationQuery({});
+  console.log(nextStation);
+
   return (
     <View style={tw` flex-1`}>
       <ImageBackground
@@ -160,28 +165,36 @@ const Home = () => {
               tint="light"
             >
               <Image
-                source={nextStation}
+                source={nextStation?.data?.room?.photo}
                 style={[tw`h-20 w-20 rounded-2xl`, {}]}
               ></Image>
               <View style={tw`flex-1 items-start  justify-center`}>
                 <Text style={tw`text-white font-bold text-lg`}>
-                  Mumba Esport House
+                  {nextStation?.data?.room?.name}
                 </Text>
 
                 {/* Date and Time */}
                 <View style={tw`flex-row items-center mt-1 gap-1`}>
                   <SvgXml xml={IconCleander} />
-                  <Text style={tw`text-white ml-2`}>9 June, 2025</Text>
+                  <Text style={tw`text-white ml-2`}>
+                    {nextStation?.data?.booking_date}
+                  </Text>
                   <SvgXml xml={IconTime} />
-                  <Text style={tw`text-white ml-1`}>10:00 AM</Text>
+                  <Text style={tw`text-white ml-1`}>
+                    {nextStation?.data?.starting_time}
+                  </Text>
                 </View>
 
                 {/* Duration and Location */}
                 <View style={tw`flex-row items-center mt-1 gap-1`}>
                   <SvgXml xml={Iconhoure} />
-                  <Text style={tw`text-white ml-2`}>2 - Hour</Text>
+                  <Text style={tw`text-white ml-2`}>
+                    {nextStation?.data?.duration} Hour
+                  </Text>
                   <SvgXml xml={IconLoction} />
-                  <Text style={tw`text-white ml-1`}>New York, USA</Text>
+                  <Text style={tw`text-white ml-1`}>
+                    {nextStation?.data?.provider?.address}
+                  </Text>
                 </View>
               </View>
             </BlurView>

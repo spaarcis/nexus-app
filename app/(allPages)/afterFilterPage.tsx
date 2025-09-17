@@ -127,7 +127,7 @@ const AfterFilterPage = () => {
           }
         />
       ) : (
-        <Text style={tw`text-gray-400 text-center mt-10`}>
+        <Text style={tw`text-gray-400 text-center mt-10 `}>
           No data found for your filters
         </Text>
       )}
