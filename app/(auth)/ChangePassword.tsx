@@ -1,9 +1,8 @@
-"use client";
-
 import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import { IconInputBox, IconPoword } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useChange_passwordMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
 import { router } from "expo-router";
@@ -21,14 +20,13 @@ import {
 } from "react-native";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { SvgXml } from "react-native-svg";
-import { useTailwind } from "tailwind-rn";
 import * as Yup from "yup";
 
 const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showRetypePassword, setShowRetypePassword] = React.useState(false);
-  const tailwind = useTailwind();
+  const [change_password] = useChange_passwordMutation();
 
   return (
     <KeyboardAvoidingView
@@ -55,7 +53,24 @@ const ChangePassword = () => {
               newPassword: "",
               retypePassword: "",
             }}
-            onSubmit={async (values) => {}}
+            onSubmit={async (values) => {
+              try {
+                const payload = {
+                  current_password: values.currentPassword,
+                  new_password: values.newPassword,
+                  retype_password: values.retypePassword,
+                };
+
+                const res = await change_password(payload).unwrap();
+                router.push("/Main/Homes/Home");
+                router.push({
+                  pathname: "/Toaster",
+                  params: { res: res.message },
+                });
+              } catch (err) {
+                console.error("Error changing password:", err);
+              }
+            }}
             validationSchema={Yup.object({
               currentPassword: Yup.string()
                 .min(4, "Password is too short")
@@ -237,7 +252,6 @@ const ChangePassword = () => {
                       style={tw` mt-10`}
                       onPress={() => {
                         handleSubmit();
-                        router.push("/Main/Homes/Home");
                       }}
                     >
                       <CustomButton title={"Update"} />

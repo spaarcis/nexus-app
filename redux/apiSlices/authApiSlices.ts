@@ -46,6 +46,14 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    change_password: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/change-password`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
     socialLogin: builder.mutation<any, any>({
       query: (data) => ({
         url: `/auth/social-login`,
@@ -67,5 +75,6 @@ export const {
   useLoginUserMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useChange_passwordMutation,
   useSocialLoginMutation,
 } = authSlice;
