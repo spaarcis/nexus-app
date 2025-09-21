@@ -41,7 +41,6 @@ const BookingsDetails = () => {
     return Array.from({ length: 5 }, (_, index) => {
       const starValue = index + 1;
       const isFilled = starValue <= rating;
-
       return (
         <TouchableOpacity
           key={index}

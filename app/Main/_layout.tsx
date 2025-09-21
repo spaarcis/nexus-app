@@ -1,7 +1,8 @@
-import { ImgGradint, profileImg } from "@/assets/images/image";
+import { ImgGradint } from "@/assets/images/image";
 import DeleteAccountModal from "@/components/shear/DeleteAccountModal";
 import { IconLogo, IconLogoIcon, IconLogout } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useUser_profileQuery } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import {
   type DrawerContentComponentProps,
@@ -19,6 +20,12 @@ interface CustomDrawerProps extends DrawerContentComponentProps {
 }
 
 function CustomDrawerContent(props: CustomDrawerProps) {
+  const { data: user, isLoading } = useUser_profileQuery({});
+  if (isLoading) {
+    <View>
+      <Text>loading...</Text>
+    </View>;
+  }
   return (
     <DrawerContentScrollView
       showsVerticalScrollIndicator={false}
@@ -58,13 +65,13 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             <View
               style={tw`w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden`}
             >
-              <Image source={profileImg} style={tw`w-full h-full`} />
+              <Image source={user?.data?.avatar} style={tw`w-full h-full`} />
             </View>
             <View>
               <Text style={tw`text-white text-lg font-semibold`}>
-                Christiano Ronaldo
+                {user?.data?.name ?? "User"}
               </Text>
-              <Text style={tw`text-gray-400 text-sm`}>sul234@gmail.com</Text>
+              <Text style={tw`text-gray-400 text-sm`}>{user?.data?.email}</Text>
             </View>
           </View>
         </View>
@@ -128,7 +135,6 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             </TouchableOpacity>
           </View>
         </View>
-
         {/* Log Out Button */}
         <View style={tw`flex-1 justify-end px-6 mt-20`}>
           <TouchableOpacity
@@ -153,23 +159,8 @@ const DrawerLayout = () => {
   const handleDeleteAccount = async (password: string) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Alert.alert(
-      //   'Account Deleted',
-      //   'Your account has been successfully deleted.',
-      //   [
-      //     {
-      //       text: 'OK',
-      //       onPress: () => {
-      //         setShowDeleteModal(false);
       router.push("/(auth)/Login");
-      //       }
-      //     }
-      //   ]
-      // );
-    } catch (error) {
-      // Alert.alert('Error', 'Failed to delete account. Please try again.');
-    }
+    } catch (error) {}
   };
 
   const handleForgotPassword = () => {

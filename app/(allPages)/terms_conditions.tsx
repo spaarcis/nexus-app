@@ -45,8 +45,6 @@ const TermsConditions = () => {
       year: "numeric",
     });
   };
-  console.log("termsData==>", termsData);
-  console.log("error==>", error);
 
   if (isLoading) {
     <View style={tw`flex-1 justify-center items-center `}>

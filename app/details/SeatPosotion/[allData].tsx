@@ -293,11 +293,11 @@ const seatPosotion = () => {
               {/* Promo Code Options */}
               <View style={tw`mb-6`}>
                 {promoCodes.map((promo, index) => {
-                  const isSelected = selectedPromo === promo.code; // check select হয়েছে কিনা
+                  const isSelected = selectedPromo === promo.code;
                   return (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => setSelectedPromo(promo.code)} // শুধু একটা সিলেক্ট হবে
+                      onPress={() => setSelectedPromo(promo.code)}
                       style={tw`flex-row items-center justify-between py-3 ${
                         index !== promoCodes.length - 1
                           ? "border-b border-gray-700"
@@ -374,7 +374,7 @@ const seatPosotion = () => {
           >
             <View style={tw`absolute top-0 left-0 right-0 items-center`}>
               <Image
-                source={require("../../assets/images/confirm.gif")}
+                source={require("../../../assets/images/confirm.gif")}
                 style={tw`w-44 h-44`}
               />
             </View>

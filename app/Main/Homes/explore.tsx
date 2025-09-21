@@ -42,7 +42,6 @@ const Explore = () => {
       const responseData = res?.data || {};
       const newPosts = responseData?.data || [];
       const pagination = responseData?.pagination || {};
-      console.log(res);
       if (isRefresh) {
         setExplore(newPosts);
       } else {
@@ -59,7 +58,6 @@ const Explore = () => {
       setHasMore(currentPage < lastPage);
       setPage(currentPage + 1);
     } catch (err) {
-      console.log("Error fetching explore data:", err);
     } finally {
       setRefreshing(false);
       setLoadingMore(false);

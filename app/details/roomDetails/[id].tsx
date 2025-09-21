@@ -1,9 +1,8 @@
-"use client";
-
 import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
@@ -14,7 +13,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { BlurView } from "expo-blur";
 import { ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -25,20 +24,42 @@ import {
 } from "react-native";
 import { SvgXml } from "react-native-svg";
 
-const roomDetails = () => {
+// Define TypeScript interfaces
+interface Room {
+  id: number;
+  name: string;
+}
+
+interface PCAvailability {
+  pc_no: number;
+  is_book: boolean;
+  booking_id: number | null;
+}
+
+interface CheckAvailabilityResponse {
+  status: string;
+  status_code: number;
+  message: string;
+  data: PCAvailability[];
+}
+
+const RoomDetails = () => {
   const { id } = useLocalSearchParams();
-  console.log(id);
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone] = useAdd_to_favorite_zoneMutation();
 
-  const [selectedRoom, setSelectedRoom] = useState();
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("00:00");
-  const [dateModalVisible, setDateModalVisible] = useState(false);
-  const [timeModalVisible, setTimeModalVisible] = useState(false);
-  const [selectedDuration, setSelectedDuration] = useState("Select Duration");
-  const [showDurationDropdown, setShowDurationDropdown] = useState(false);
-  const [showRoomDropdown, setShowRoomDropdown] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>("00:00");
+  const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
+  const [timeModalVisible, setTimeModalVisible] = useState<boolean>(false);
+  const [selectedDuration, setSelectedDuration] =
+    useState<string>("Select Duration");
+  const [showDurationDropdown, setShowDurationDropdown] =
+    useState<boolean>(false);
+  const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
+  const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
+  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
 
   const durations = [
     "1 hour",
@@ -51,7 +72,62 @@ const roomDetails = () => {
     "8 hour",
   ];
 
-  // handle date change
+  // Format date to YYYY-MM-DD format as required by API
+  const formatDateForAPI = (dateString: string): string => {
+    if (!dateString) return "";
+    const parts = dateString.split("/");
+    if (parts.length !== 3) return "";
+    return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  // Format time to HH:MM AM/PM format as required by API
+  const formatTimeForAPI = (timeString: string): string => {
+    if (!timeString) return "";
+    const [hours, minutes] = timeString.split(":");
+    const hourNum = parseInt(hours, 10);
+    const period = hourNum >= 12 ? "PM" : "AM";
+    const hour12 = hourNum % 12 || 12;
+    return `${hour12}:${minutes} ${period}`;
+  };
+
+  // Extract duration number from string (e.g., "2 hour" → 2)
+  const getDurationNumber = (durationString: string): number => {
+    if (!durationString || durationString === "Select Duration") return 0;
+    return parseInt(durationString, 10);
+  };
+
+  // Call the API with all required parameters
+  const { data: Check_availability, isLoading: isCheckingAvailability } =
+    useCheck_availabilityQuery(
+      {
+        room_id: selectedRoomID,
+        date: formatDateForAPI(selectedDate),
+        starting_time: formatTimeForAPI(selectedTime),
+        duration: getDurationNumber(selectedDuration),
+      },
+      {
+        skip: !shouldFetch,
+      }
+    );
+
+  // Handle API response
+  useEffect(() => {
+    if (Check_availability) {
+      console.log("API Response:", Check_availability);
+      setShouldFetch(false); // Reset after getting response
+      router.push({
+        pathname: "/details/SeatPosotion/[allData]",
+        params: {
+          ...Check_availability,
+          id: id,
+        },
+      });
+    }
+  }, [Check_availability]);
+
   const handleDateChange = (event: any, date?: Date) => {
     if (date) {
       const formatted = `${date.getDate()}/${
@@ -61,23 +137,66 @@ const roomDetails = () => {
     }
     setDateModalVisible(false);
   };
-  // handle time change
+
   const handleTimeChange = (event: any, time?: Date) => {
     if (time) {
       const hours = time.getHours().toString().padStart(2, "0");
       const minutes = time.getMinutes().toString().padStart(2, "0");
-      setSelectedTime(`${hours}:${minutes}`);
+      const selected = `${hours}:${minutes}`;
+
+      // Opening time validation
+      const open = details?.data?.opening_time;
+      if (open && selected < open) {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: `Please select a time after ${open}` },
+        });
+        return;
+      }
+
+      setSelectedTime(selected);
     }
     setTimeModalVisible(false);
   };
+
+  const logAllSelections = () => {
+    console.log("=== ALL SELECTED VALUES ===");
+    console.log("Selected Room:", selectedRoom);
+    console.log("Selected Room ID:", selectedRoomID);
+    console.log("Selected Date:", selectedDate);
+    console.log("Selected Time:", selectedTime);
+    console.log("Selected Duration:", selectedDuration);
+    console.log("API Parameters:", {
+      room_id: selectedRoomID,
+      date: formatDateForAPI(selectedDate),
+      starting_time: formatTimeForAPI(selectedTime),
+      duration: getDurationNumber(selectedDuration),
+    });
+    if (
+      !selectedRoomID ||
+      !selectedDate ||
+      !selectedTime ||
+      selectedDuration === "Select Duration"
+    ) {
+      console.log("Please select all fields before checking availability");
+      return;
+    }
+
+    // Trigger the API call
+    setShouldFetch(true);
+  };
+
   if (isLoading) {
-    <View style={tw`flex-1 justify-center items-center `}>
-      <ActivityIndicator size="large" color="#0c8ce9" />
-      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
-        Loading...
-      </Text>
-    </View>;
+    return (
+      <View style={tw`flex-1 justify-center items-center `}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
   }
+
   if (!details?.data) {
     return (
       <View style={tw`flex-1 justify-center items-center `}>
@@ -85,18 +204,17 @@ const roomDetails = () => {
       </View>
     );
   }
+
   const {
     rooms,
     rating,
-    phone,
     opening_time,
     is_favorite,
     gaming_zone_name,
     gaming_zone,
     closing_time,
     address,
-  } = details?.data;
-  console.log(rooms);
+  } = details.data;
 
   return (
     <View style={tw`flex-1`}>
@@ -179,6 +297,7 @@ const roomDetails = () => {
             </View>
           </View>
         </BlurView>
+
         {/* Select Room */}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold my-3`}>
@@ -187,9 +306,10 @@ const roomDetails = () => {
           <TouchableOpacity
             onPress={() => setShowRoomDropdown(!showRoomDropdown)}
             style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
+            disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400 text-base font-poppins`}>
-              {selectedRoom}
+              {selectedRoom || "Select a room"}
             </Text>
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
@@ -201,11 +321,12 @@ const roomDetails = () => {
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={true}
               >
-                {rooms.map((roomItem: any, index: any) => (
+                {rooms.map((roomItem: Room, index: number) => (
                   <TouchableOpacity
                     key={roomItem.id}
                     onPress={() => {
                       setSelectedRoom(roomItem.name);
+                      setSelectedRoomID(roomItem.id);
                       setShowRoomDropdown(false);
                     }}
                     style={tw`p-4 ${
@@ -232,6 +353,7 @@ const roomDetails = () => {
           <TouchableOpacity
             style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
             onPress={() => setDateModalVisible(true)}
+            disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400`}>
               {selectedDate ? selectedDate : "DD/MM/YYYY"}
@@ -248,6 +370,7 @@ const roomDetails = () => {
           <TouchableOpacity
             style={tw`bg-gray-800 bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
             onPress={() => setTimeModalVisible(true)}
+            disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400`}>
               {selectedTime ? selectedTime : "00:00"}
@@ -265,6 +388,7 @@ const roomDetails = () => {
           <TouchableOpacity
             style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
             onPress={() => setShowDurationDropdown(!showDurationDropdown)}
+            disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400`}>{selectedDuration}</Text>
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
@@ -296,12 +420,17 @@ const roomDetails = () => {
         </View>
 
         <TouchableOpacity
-          style={tw` relative mb-4`}
-          onPress={() => {
-            router.push("/(allPages)/seatPosotion");
-          }}
+          style={tw`relative mb-4`}
+          onPress={logAllSelections}
+          disabled={isCheckingAvailability}
         >
-          <CustomButton title={"Check Availability"} />
+          <CustomButton
+            title={
+              isCheckingAvailability
+                ? "Checking Availability..."
+                : "Check Availability"
+            }
+          />
         </TouchableOpacity>
       </ScrollView>
 
@@ -328,4 +457,4 @@ const roomDetails = () => {
   );
 };
 
-export default roomDetails;
+export default RoomDetails;

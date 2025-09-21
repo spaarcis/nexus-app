@@ -43,8 +43,6 @@ const Home = () => {
       <Text>loading...</Text>
     </View>;
   }
-  console.log(user);
-
   return (
     <View style={tw` flex-1`}>
       <ImageBackground

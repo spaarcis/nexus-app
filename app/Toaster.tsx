@@ -21,7 +21,7 @@ const Toaster = () => {
       if (router.canGoBack() && pathname === currentPath) {
         router.back();
       }
-    }, Number(params?.time) || 2000);
+    }, Number(params?.time) || 3000);
     return () => clearTimeout(timer);
   }, []);
 

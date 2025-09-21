@@ -33,7 +33,6 @@ const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
     });
 
     // ........Check if response data is a string and malformed.......//
-    console.log(token);
 
     if (result?.status === 403) {
       AsyncStorage.removeItem("token");
@@ -80,7 +79,14 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: ["user", "home", "favorite", "TermsConPrivacyPol", "explore"],
+  tagTypes: [
+    "user",
+    "home",
+    "favorite",
+    "TermsConPrivacyPol",
+    "explore",
+    "booking",
+  ],
 });
 
 export const imageUrl = "http://157.245.63.191/";

@@ -67,9 +67,7 @@ const ChangePassword = () => {
                   pathname: "/Toaster",
                   params: { res: res.message },
                 });
-              } catch (err) {
-                console.error("Error changing password:", err);
-              }
+              } catch (err) {}
             }}
             validationSchema={Yup.object({
               currentPassword: Yup.string()
@@ -107,7 +105,9 @@ const ChangePassword = () => {
                       </Text>
                     </TouchableOpacity>
                   </View>
-
+                  <View>
+                    <Text>name : samya roy</Text>
+                  </View>
                   {/* Title Section */}
                   <View style={tw`mb-12`}>
                     <Text

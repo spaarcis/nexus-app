@@ -45,8 +45,7 @@ const PrivacyPolicy = () => {
       year: "numeric",
     });
   };
-  console.log("termsData==>", termsData);
-  console.log("error==>", error);
+
   if (isLoading) {
     <View style={tw`flex-1 justify-center items-center `}>
       <ActivityIndicator size="large" color="#0c8ce9" />

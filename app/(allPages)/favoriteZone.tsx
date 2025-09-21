@@ -32,12 +32,10 @@ const favoriteZone = () => {
       setLoadingMore(true);
 
       const res = await fetchFavoriteData({ page: pageNum }).unwrap();
-      console.log(res);
 
       const responseData = res?.data || {};
       const newPosts = responseData?.data || [];
       const pagination = responseData?.pagination || {};
-      console.log(res);
       if (isRefresh) {
         setFavorite(newPosts);
       } else {
@@ -54,7 +52,6 @@ const favoriteZone = () => {
       setHasMore(currentPage < lastPage);
       setPage(currentPage + 1);
     } catch (err) {
-      console.log("Error fetching Favorite data:", err);
     } finally {
       setRefreshing(false);
       setLoadingMore(false);

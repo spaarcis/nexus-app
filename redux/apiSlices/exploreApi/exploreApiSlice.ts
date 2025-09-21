@@ -21,8 +21,20 @@ export const exploreApiSlice = api.injectEndpoints({
       },
       providesTags: ["explore"],
     }),
+    // In your API slice file (exploreApiSlice.ts)
+    check_availability: builder.query<any, any>({
+      query: ({ room_id, date, starting_time, duration }) => ({
+        url: `/check-availability?room_id=${room_id}&date=${date}&starting_time=${starting_time}&duration=${duration}`,
+        method: "GET",
+      }),
+      providesTags: ["booking"],
+    }),
   }),
   overrideExisting: true,
 });
-export const { useLazyExplore_gaming_zoneQuery, useExplore_gaming_zoneQuery } =
-  exploreApiSlice;
+export const {
+  useLazyExplore_gaming_zoneQuery,
+  useExplore_gaming_zoneQuery,
+  useCheck_availabilityQuery,
+  useLazyCheck_availabilityQuery,
+} = exploreApiSlice;

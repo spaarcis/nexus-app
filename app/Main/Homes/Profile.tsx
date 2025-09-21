@@ -45,7 +45,6 @@ const Profile = () => {
     try {
       const formData = new FormData();
       formData.append("name", fullName);
-      console.log(formData);
 
       if (image) {
         formData.append("avatar", {
@@ -55,11 +54,9 @@ const Profile = () => {
         } as any);
       }
       const res = await edit_profile(formData).unwrap();
-      console.log("Profile updated:", res);
+
       alert("Profile updated successfully!");
-    } catch (err) {
-      console.error("Error updating profile:", err);
-    }
+    } catch (err) {}
   };
   useEffect(() => {
     if (user?.data?.name) {

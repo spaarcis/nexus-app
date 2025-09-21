@@ -37,8 +37,6 @@ const PopularZone = () => {
       const responseData = res?.data || {};
       const newZones = responseData?.data || [];
       const pagination = responseData?.pagination || {};
-      console.log(res);
-
       if (isRefresh) {
         setGamingZones(newZones);
       } else {
@@ -55,7 +53,6 @@ const PopularZone = () => {
       setHasNextPage(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      console.log("Error fetching popular zones:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);

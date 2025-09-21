@@ -37,7 +37,6 @@ const NewlyAddedZones = () => {
       const responseData = res?.data || {};
       const newZones = responseData?.data || [];
       const pagination = responseData?.pagination || {};
-      console.log(res);
 
       if (isRefresh) {
         setNewlyAddedZones(newZones);
@@ -55,7 +54,6 @@ const NewlyAddedZones = () => {
       setHasNextPage(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      console.log("Error fetching newly added zones:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);

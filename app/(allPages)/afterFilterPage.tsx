@@ -60,7 +60,6 @@ const AfterFilterPage = () => {
       setHasMore(currentPage < lastPage);
       setPage(currentPage + 1);
     } catch (err) {
-      console.log("Error fetching explore data:", err);
     } finally {
       setRefreshing(false);
       setLoadingMore(false);
