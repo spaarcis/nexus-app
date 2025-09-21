@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { BokCardSkeleton } from "../skeleton/BokCardSkeleton";
 import BookingCard from "./BookingCard";
 
 const Upcoming = () => {
@@ -82,40 +83,52 @@ const Upcoming = () => {
 
   return (
     <View>
-      <FlatList
-        data={upcomingBookings}
-        keyExtractor={(item, index) => `booking-${item.id}-${index}`}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
-          console.log("booking item", item);
-          return <BookingCard data={item} />;
-        }}
-        contentContainerStyle={tw`pb-10`}
-        ListFooterComponent={
-          <View style={tw`py-4 flex justify-center items-center`}>
-            {isLoadingMore ? (
-              <>
-                <ActivityIndicator size="small" color="#0000ff" />
-                <Text style={tw`mt-2 text-gray-500`}>Loading more ...</Text>
-              </>
-            ) : !hasMorePages && upcomingBookings.length > 0 ? (
-              <Text style={tw`text-gray-500`}>No more bookings to load</Text>
-            ) : null}
-          </View>
-        }
-        ListEmptyComponent={
-          !isLoading ? (
-            <View style={tw`py-10 flex justify-center items-center`}>
-              <Text style={tw`text-gray-500`}>No upcoming bookings found</Text>
+      {isLoading && upcomingBookings.length === 0 ? (
+        <View style={tw`pb-10`}>
+          {[...Array(5)].map((_, index) => (
+            <View key={index} style={tw`mb-4`}>
+              <BokCardSkeleton />
             </View>
-          ) : null
-        }
-      />
+          ))}
+        </View>
+      ) : (
+        <FlatList
+          data={upcomingBookings}
+          keyExtractor={(item, index) => `booking-${item.id}-${index}`}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              onRefresh={handleRefresh}
+            />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => <BookingCard data={item} />}
+          contentContainerStyle={tw`pb-10`}
+          ListFooterComponent={
+            <View style={tw`py-4 flex justify-center items-center`}>
+              {isLoadingMore ? (
+                <>
+                  <ActivityIndicator size="small" color="#0000ff" />
+                  <Text style={tw`mt-2 text-gray-500`}>Loading more ...</Text>
+                </>
+              ) : !hasMorePages && upcomingBookings.length > 0 ? (
+                <Text style={tw`text-gray-500`}>No more bookings to load</Text>
+              ) : null}
+            </View>
+          }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={tw`py-10 flex justify-center items-center`}>
+                <Text style={tw`text-gray-500`}>
+                  No upcoming bookings found
+                </Text>
+              </View>
+            ) : null
+          }
+        />
+      )}
     </View>
   );
 };
