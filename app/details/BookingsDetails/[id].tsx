@@ -277,9 +277,9 @@ const BookingsDetails = () => {
           animationType="fade"
           onRequestClose={() => setIsModalVisible(false)}
         >
-          <View style={tw`flex-1 bg-black/70 justify-center items-center px-5`}>
+          <View style={tw`flex-1 bg-black/50 justify-center items-center px-6`}>
             <View
-              style={tw`bg-black/40 shadow-lg shadow-[#A7BEFE] rounded-2xl p-8 w-full max-w-sm`}
+              style={tw`bg-black rounded-2xl p-6 w-full max-w-sm border border-gray-700`}
             >
               {/* Modal Header */}
               <View style={tw`flex-row items-center justify-between mb-6`}>
