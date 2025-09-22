@@ -105,7 +105,6 @@ const Completed = () => {
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
-            console.log("completed booking item", item);
             return <BookingCard data={item} />;
           }}
           contentContainerStyle={tw`pb-10`}

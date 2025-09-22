@@ -11,11 +11,16 @@ import {
   IconVIP,
 } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import {
+  useBooking_cancelMutation,
+  useBooking_detailsQuery,
+} from "@/redux/apiSlices/bookingApi/bookingSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   Modal,
@@ -32,7 +37,17 @@ const BookingsDetails = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
-
+  const [visible, setVisible] = useState(false);
+  const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
+  const [booking_cancel] = useBooking_cancelMutation();
+  if (isLoading) {
+    <View style={tw`flex-1 justify-center items-center `}>
+      <ActivityIndicator size="large" color="#0c8ce9" />
+      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+        Loading...
+      </Text>
+    </View>;
+  }
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
@@ -76,6 +91,25 @@ const BookingsDetails = () => {
     }
   }, [isModalVisible]);
 
+  const handleConfirm = async () => {
+    try {
+      const res = await booking_cancel(Number(id)).unwrap();
+      console.log("Booking cancel response:", res);
+
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res.message },
+      });
+      setVisible(false);
+    } catch (error) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: (error as any)?.message || "An error occurred" },
+      });
+      setVisible(false);
+    }
+  };
+
   return (
     <View style={tw`flex-1`}>
       <ImageBackground
@@ -111,24 +145,26 @@ const BookingsDetails = () => {
           <View style={tw`mb-6`}>
             <Image
               source={{
-                uri: "https://picsum.photos/200/200?random=2",
+                uri: booking_details?.data?.provider?.gaming_zone,
               }}
               style={tw`w-full h-48 rounded-2xl`}
             />
           </View>
           <View style={tw`mb-6`}>
             <Text style={tw`text-white text-xl font-poppinsBold mb-4`}>
-              Alpha Esport Zone
+              {booking_details?.data?.provider?.gaming_zone_name}
             </Text>
 
             <View style={tw`flex-row items-center gap-1 mb-2`}>
               <SvgXml xml={IconLoction} />
               <Text style={tw`text-gray-400 font-poppins ml-1`}>
-                Los Angeles, USA
+                {booking_details?.data?.provider?.address}
               </Text>
               <View style={tw`flex-row items-center ml-auto`}>
                 <SvgXml xml={IconStar} />
-                <Text style={tw`text-white font-poppins ml-1`}>4.5</Text>
+                <Text style={tw`text-white font-poppins ml-1`}>
+                  {booking_details?.data?.provider?.rating}
+                </Text>
               </View>
             </View>
 
@@ -138,7 +174,8 @@ const BookingsDetails = () => {
                 Operating hours
               </Text>
               <Text style={tw`text-white font-poppins ml-auto`}>
-                10:00 AM - 09:00 PM
+                {booking_details?.data?.provider?.opening_time} -{" "}
+                {booking_details?.data?.provider?.closing_time}
               </Text>
             </View>
           </View>
@@ -152,7 +189,7 @@ const BookingsDetails = () => {
             <View style={tw`flex-row items-center`}>
               <SvgXml xml={IconCleander} />
               <Text style={tw`text-gray-400 font-poppins ml-2`}>
-                9 June, 2025
+                {booking_details?.data?.booking_date}
               </Text>
             </View>
           </View>
@@ -160,28 +197,36 @@ const BookingsDetails = () => {
           <View style={tw`flex-row items-center justify-between mb-3`}>
             <View style={tw`flex-row items-center`}>
               <SvgXml xml={IconTime} />
-              <Text style={tw`text-gray-400 font-poppins ml-2`}>10:00 AM</Text>
+              <Text style={tw`text-gray-400 font-poppins ml-2`}>
+                {booking_details?.data?.starting_time}
+              </Text>
             </View>
           </View>
 
           <View style={tw`flex-row items-center justify-between mb-3`}>
             <View style={tw`flex-row items-center`}>
               <SvgXml xml={Iconhoure} />
-              <Text style={tw`text-gray-400 font-poppins ml-2`}>2 - Hour</Text>
+              <Text style={tw`text-gray-400 font-poppins ml-2`}>
+                {booking_details?.data?.duration}- Hour
+              </Text>
             </View>
           </View>
 
           <View style={tw`flex-row items-center justify-between mb-3`}>
             <View style={tw`flex-row items-center`}>
               <SvgXml xml={IconA1} />
-              <Text style={tw`text-gray-400 font-poppins ml-2`}>A1</Text>
+              <Text style={tw`text-gray-400 font-poppins ml-2`}>
+                {booking_details?.data?.pc_no}
+              </Text>
             </View>
           </View>
 
           <View style={tw`flex-row items-center justify-between mb-4`}>
             <View style={tw`flex-row items-center`}>
               <SvgXml xml={IconVIP} />
-              <Text style={tw`text-gray-400 font-poppins ml-2`}>VIP</Text>
+              <Text style={tw`text-gray-400 font-poppins ml-2`}>
+                {booking_details?.data?.room_name}
+              </Text>
             </View>
           </View>
 
@@ -190,7 +235,9 @@ const BookingsDetails = () => {
               <Text style={tw`text-white text-lg  font-poppinsSemiBold`}>
                 Paid:
               </Text>
-              <Text style={tw`text-white text-xl font-poppinsBold`}>€3644</Text>
+              <Text style={tw`text-white text-xl font-poppinsBold`}>
+                €{booking_details?.data?.have_to_pay}
+              </Text>
             </View>
           </View>
         </View>
@@ -201,11 +248,11 @@ const BookingsDetails = () => {
           >
             <CustomButton title={"Rating & Review"} />
           </TouchableOpacity>
-        ) : status === "Upcoming" ? (
+        ) : status === "Confirmed" ? (
           <View>
             <TouchableOpacity
               style={tw`bg-[#171823] mb-4 rounded-full`}
-              // onPress={() => handleCancelBooking()}
+              onPress={() => setVisible(true)}
             >
               <Text
                 style={tw`text-primary  flex w-full text-center text-lg py-[14px] font-poppinsBold`}
@@ -284,6 +331,49 @@ const BookingsDetails = () => {
                   disabled={rating === 0}
                 >
                   <CustomButton title={"Done"} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+        <Modal
+          visible={visible}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setVisible(false)}
+        >
+          <View style={tw`flex-1 bg-black/50 justify-center items-center px-6`}>
+            <View
+              style={tw`bg-black rounded-2xl p-6 w-full max-w-sm border border-gray-700`}
+            >
+              {/* Title */}
+              <Text
+                style={tw`text-white text-xl font-poppinsBold text-center mb-2`}
+              >
+                Are you sure?
+              </Text>
+
+              {/* Subtitle */}
+              <Text
+                style={tw`text-gray-400 text-sm text-center font-poppins mb-6`}
+              >
+                You want to cancel the booking
+              </Text>
+
+              {/* Buttons */}
+              <View style={tw`flex-row justify-between`}>
+                <TouchableOpacity
+                  onPress={handleConfirm}
+                  style={tw`flex-1 bg-blue-600 rounded-full py-3 mr-3 items-center`}
+                >
+                  <Text style={tw`text-white font-poppinsBold`}>Yes</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setVisible(false)}
+                  style={tw`flex-1 bg-[#151515] rounded-full py-3 items-center`}
+                >
+                  <Text style={tw`text-red-500 font-poppinsBold`}>No</Text>
                 </TouchableOpacity>
               </View>
             </View>

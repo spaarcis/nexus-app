@@ -28,7 +28,7 @@ const Toaster = () => {
   return (
     <View style={tw``}>
       <View style={tw`bg-[#0c082c] justify-center items-center p-4 `}>
-        <Text style={tw`text-sm font-PoppinsMedium text-white`}>{res}</Text>
+        <Text style={tw`text-sm font-poppinsMedium text-white`}>{res}</Text>
       </View>
     </View>
   );

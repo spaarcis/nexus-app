@@ -10,6 +10,7 @@ import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Image, ImageBackground } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -55,7 +56,10 @@ const Profile = () => {
 
       try {
         const res = await edit_profile_picture(formData).unwrap();
-        console.log(res, "edit_profile_picture success");
+        router.push({
+          pathname: "/Toaster",
+          params: { res: res?.message },
+        });
       } catch (err) {
         console.log(err, "edit_profile_picture error");
       }
@@ -75,7 +79,6 @@ const Profile = () => {
         } as any);
       }
       const res = await edit_profile(formData).unwrap();
-      console.log(res, "almssss");
 
       // alert("Profile updated successfully!");
     } catch (err) {

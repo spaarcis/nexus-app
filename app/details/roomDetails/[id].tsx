@@ -116,7 +116,6 @@ const RoomDetails = () => {
   // Handle API response
   useEffect(() => {
     if (Check_availability) {
-      console.log("API Response:", Check_availability);
       setShouldFetch(false); // Reset after getting response
       router.push({
         pathname: "/details/SeatPosotion/[allData]",

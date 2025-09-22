@@ -104,7 +104,6 @@ const Canceled = () => {
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => {
-            console.log("canceled booking item", item);
             return <BookingCard data={item} status="Canceled" />;
           }}
           contentContainerStyle={tw`pb-10`}
