@@ -65,6 +65,17 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    edit_profile_picture: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/edit-profile-picture`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -77,4 +88,5 @@ export const {
   useResetPasswordMutation,
   useChange_passwordMutation,
   useSocialLoginMutation,
+  useEdit_profile_pictureMutation,
 } = authSlice;

@@ -50,6 +50,9 @@ export const authSlice = api.injectEndpoints({
       query: (data) => ({
         url: `/edit-profile`,
         method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
         body: data,
       }),
       invalidatesTags: ["user"],

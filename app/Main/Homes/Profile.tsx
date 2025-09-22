@@ -1,18 +1,18 @@
 import { ImgGradint } from "@/assets/images/image";
 import { IconButton, IconEdit, IconUpload } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useEdit_profile_pictureMutation } from "@/redux/apiSlices/authApiSlices";
 import {
   useEdit_profileMutation,
   useUser_profileQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
-import { ImageBackground } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -20,44 +20,69 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
 
 const Profile = () => {
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = React.useState<ImagePicker.ImagePickerAsset | null>(
+    null
+  );
   const [fullName, setFullName] = useState("Siva Rohitha");
+
   const { data: user, isLoading } = useUser_profileQuery({});
   const [edit_profile] = useEdit_profileMutation();
+  const [edit_profile_picture] = useEdit_profile_pictureMutation();
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [16, 9],
       quality: 1,
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const pickedImage = result.assets[0];
+      setImage(pickedImage as any);
+
+      const formData = new FormData();
+      formData.append("photo", {
+        uri: pickedImage.uri,
+        name: pickedImage.fileName || "profile.jpg",
+        type: pickedImage.mimeType || "image/jpeg",
+      } as any);
+
+      try {
+        const res = await edit_profile_picture(formData).unwrap();
+        console.log(res, "edit_profile_picture success");
+      } catch (err) {
+        console.log(err, "edit_profile_picture error");
+      }
     }
   };
+
   const handleEditProfile = async () => {
     try {
       const formData = new FormData();
       formData.append("name", fullName);
 
-      if (image) {
-        formData.append("avatar", {
-          uri: image,
-          type: "image/jpeg",
-          name: "profile.jpg",
+      if (image?.uri) {
+        formData.append("gaming_zone", {
+          uri: image?.uri,
+          name: image?.fileName || "profile.jpg",
+          type: image?.mimeType || "image/jpeg",
         } as any);
       }
       const res = await edit_profile(formData).unwrap();
+      console.log(res, "almssss");
 
-      alert("Profile updated successfully!");
-    } catch (err) {}
+      // alert("Profile updated successfully!");
+    } catch (err) {
+      console.log(err);
+    }
   };
+
   useEffect(() => {
     if (user?.data?.name) {
       setFullName(user.data.name);
@@ -96,16 +121,11 @@ const Profile = () => {
           <Text style={tw`text-white text-2xl font-semibold mb-8`}>
             My Profile
           </Text>
-
           {/* Profile Image Section */}
           <View style={tw`items-center mb-8`}>
             <View style={tw`relative`}>
               <Image
-                source={
-                  user?.data?.avatar || {
-                    uri: image,
-                  }
-                }
+                source={image ? { uri: image.uri } : user?.data?.avatar}
                 style={tw`w-24 h-24 rounded-full`}
               />
               <TouchableOpacity
@@ -116,7 +136,6 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
           </View>
-          {/* Basic Information Section */}
           <View style={tw`mb-6`}>
             <Text style={tw`text-white text-lg font-medium mb-4`}>
               Basic Information
