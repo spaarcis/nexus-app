@@ -14,6 +14,7 @@ import tw from "@/lib/tailwind";
 import {
   useBooking_cancelMutation,
   useBooking_detailsQuery,
+  useRatingsMutation,
 } from "@/redux/apiSlices/bookingApi/bookingSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
@@ -23,6 +24,7 @@ import {
   ActivityIndicator,
   Image,
   ImageBackground,
+  Linking,
   Modal,
   ScrollView,
   Text,
@@ -40,6 +42,7 @@ const BookingsDetails = () => {
   const [visible, setVisible] = useState(false);
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
   const [booking_cancel] = useBooking_cancelMutation();
+  const [ratings] = useRatingsMutation();
   if (isLoading) {
     <View style={tw`flex-1 justify-center items-center `}>
       <ActivityIndicator size="large" color="#0c8ce9" />
@@ -72,9 +75,22 @@ const BookingsDetails = () => {
       );
     });
   };
+  console.log("booking_details", booking_details, "booking_details");
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async () => {
     if (rating > 0) {
+      const data = {
+        booking_id: id,
+        rating: rating,
+        review: reviewText,
+      };
+      const res = await ratings(data).unwrap();
+      console.log(res);
+
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res.message },
+      });
       setIsModalVisible(false);
       router.push("/Main/Homes/Home");
     } else {
@@ -110,6 +126,13 @@ const BookingsDetails = () => {
     }
   };
 
+  const handleCall = () => {
+    const phoneNumber = booking_details?.data?.provider?.phone;
+    console.log(phoneNumber);
+
+    Linking.openURL(`tel:${phoneNumber}`);
+  };
+
   return (
     <View style={tw`flex-1`}>
       <ImageBackground
@@ -135,7 +158,10 @@ const BookingsDetails = () => {
               <Ionicons name="chevron-back" size={24} color="white" />
               <Text style={tw`text-white text-lg ml-1`}>Back</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={tw`flex-row items-center`}>
+            <TouchableOpacity
+              onPress={handleCall}
+              style={tw`flex-row items-center`}
+            >
               <SvgXml xml={IconContact} />
             </TouchableOpacity>
           </View>

@@ -2,50 +2,100 @@ import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import { IconAvailable } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import {
+  useBooking_newMutation,
+  useUser_promo_codeQuery,
+} from "@/redux/apiSlices/bookingApi/bookingSlice";
+import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import { useGame_zone_detailsQuery } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import React, { useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useLocalSearchParams } from "expo-router/build/hooks";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SvgXml } from "react-native-svg";
 
+interface Room {
+  id: number;
+  name: string;
+}
+interface Seat {
+  index_id: number;
+  booking_id: number;
+  is_book: boolean;
+  pc_no: number;
+}
+
 const seatPosotion = () => {
+  const { allData } = useLocalSearchParams();
+  const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [showPromoModal, setShowPromoModal] = useState(false);
   const [showRoomDropdown, setShowRoomDropdown] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState("Select");
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
+  const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
+  const [backendSeats, setBackendSeats] = useState<Seat[]>([]);
+  const [percen, setPercen] = useState([]);
 
-  const roomOptions = [
-    "VIP",
-    "NON VIP",
-    "Semi VIP",
-    "PS5",
-    "Common",
-    "Common",
-    "Common",
-    "Common",
-    "Common",
-    "Common",
-  ];
-  const seats = [
-    { id: "PC 1", available: true },
-    { id: "PC 2", available: false },
-    { id: "PC 3", available: true },
-    { id: "PC 4", available: false },
-    { id: "PC 5", available: true },
-    { id: "PC 6", available: true },
-    { id: "PC 7", available: true },
-    { id: "PC 8", available: true },
-    { id: "PC 9", available: true },
-    { id: "PC 10", available: true },
-    { id: "PC 11", available: true },
-    { id: "PC 12", available: true },
-  ];
+  useEffect(() => {
+    if (allData) {
+      try {
+        const dataString = Array.isArray(allData) ? allData[0] : allData;
+        const parsed = JSON.parse(dataString);
+        setParsedData(parsed);
+        console.log("Parsed Data:", parsed);
+      } catch (error) {
+        console.error("Error parsing allData:", error);
+        console.log("Raw allData:", allData);
+      }
+    }
+  }, [allData]);
+  const metadata = parsedData?.availabilityData?.metadata;
+  const { data: details, isLoading } = useGame_zone_detailsQuery({
+    id: parsedData?.roomId,
+  });
+  const [booking_new] = useBooking_newMutation();
+  const { data: Check_availability, isLoading: isCheckingAvailability } =
+    useCheck_availabilityQuery({
+      room_id: selectedRoomID || parsedData?.roomId,
+      date: metadata?.date,
+      starting_time: metadata?.starting_time,
+      duration: metadata?.duration,
+    });
+  const { data: promoData, isLoading: promoLodding } = useUser_promo_codeQuery(
+    parsedData?.roomId
+  );
+
+  useEffect(() => {
+    if (Check_availability?.data) {
+      setBackendSeats(Check_availability.data);
+    }
+  }, [Check_availability?.data]);
+
+  if (isCheckingAvailability || isLoading || promoLodding) {
+    return (
+      // Added return here
+      <View style={tw`flex-1 justify-center items-center `}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
   const promoCodes = [
     { code: "SAD563", expiry: "12/25/25" },
     { code: "SAD564", expiry: "12/25/25" },
@@ -57,6 +107,38 @@ const seatPosotion = () => {
       setSelectedSeat(selectedSeat === seatId ? null : seatId);
     }
   };
+  const handelConfirmBokking = async () => {
+    const data = {
+      duration: "",
+      pc_no: "",
+      total: "",
+      promo_code: "",
+      starting_time: "",
+      booking_date: "",
+      coupon_id: "",
+      room_id: "",
+      provider_id: parsedData?.roomId,
+    };
+    try {
+      const res = await booking_new(data).unwrap();
+    } catch (error) {}
+  };
+  // Calculate total amount with promo discount
+  const calculateTotalAmount = () => {
+    const originalAmount = parseFloat(metadata?.to_pay) || 0;
+
+    if (selectedPromo && percen) {
+      const discountAmount = (originalAmount * parseInt(percen as any)) / 100;
+      return originalAmount - discountAmount;
+    }
+
+    return originalAmount;
+  };
+
+  const totalAmount = calculateTotalAmount();
+  const originalAmount = parseFloat(metadata?.to_pay) || 0;
+  console.log("details", percen, "details");
+  console.log("details@", metadata?.to_pay, "details@");
 
   return (
     <View style={tw`flex-1`}>
@@ -124,31 +206,29 @@ const seatPosotion = () => {
             </Text>
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
-
           {showRoomDropdown && (
-            <View
-              style={tw`bg-gray-900/95 rounded-2xl mt-2 border border-gray-700 overflow-hidden`}
-            >
+            <View style={tw`bg-white/10 mt-2 rounded-lg`}>
               <ScrollView
-                style={tw`max-h-60`} // Fixed height for 5 items
+                style={tw`max-h-60`}
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={true}
               >
-                {roomOptions.map((room, index) => (
+                {details?.data?.rooms?.map((roomItem: Room, index: number) => (
                   <TouchableOpacity
-                    key={index}
+                    key={roomItem?.id}
                     onPress={() => {
-                      setSelectedRoom(room);
+                      setSelectedRoom(roomItem?.name);
+                      setSelectedRoomID(roomItem?.id);
                       setShowRoomDropdown(false);
                     }}
                     style={tw`p-4 ${
-                      index !== roomOptions.length - 1
+                      index !== details?.data?.rooms?.length - 1
                         ? "border-b border-gray-700"
                         : ""
                     }`}
                   >
                     <Text style={tw`text-white text-base font-poppins`}>
-                      {room}
+                      {roomItem?.name}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -163,20 +243,22 @@ const seatPosotion = () => {
             Available Seat
           </Text>
 
-          {/* All 10 seats in proper grid */}
+          {/* All seats in proper grid */}
           <View style={tw`flex-row flex-wrap justify-between`}>
-            {seats.map((seat, index) => (
+            {backendSeats.map((seat: Seat, index) => (
               <TouchableOpacity
-                key={seat.id}
-                onPress={() => handleSeatPress(seat.id, seat.available)}
+                key={seat.index_id}
+                onPress={() =>
+                  handleSeatPress(`PC ${seat.pc_no}`, !seat.is_book)
+                }
                 style={tw`items-center mb-4 ${index >= 6 ? "w-1/5" : "w-1/6"}`}
-                disabled={!seat.available}
+                disabled={seat.is_book}
               >
                 <View
                   style={tw`w-12 h-12 rounded-full border-2 items-center justify-center mb-2 ${
-                    !seat.available
+                    seat.is_book
                       ? "border-red-500"
-                      : selectedSeat === seat.id
+                      : selectedSeat === `PC ${seat.pc_no}`
                       ? " border-secondaryGreen"
                       : "bg-gray-800/80 border-gray-600"
                   }`}
@@ -185,9 +267,9 @@ const seatPosotion = () => {
                     name="desktop-outline"
                     size={18}
                     color={
-                      !seat.available
+                      seat.is_book
                         ? "#EF4444"
-                        : selectedSeat === seat.id
+                        : selectedSeat === `PC ${seat.pc_no}`
                         ? "#FFFFFF"
                         : "#FFFFFF"
                     }
@@ -195,14 +277,14 @@ const seatPosotion = () => {
                 </View>
                 <Text
                   style={tw`text-xs font-poppinsMedium ${
-                    !seat.available
+                    seat.is_book
                       ? "text-red-400"
-                      : selectedSeat === seat.id
+                      : selectedSeat === `PC ${seat.pc_no}`
                       ? "text-secondaryGreen"
                       : "text-gray-400"
                   }`}
                 >
-                  {seat.id}
+                  PC {seat.pc_no}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -215,32 +297,34 @@ const seatPosotion = () => {
             <Text style={tw`text-white text-lg font-poppinsBold`}>
               Payment Details
             </Text>
-            <TouchableOpacity onPress={() => setShowPromoModal(true)}>
-              <MaskedView
-                maskElement={
-                  <Text
-                    style={[
-                      tw`text-base font-poppinsBold`,
-                      { backgroundColor: "transparent" },
-                    ]}
-                  >
-                    Apply promo
-                  </Text>
-                }
-              >
-                <LinearGradient
-                  colors={["#6523E7", "#023CE3", "#6523E7"]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
+            {promoData?.data.length > 0 && (
+              <TouchableOpacity onPress={() => setShowPromoModal(true)}>
+                <MaskedView
+                  maskElement={
+                    <Text
+                      style={[
+                        tw`text-base font-poppinsBold`,
+                        { backgroundColor: "transparent" },
+                      ]}
+                    >
+                      Apply promo
+                    </Text>
+                  }
                 >
-                  <Text
-                    style={[tw`text-base font-poppinsBold`, { opacity: 0 }]}
+                  <LinearGradient
+                    colors={["#6523E7", "#023CE3", "#6523E7"]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
                   >
-                    Apply promo
-                  </Text>
-                </LinearGradient>
-              </MaskedView>
-            </TouchableOpacity>
+                    <Text
+                      style={[tw`text-base font-poppinsBold`, { opacity: 0 }]}
+                    >
+                      Apply promo
+                    </Text>
+                  </LinearGradient>
+                </MaskedView>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View>
@@ -249,18 +333,34 @@ const seatPosotion = () => {
                 To pay:
               </Text>
               <Text style={tw`text-white text-base font-poppinsBold`}>
-                € 5604
+                € {originalAmount.toFixed(2)}
               </Text>
             </View>
 
-            <View style={tw`flex-row justify-between items-center mb-4`}>
-              <Text style={tw`text-gray-300 text-base font-poppins`}>
-                Promo Code:
-              </Text>
-              <Text style={tw`text-white text-base font-poppinsBold`}>
-                SAD564
-              </Text>
-            </View>
+            {/* Show discount details if promo is applied */}
+            {selectedPromo && percen && (
+              <>
+                <View style={tw`flex-row justify-between items-center mb-1`}>
+                  <Text style={tw`text-gray-300 text-base font-poppins`}>
+                    Discount ({percen}%):
+                  </Text>
+                  <Text style={tw`text-green-400 text-base font-poppinsBold`}>
+                    -€{" "}
+                    {((originalAmount * parseInt(percen as any)) / 100).toFixed(
+                      2
+                    )}
+                  </Text>
+                </View>
+                <View style={tw`flex-row justify-between items-center mb-3`}>
+                  <Text style={tw`text-gray-300 text-base font-poppins`}>
+                    Promo Code:
+                  </Text>
+                  <Text style={tw`text-white text-base font-poppinsBold`}>
+                    {selectedPromo}
+                  </Text>
+                </View>
+              </>
+            )}
 
             <View style={tw`h-px bg-gray-700 mb-4`} />
 
@@ -269,11 +369,12 @@ const seatPosotion = () => {
                 Total:
               </Text>
               <Text style={tw`text-white text-xl font-poppinsBold`}>
-                € 4500
+                € {totalAmount.toFixed(2)}
               </Text>
             </View>
           </View>
         </View>
+
         {/* Promo Code Modal */}
         {showPromoModal && (
           <View
@@ -292,14 +393,18 @@ const seatPosotion = () => {
               </View>
               {/* Promo Code Options */}
               <View style={tw`mb-6`}>
-                {promoCodes.map((promo, index) => {
-                  const isSelected = selectedPromo === promo.code;
+                {promoData?.data?.map((promo: any, index: any) => {
+                  const isSelected =
+                    selectedPromo === promo?.coupon?.promo_code;
                   return (
                     <TouchableOpacity
                       key={index}
-                      onPress={() => setSelectedPromo(promo.code)}
+                      onPress={() => {
+                        setSelectedPromo(promo?.coupon?.promo_code);
+                        setPercen(promo?.coupon?.percentage);
+                      }}
                       style={tw`flex-row items-center justify-between py-3 ${
-                        index !== promoCodes.length - 1
+                        index !== promoCodes?.length - 1
                           ? "border-b border-gray-700"
                           : ""
                       }`}
@@ -314,11 +419,11 @@ const seatPosotion = () => {
                           }`}
                         />
                         <Text style={tw`text-white text-base font-poppins`}>
-                          {promo.code}
+                          {promo?.coupon?.promo_code}
                         </Text>
                       </View>
                       <Text style={tw`text-gray-400 text-sm font-poppins`}>
-                        Exp in {promo.expiry}
+                        Exp in {promo?.coupon?.validate_date}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -351,12 +456,15 @@ const seatPosotion = () => {
             </View>
           </View>
         )}
+
         {/* footer confirm btn */}
         <TouchableOpacity
           style={tw` mb-8 mt-16`}
-          onPress={() => {
-            setSuccessModalVisible(true);
-          }}
+          // onPress={() => {
+          //   setSuccessModalVisible(true);
+
+          // }}
+          onPress={handelConfirmBokking}
         >
           <CustomButton title={"Confirm Booking"} />
         </TouchableOpacity>

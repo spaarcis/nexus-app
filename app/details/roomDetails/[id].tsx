@@ -99,7 +99,7 @@ const RoomDetails = () => {
     return parseInt(durationString, 10);
   };
 
-  // Call the API with all required parameters
+  // Call the API with all required parameters - moved to top level
   const { data: Check_availability, isLoading: isCheckingAvailability } =
     useCheck_availabilityQuery(
       {
@@ -109,23 +109,27 @@ const RoomDetails = () => {
         duration: getDurationNumber(selectedDuration),
       },
       {
-        skip: !shouldFetch,
+        skip: !shouldFetch, // Skip the query until shouldFetch is true
       }
     );
 
-  // Handle API response
+  // Handle the API response when it arrives
   useEffect(() => {
-    if (Check_availability) {
-      setShouldFetch(false); // Reset after getting response
+    if (Check_availability && shouldFetch) {
+      setShouldFetch(false); // Reset the flag
+      const dataToPass = JSON.stringify({
+        availabilityData: Check_availability,
+        roomId: id,
+      });
+
       router.push({
         pathname: "/details/SeatPosotion/[allData]",
         params: {
-          ...Check_availability,
-          id: id,
+          allData: dataToPass,
         },
       });
     }
-  }, [Check_availability]);
+  }, [Check_availability, shouldFetch]);
 
   const handleDateChange = (event: any, date?: Date) => {
     if (date) {
@@ -159,29 +163,32 @@ const RoomDetails = () => {
   };
 
   const logAllSelections = () => {
-    console.log("=== ALL SELECTED VALUES ===");
-    console.log("Selected Room:", selectedRoom);
-    console.log("Selected Room ID:", selectedRoomID);
-    console.log("Selected Date:", selectedDate);
-    console.log("Selected Time:", selectedTime);
-    console.log("Selected Duration:", selectedDuration);
-    console.log("API Parameters:", {
-      room_id: selectedRoomID,
-      date: formatDateForAPI(selectedDate),
-      starting_time: formatTimeForAPI(selectedTime),
-      duration: getDurationNumber(selectedDuration),
-    });
-    if (
-      !selectedRoomID ||
-      !selectedDate ||
-      !selectedTime ||
-      selectedDuration === "Select Duration"
-    ) {
-      console.log("Please select all fields before checking availability");
+    // Validate all required fields are selected
+    if (!selectedRoomID) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: "Please select a room" },
+      });
       return;
     }
 
-    // Trigger the API call
+    if (!selectedDate) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: "Please select a date" },
+      });
+      return;
+    }
+
+    if (selectedDuration === "Select Duration") {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: "Please select a duration" },
+      });
+      return;
+    }
+
+    // Set shouldFetch to true to trigger the API call
     setShouldFetch(true);
   };
 
@@ -254,7 +261,7 @@ const RoomDetails = () => {
           {/* Gaming Room Image */}
           <View style={tw`mb-6`}>
             <Image
-              source={gaming_zone}
+              source={{ uri: gaming_zone }}
               style={tw`w-full h-48 rounded-xl`}
               resizeMode="cover"
             />
@@ -305,7 +312,7 @@ const RoomDetails = () => {
           <TouchableOpacity
             onPress={() => setShowRoomDropdown(!showRoomDropdown)}
             style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
-            disabled={isCheckingAvailability}
+            // disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400 text-base font-poppins`}>
               {selectedRoom || "Select a room"}
