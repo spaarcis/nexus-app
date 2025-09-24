@@ -49,6 +49,8 @@ const seatPosotion = () => {
   const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
   const [backendSeats, setBackendSeats] = useState<Seat[]>([]);
   const [percen, setPercen] = useState([]);
+  const [pc_No, setPc_No] = useState([]);
+  const [couponID, setCouponID] = useState([]);
 
   useEffect(() => {
     if (allData) {
@@ -56,7 +58,6 @@ const seatPosotion = () => {
         const dataString = Array.isArray(allData) ? allData[0] : allData;
         const parsed = JSON.parse(dataString);
         setParsedData(parsed);
-        console.log("Parsed Data:", parsed);
       } catch (error) {
         console.error("Error parsing allData:", error);
         console.log("Raw allData:", allData);
@@ -96,32 +97,10 @@ const seatPosotion = () => {
       </View>
     );
   }
-  const promoCodes = [
-    { code: "SAD563", expiry: "12/25/25" },
-    { code: "SAD564", expiry: "12/25/25" },
-    { code: "SAD565", expiry: "12/25/25" },
-  ];
-
   const handleSeatPress = (seatId: string, available: boolean) => {
     if (available) {
       setSelectedSeat(selectedSeat === seatId ? null : seatId);
     }
-  };
-  const handelConfirmBokking = async () => {
-    const data = {
-      duration: "",
-      pc_no: "",
-      total: "",
-      promo_code: "",
-      starting_time: "",
-      booking_date: "",
-      coupon_id: "",
-      room_id: "",
-      provider_id: parsedData?.roomId,
-    };
-    try {
-      const res = await booking_new(data).unwrap();
-    } catch (error) {}
   };
   // Calculate total amount with promo discount
   const calculateTotalAmount = () => {
@@ -137,8 +116,40 @@ const seatPosotion = () => {
 
   const totalAmount = calculateTotalAmount();
   const originalAmount = parseFloat(metadata?.to_pay) || 0;
-  console.log("details", percen, "details");
-  console.log("details@", metadata?.to_pay, "details@");
+  console.log(selectedSeat);
+  // -----------booking------------
+  const handelConfirmBokking = async () => {
+    // Base data object
+    const baseData = {
+      duration: metadata?.duration,
+      pc_no: pc_No,
+      total: totalAmount.toFixed(2),
+      starting_time: metadata?.starting_time,
+      booking_date: metadata?.date,
+      room_id: selectedRoomID || parsedData?.roomId,
+      provider_id: parsedData?.roomId,
+    };
+
+    const dataWithPromo = selectedPromo
+      ? {
+          ...baseData,
+          promo_code: selectedPromo,
+          coupon_id: couponID,
+        }
+      : baseData;
+
+    console.log("Sending data to backend:", dataWithPromo);
+
+    try {
+      const res = await booking_new(dataWithPromo).unwrap();
+      if (res?.data) {
+        setSuccessModalVisible(true);
+      }
+      console.log(res, "booking Confirmed");
+    } catch (error) {
+      console.log("Booking error:", error);
+    }
+  };
 
   return (
     <View style={tw`flex-1`}>
@@ -248,9 +259,10 @@ const seatPosotion = () => {
             {backendSeats.map((seat: Seat, index) => (
               <TouchableOpacity
                 key={seat.index_id}
-                onPress={() =>
-                  handleSeatPress(`PC ${seat.pc_no}`, !seat.is_book)
-                }
+                onPress={() => {
+                  handleSeatPress(`PC ${seat.pc_no}`, !seat.is_book);
+                  setPc_No(seat.pc_no as any);
+                }}
                 style={tw`items-center mb-4 ${index >= 6 ? "w-1/5" : "w-1/6"}`}
                 disabled={seat.is_book}
               >
@@ -402,9 +414,10 @@ const seatPosotion = () => {
                       onPress={() => {
                         setSelectedPromo(promo?.coupon?.promo_code);
                         setPercen(promo?.coupon?.percentage);
+                        setCouponID(promo?.coupon?.id);
                       }}
                       style={tw`flex-row items-center justify-between py-3 ${
-                        index !== promoCodes?.length - 1
+                        index !== promoData?.data?.length - 1
                           ? "border-b border-gray-700"
                           : ""
                       }`}
