@@ -18,7 +18,7 @@ export const Card = ({ item }: any) => {
       onPress={() =>
         router.push({
           pathname: "/details/RoomDetails/[id]",
-          params: { id: id },
+          params: { id: id, type: "booking" },
         })
       }
     >

@@ -60,9 +60,7 @@ const Profile = () => {
           pathname: "/Toaster",
           params: { res: res?.message },
         });
-      } catch (err) {
-        console.log(err, "edit_profile_picture error");
-      }
+      } catch (err) {}
     }
   };
 
@@ -79,11 +77,8 @@ const Profile = () => {
         } as any);
       }
       const res = await edit_profile(formData).unwrap();
-
       // alert("Profile updated successfully!");
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {

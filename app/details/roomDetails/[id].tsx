@@ -44,7 +44,7 @@ interface CheckAvailabilityResponse {
 }
 
 const RoomDetails = () => {
-  const { id } = useLocalSearchParams();
+  const { id, type } = useLocalSearchParams();
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone] = useAdd_to_favorite_zoneMutation();
 
@@ -126,6 +126,8 @@ const RoomDetails = () => {
         pathname: "/details/SeatPosotion/[allData]",
         params: {
           allData: dataToPass,
+          type,
+          id,
         },
       });
     }
@@ -140,6 +142,8 @@ const RoomDetails = () => {
     }
     setDateModalVisible(false);
   };
+  console.log("ID:", id);
+  console.log("Type:", type);
 
   const handleTimeChange = (event: any, time?: Date) => {
     if (time) {

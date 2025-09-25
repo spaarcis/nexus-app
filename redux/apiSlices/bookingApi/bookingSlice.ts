@@ -1,6 +1,7 @@
 import { api } from "@/redux/api/baseApi";
 
 export const bookingSlice = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
     booking: builder.query<any, any>({
       query: ({ type, page }) => ({
@@ -47,6 +48,17 @@ export const bookingSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["booking"],
     }),
+    booking_reschedule: builder.mutation<any, any>({
+      query: ({ id, formData }) => ({
+        url: `/booking-reschedule/${id}`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      }),
+      invalidatesTags: ["booking"],
+    }),
   }),
 });
 
@@ -57,4 +69,5 @@ export const {
   useRatingsMutation,
   useBooking_newMutation,
   useUser_promo_codeQuery,
+  useBooking_rescheduleMutation,
 } = bookingSlice;

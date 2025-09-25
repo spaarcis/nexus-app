@@ -75,8 +75,6 @@ const BookingsDetails = () => {
       );
     });
   };
-  console.log("booking_details", booking_details, "booking_details");
-
   const handleSubmitReview = async () => {
     if (rating > 0) {
       const data = {
@@ -85,8 +83,6 @@ const BookingsDetails = () => {
         review: reviewText,
       };
       const res = await ratings(data).unwrap();
-      console.log(res);
-
       router.push({
         pathname: "/Toaster",
         params: { res: res.message },
@@ -94,12 +90,10 @@ const BookingsDetails = () => {
       setIsModalVisible(false);
       router.push("/Main/Homes/Home");
     } else {
-      // Optional: Show error message if no rating is selected
       alert("Please select a rating before submitting");
     }
   };
 
-  // Reset form when modal opens/closes
   useEffect(() => {
     if (!isModalVisible) {
       setRating(0);
@@ -110,8 +104,6 @@ const BookingsDetails = () => {
   const handleConfirm = async () => {
     try {
       const res = await booking_cancel(Number(id)).unwrap();
-      console.log("Booking cancel response:", res);
-
       router.push({
         pathname: "/Toaster",
         params: { res: res.message },
@@ -128,8 +120,6 @@ const BookingsDetails = () => {
 
   const handleCall = () => {
     const phoneNumber = booking_details?.data?.provider?.phone;
-    console.log(phoneNumber);
-
     Linking.openURL(`tel:${phoneNumber}`);
   };
 
@@ -287,8 +277,12 @@ const BookingsDetails = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.push("/details/RoomDetails/[id]")}
               style={tw`relative mb-8`}
+              onPress={() =>
+                router.push(
+                  `/details/RoomDetails/${booking_details?.data?.provider?.id}?type=Reschedule?id=${id}`
+                )
+              }
             >
               <CustomButton title={"Reschedule"} />
             </TouchableOpacity>

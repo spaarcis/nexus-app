@@ -13,9 +13,7 @@ interface BaseQueryArgs extends AxiosRequestConfig {
 // Type for the args that will be passed to axios (base query arguments)
 
 const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
-  args,
-  api,
-  extraOptions
+  args
 ) => {
   try {
     const token = await AsyncStorage.getItem("token");

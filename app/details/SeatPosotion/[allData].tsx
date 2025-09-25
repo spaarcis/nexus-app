@@ -1,9 +1,10 @@
 import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
-import { IconAvailable } from "@/Icons/Icons";
+import { IconAvailable, IconAvailableDenger } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import {
   useBooking_newMutation,
+  useBooking_rescheduleMutation,
   useUser_promo_codeQuery,
 } from "@/redux/apiSlices/bookingApi/bookingSlice";
 import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
@@ -38,7 +39,7 @@ interface Seat {
 }
 
 const seatPosotion = () => {
-  const { allData } = useLocalSearchParams();
+  const { allData, type, id } = useLocalSearchParams();
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [showPromoModal, setShowPromoModal] = useState(false);
@@ -60,7 +61,6 @@ const seatPosotion = () => {
         setParsedData(parsed);
       } catch (error) {
         console.error("Error parsing allData:", error);
-        console.log("Raw allData:", allData);
       }
     }
   }, [allData]);
@@ -69,6 +69,7 @@ const seatPosotion = () => {
     id: parsedData?.roomId,
   });
   const [booking_new] = useBooking_newMutation();
+  const [booking_reschedule] = useBooking_rescheduleMutation();
   const { data: Check_availability, isLoading: isCheckingAvailability } =
     useCheck_availabilityQuery({
       room_id: selectedRoomID || parsedData?.roomId,
@@ -82,7 +83,7 @@ const seatPosotion = () => {
 
   useEffect(() => {
     if (Check_availability?.data) {
-      setBackendSeats(Check_availability.data);
+      setBackendSeats(Check_availability?.data);
     }
   }, [Check_availability?.data]);
 
@@ -102,7 +103,7 @@ const seatPosotion = () => {
       setSelectedSeat(selectedSeat === seatId ? null : seatId);
     }
   };
-  // Calculate total amount with promo discount
+
   const calculateTotalAmount = () => {
     const originalAmount = parseFloat(metadata?.to_pay) || 0;
 
@@ -116,10 +117,9 @@ const seatPosotion = () => {
 
   const totalAmount = calculateTotalAmount();
   const originalAmount = parseFloat(metadata?.to_pay) || 0;
-  console.log(selectedSeat);
-  // -----------booking------------
+  // -----------booking------------//
   const handelConfirmBokking = async () => {
-    // Base data object
+    //----------- Base data object ------------//
     const baseData = {
       duration: metadata?.duration,
       pc_no: pc_No,
@@ -138,18 +138,59 @@ const seatPosotion = () => {
         }
       : baseData;
 
-    console.log("Sending data to backend:", dataWithPromo);
-
     try {
       const res = await booking_new(dataWithPromo).unwrap();
       if (res?.data) {
         setSuccessModalVisible(true);
       }
-      console.log(res, "booking Confirmed");
     } catch (error) {
-      console.log("Booking error:", error);
+      console.log(error);
     }
   };
+
+  const handelReschedule = async () => {
+    const baseData = {
+      _method: "PUT",
+      duration: metadata?.duration,
+      pc_no: pc_No,
+      total: totalAmount.toFixed(2),
+      starting_time: metadata?.starting_time,
+      booking_date: metadata?.date,
+      room_id: selectedRoomID || parsedData?.roomId,
+      provider_id: parsedData?.roomId,
+    };
+
+    const dataWithPromo = selectedPromo
+      ? {
+          ...baseData,
+          promo_code: selectedPromo,
+          coupon_id: couponID,
+        }
+      : baseData;
+    console.log(dataWithPromo, "dataWithPromo");
+
+    // 👉 Convert to FormData
+    const formData = new FormData();
+    Object.entries(dataWithPromo).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, String(value));
+      }
+    });
+
+    try {
+      const res = await booking_reschedule({
+        formData,
+        id: id,
+      }).unwrap();
+      if (res?.data) {
+        console.log("booking_reschedule", res.data);
+        setSuccessModalVisible(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  console.log(id, "id ididididididididididididid");
 
   return (
     <View style={tw`flex-1`}>
@@ -177,21 +218,33 @@ const seatPosotion = () => {
             <Text style={tw`text-primary font-poppins text-lg ml-1`}>Back</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={tw` flex-row items-center justify-center gap-2 px-4 py-2 rounded-full`}
-          >
-            <Text style={tw`text-primary font-poppinsMedium`}>
-              Available Now
-            </Text>
-            <SvgXml xml={IconAvailable} />
-          </TouchableOpacity>
+          {Check_availability?.metadata?.availability_status ==
+          "Available Now" ? (
+            <TouchableOpacity
+              style={tw` flex-row items-center justify-center gap-2 px-4 py-2 rounded-full`}
+            >
+              <Text style={tw`text-green-600 font-poppinsMedium`}>
+                {Check_availability?.metadata?.availability_status}
+              </Text>
+              <SvgXml xml={IconAvailable} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={tw` flex-row items-center justify-center gap-2 px-4 py-2 rounded-full`}
+            >
+              <Text style={tw`text-red-500 font-poppinsMedium`}>
+                {Check_availability?.metadata?.availability_status}
+              </Text>
+              <SvgXml xml={IconAvailableDenger} />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Gaming Lounge Banner */}
         <View style={tw`mb-6 rounded-2xl overflow-hidden h-48`}>
           <ImageBackground
             source={{
-              uri: "https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg",
+              uri: details?.address?.gaming_zone,
             }}
             style={tw`flex-1 justify-end`}
           >
@@ -473,11 +526,7 @@ const seatPosotion = () => {
         {/* footer confirm btn */}
         <TouchableOpacity
           style={tw` mb-8 mt-16`}
-          // onPress={() => {
-          //   setSuccessModalVisible(true);
-
-          // }}
-          onPress={handelConfirmBokking}
+          onPress={type == "booking" ? handelConfirmBokking : handelReschedule}
         >
           <CustomButton title={"Confirm Booking"} />
         </TouchableOpacity>
