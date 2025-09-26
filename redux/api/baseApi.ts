@@ -84,6 +84,7 @@ export const api = createApi({
     "TermsConPrivacyPol",
     "explore",
     "booking",
+    "notification",
   ],
 });
 
