@@ -70,7 +70,6 @@ const Login = () => {
                     pathname: "/Toaster",
                     params: { res: res.message },
                   });
-                  setTimeout(() => {}, 2000);
                 } else {
                   router.push({
                     pathname: "/Toaster",

@@ -76,6 +76,16 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    logout: builder.mutation<any, void>({
+      query: () => ({
+        url: `/logout`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -89,4 +99,5 @@ export const {
   useChange_passwordMutation,
   useSocialLoginMutation,
   useEdit_profile_pictureMutation,
+  useLogoutMutation,
 } = authSlice;

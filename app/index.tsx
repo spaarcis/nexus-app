@@ -10,8 +10,8 @@ import { SvgXml } from "react-native-svg";
 export default function Index() {
   useEffect(() => {
     const t = setTimeout(() => {
-      router.replace("/Main/Homes/Home");
-      // router.replace("/(auth)/Login");
+      // router.replace("/Main/Homes/Home");
+      router.replace("/(auth)/Login");
       // router.replace("/(allPages)/seatPosotion")
       // router.replace("/Main/home/home")
     }, 2000);

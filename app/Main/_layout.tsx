@@ -2,8 +2,10 @@ import { ImgGradint } from "@/assets/images/image";
 import DeleteAccountModal from "@/components/shear/DeleteAccountModal";
 import { IconLogo, IconLogoIcon, IconLogout } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useLogoutMutation } from "@/redux/apiSlices/authApiSlices";
 import { useUser_profileQuery } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   type DrawerContentComponentProps,
   DrawerContentScrollView,
@@ -21,11 +23,24 @@ interface CustomDrawerProps extends DrawerContentComponentProps {
 
 function CustomDrawerContent(props: CustomDrawerProps) {
   const { data: user, isLoading } = useUser_profileQuery({});
+  const [logout] = useLogoutMutation();
   if (isLoading) {
     <View>
       <Text>loading...</Text>
     </View>;
   }
+  const handleLogout = async () => {
+    const res = await logout().unwrap();
+    console.log(res, "logout status");
+    if (res.status) {
+      router.push("/(auth)/Login");
+      AsyncStorage.removeItem("token");
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res.message },
+      });
+    }
+  };
   return (
     <DrawerContentScrollView
       showsVerticalScrollIndicator={false}
@@ -141,7 +156,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
             style={tw`flex-row items-center py-4 gap-3`}
             onPress={() => {
               props.navigation.closeDrawer();
-              router.push("/(auth)/Login");
+              handleLogout();
             }}
           >
             <SvgXml xml={IconLogout} />
