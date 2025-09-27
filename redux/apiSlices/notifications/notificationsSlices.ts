@@ -3,8 +3,8 @@ import { api } from "@/redux/api/baseApi";
 export const notificationsSlices = api.injectEndpoints({
   endpoints: (builder) => ({
     notifications: builder.query<any, any>({
-      query: () => ({
-        url: `/notifications`,
+      query: (params = {}) => ({
+        url: `/notifications?page=${params.page || 1}`,
         method: "GET",
       }),
       providesTags: ["notification"],
@@ -16,12 +16,22 @@ export const notificationsSlices = api.injectEndpoints({
         headers: {
           "Content-Type": "application/json",
         },
-        // body: { id },
+      }),
+      invalidatesTags: ["notification"],
+    }),
+    mark_all_notification: builder.mutation<any, void>({
+      query: () => ({
+        url: `/mark-all-notification`,
+        method: "POST",
       }),
       invalidatesTags: ["notification"],
     }),
   }),
 });
 
-export const { useNotificationsQuery, useSingle_markMutation } =
-  notificationsSlices;
+export const {
+  useNotificationsQuery,
+  useLazyNotificationsQuery,
+  useSingle_markMutation,
+  useMark_all_notificationMutation,
+} = notificationsSlices;
