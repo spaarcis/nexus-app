@@ -55,7 +55,7 @@ export const authSlice = api.injectEndpoints({
         },
         body: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: ["profile", "user"],
     }),
   }),
   overrideExisting: true,

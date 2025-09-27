@@ -13,7 +13,6 @@ const _layout = () => {
       <Stack.Screen name="favoriteZone" />
       <Stack.Screen name="terms_conditions" />
       <Stack.Screen name="privacy_policy" />
-      <Stack.Screen name="Toaster" />
     </Stack>
   );
 };

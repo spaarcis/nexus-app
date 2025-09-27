@@ -74,7 +74,7 @@ export const authSlice = api.injectEndpoints({
         },
         body: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: ["profile", "user"],
     }),
     logout: builder.mutation<any, void>({
       query: () => ({
@@ -83,6 +83,17 @@ export const authSlice = api.injectEndpoints({
         headers: {
           "Content-Type": "multipart/form-data",
         },
+      }),
+      invalidatesTags: ["user"],
+    }),
+    delete_profile: builder.mutation<any, FormData>({
+      query: (data) => ({
+        url: `/delete-profile`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
       }),
       invalidatesTags: ["user"],
     }),
@@ -100,4 +111,5 @@ export const {
   useSocialLoginMutation,
   useEdit_profile_pictureMutation,
   useLogoutMutation,
+  useDelete_profileMutation,
 } = authSlice;

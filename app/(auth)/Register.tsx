@@ -58,8 +58,6 @@ const Register = () => {
           top: 0,
           left: 0,
           backgroundColor: "#000000",
-
-          // backgroundColor: colors.primary
         }}
       />
       <ScrollView contentContainerStyle={tw` px-5`}>

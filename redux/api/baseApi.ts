@@ -85,6 +85,7 @@ export const api = createApi({
     "explore",
     "booking",
     "notification",
+    "profile",
   ],
 });
 

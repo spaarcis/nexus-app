@@ -1,15 +1,9 @@
 import { IconButtonBG } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+import { useDelete_profileMutation } from "@/redux/apiSlices/authApiSlices";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import {
-  Alert,
-  Modal,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 interface DeleteAccountModalProps {
@@ -22,24 +16,27 @@ interface DeleteAccountModalProps {
 const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({
   visible,
   onClose,
-  onConfirmDelete,
-  onForgotPassword,
 }) => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [delete_profile] = useDelete_profileMutation();
 
   const handleDelete = async () => {
-    if (!password.trim()) {
-      Alert.alert("Error", "Please enter your password");
-      return;
-    }
-
-    setIsLoading(true);
     try {
-      await onConfirmDelete(password);
-    } catch (error) {
-    } finally {
-      setIsLoading(false);
+      const formData = new FormData();
+      formData.append("password", password);
+      const res = await delete_profile(formData as any).unwrap();
+      onClose();
+      router.push("/(auth)/Login");
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res.message },
+      });
+    } catch (error: any) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: error.message },
+      });
     }
   };
 

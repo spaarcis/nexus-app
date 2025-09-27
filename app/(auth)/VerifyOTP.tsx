@@ -39,7 +39,7 @@ const VerifyOTP = () => {
 
         setTimeout(() => {
           if (flow === "register") {
-            router.replace("/Main/Homes/Home");
+            router.replace("/(auth)/Login");
           } else if (flow === "forget") {
             router.replace(`/(auth)/Createnewpassword?email=${email}`);
           }
