@@ -10,10 +10,14 @@ import {
   IconRegisterText,
 } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
-import { useLoginUserMutation } from "@/redux/apiSlices/authApiSlices";
+import {
+  useLoginUserMutation,
+  useSocialLoginMutation,
+} from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router } from "expo-router";
 import { Formik } from "formik";
 import React from "react";
@@ -31,10 +35,76 @@ import { AlertNotificationRoot } from "react-native-alert-notification";
 import { SvgXml } from "react-native-svg";
 import { useTailwind } from "tailwind-rn";
 import * as Yup from "yup";
+
 const Login = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [isChecked, setChecked] = React.useState(false);
   const tailwind = useTailwind();
+  const [socialLogin] = useSocialLoginMutation();
+  // sign in google
+  React.useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        "422276113024-mcqajrm3sdrm9oj1e469hekvo8reh91b.apps.googleusercontent.com",
+      offlineAccess: true,
+    });
+  }, []);
+
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const response = await GoogleSignin.signIn();
+      const user = response?.data?.user;
+      console.log(user, "useruseruseruseruseruser");
+
+      // Convert Google photo URL into file object
+      let photoFile: any = null;
+      if (user?.photo) {
+        const filename = `profile_${Date.now()}.jpg`;
+        const photoResp = await fetch(user.photo);
+        const blob = await photoResp.blob();
+
+        photoFile = {
+          uri: user.photo,
+          name: filename,
+          type: blob.type || "image/jpeg",
+        };
+      }
+
+      // Create FormData
+      const formData = new FormData();
+      formData.append("name", user?.name || "");
+      formData.append("email", user?.email || "");
+      formData.append("google_id", user?.id || "");
+      if (photoFile) {
+        formData.append("photo", photoFile as any);
+      }
+
+      // Send to backend
+      const res = await socialLogin(formData).unwrap();
+      console.log("res resresres", res);
+
+      if (res.status) {
+        AsyncStorage.setItem("token", res?.data?.access_token);
+        // Toast.show({
+        //   type: ALERT_TYPE.SUCCESS,
+        //   title: "Success",
+        //   textBody: res?.message,
+        //   autoClose: 2000,
+        // });
+        setTimeout(() => {
+          router?.push(`/(auth)/Login`);
+        }, 1000);
+      } else {
+        // Toast.show({
+        //   type: ALERT_TYPE.DANGER,
+        //   title: "Waring",
+        //   textBody: res?.message?.email?.[0] || "Something went wrong!",
+        //   autoClose: 2000,
+        // });
+      }
+    } catch (error) {}
+  };
 
   const [loginUser] = useLoginUserMutation();
 
@@ -211,7 +281,7 @@ const Login = () => {
                       </Text>
 
                       <View style={tw`flex-row gap-3`}>
-                        <TouchableOpacity style={tw` `}>
+                        <TouchableOpacity onPress={signIn} style={tw` `}>
                           <SvgXml xml={IconGoogleButton} />
                         </TouchableOpacity>
                         <TouchableOpacity style={tw` `}>
