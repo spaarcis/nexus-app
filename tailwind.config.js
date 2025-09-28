@@ -35,6 +35,7 @@ module.exports = {
         secondary: "#888888",
         secondaryRed: "#EB4335",
         secondaryGreen: "#20BF55",
+        base: "#000000",
       },
     },
   },

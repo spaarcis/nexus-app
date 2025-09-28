@@ -1,5 +1,6 @@
 import { ImgGradint } from "@/assets/images/image";
-import { IcoBack, IconButton, IconSendText } from "@/Icons/Icons";
+import CustomButton from "@/components/shear/CustomButton";
+import { IcoBack, IconSendText } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { useVerifyOtpMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -122,7 +123,7 @@ const VerifyOTP = () => {
                         // onBlur={handleBlur("otp")}
                         theme={{
                           pinCodeContainerStyle: {
-                            width: 55,
+                            width: 50,
                             height: 70,
                             margin: 4,
                             backgroundColor: "#151416",
@@ -138,16 +139,12 @@ const VerifyOTP = () => {
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity style={tw`flex-row justify-end`}>
+                <TouchableOpacity style={tw`flex-row justify-end mb-3`}>
                   <SvgXml xml={IconSendText} />
                 </TouchableOpacity>
-                <TouchableOpacity style={tw` relative mt-16`}>
-                  <SvgXml xml={IconButton} />
-                  <Text
-                    style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
-                  >
-                    Verify
-                  </Text>
+
+                <TouchableOpacity style={tw` mb-4`}>
+                  <CustomButton title={" Verify"} />
                 </TouchableOpacity>
               </View>
             </View>

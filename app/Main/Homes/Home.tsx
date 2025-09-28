@@ -179,18 +179,18 @@ const Home = () => {
                   style={[tw`h-20 w-20 rounded-2xl`, {}]}
                 ></Image>
                 <View style={tw`flex-1 items-start  justify-center`}>
-                  <Text style={tw`text-white font-bold text-lg`}>
+                  <Text style={tw`text-white  font-poppinsBold text-lg`}>
                     {nextStation?.data?.room?.name}
                   </Text>
 
                   {/* Date and Time */}
                   <View style={tw`flex-row items-center mt-1 gap-1`}>
                     <SvgXml xml={IconCleander} />
-                    <Text style={tw`text-white ml-2`}>
+                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
                       {nextStation?.data?.booking_date}
                     </Text>
                     <SvgXml xml={IconTime} />
-                    <Text style={tw`text-white ml-1`}>
+                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
                       {nextStation?.data?.starting_time}
                     </Text>
                   </View>
@@ -198,12 +198,15 @@ const Home = () => {
                   {/* Duration and Location */}
                   <View style={tw`flex-row items-center mt-1 gap-1`}>
                     <SvgXml xml={Iconhoure} />
-                    <Text style={tw`text-white ml-2`}>
+                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
                       {nextStation?.data?.duration} Hour
                     </Text>
                     <SvgXml xml={IconLoction} />
-                    <Text style={tw`text-white ml-1`}>
-                      {nextStation?.data?.provider?.address}
+                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                      {nextStation?.data?.provider?.address
+                        ?.split(" ")
+                        ?.slice(0, 2)
+                        ?.join(" ") + " ..."}
                     </Text>
                   </View>
                 </View>

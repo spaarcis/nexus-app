@@ -90,7 +90,7 @@ const seatPosotion = () => {
   if (isCheckingAvailability || isLoading || promoLodding) {
     return (
       // Added return here
-      <View style={tw`flex-1 justify-center items-center `}>
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
         <ActivityIndicator size="large" color="#0c8ce9" />
         <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
           Loading...

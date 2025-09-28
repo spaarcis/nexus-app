@@ -2,7 +2,7 @@ import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
-import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
@@ -13,7 +13,10 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { BlurView } from "expo-blur";
 import { ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
+import moment from "moment";
+
 import {
   ActivityIndicator,
   Image,
@@ -100,74 +103,12 @@ const RoomDetails = () => {
   };
 
   // Call the API with all required parameters - moved to top level
-  const { data: Check_availability, isLoading: isCheckingAvailability } =
-    useCheck_availabilityQuery(
-      {
-        room_id: selectedRoomID,
-        date: formatDateForAPI(selectedDate),
-        starting_time: formatTimeForAPI(selectedTime),
-        duration: getDurationNumber(selectedDuration),
-      },
-      {
-        skip: !shouldFetch, // Skip the query until shouldFetch is true
-      }
-    );
+  const [
+    triggerCheckAvailability,
+    { data: Check_availability, isFetching: isCheckingAvailability },
+  ] = useLazyCheck_availabilityQuery();
 
-  // Handle the API response when it arrives
-  useEffect(() => {
-    if (Check_availability && shouldFetch) {
-      setShouldFetch(false); // Reset the flag
-      const dataToPass = JSON.stringify({
-        availabilityData: Check_availability,
-        roomId: id,
-      });
-
-      router.push({
-        pathname: "/details/SeatPosotion/[allData]",
-        params: {
-          allData: dataToPass,
-          type,
-          id,
-        },
-      });
-    }
-  }, [Check_availability, shouldFetch]);
-
-  const handleDateChange = (event: any, date?: Date) => {
-    if (date) {
-      const formatted = `${date.getDate()}/${
-        date.getMonth() + 1
-      }/${date.getFullYear()}`;
-      setSelectedDate(formatted);
-    }
-    setDateModalVisible(false);
-  };
-  console.log("ID:", id);
-  console.log("Type:", type);
-
-  const handleTimeChange = (event: any, time?: Date) => {
-    if (time) {
-      const hours = time.getHours().toString().padStart(2, "0");
-      const minutes = time.getMinutes().toString().padStart(2, "0");
-      const selected = `${hours}:${minutes}`;
-
-      // Opening time validation
-      const open = details?.data?.opening_time;
-      if (open && selected < open) {
-        router.push({
-          pathname: "/Toaster",
-          params: { res: `Please select a time after ${open}` },
-        });
-        return;
-      }
-
-      setSelectedTime(selected);
-    }
-    setTimeModalVisible(false);
-  };
-
-  const logAllSelections = () => {
-    // Validate all required fields are selected
+  const logAllSelectionsAsync = async () => {
     if (!selectedRoomID) {
       router.push({
         pathname: "/Toaster",
@@ -191,14 +132,80 @@ const RoomDetails = () => {
       });
       return;
     }
+    if (selectedTime === "Select time") {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: "Please select a time" },
+      });
+      return;
+    }
 
-    // Set shouldFetch to true to trigger the API call
-    setShouldFetch(true);
+    // Lazy query trigger করা হচ্ছে
+    const res = await triggerCheckAvailability({
+      room_id: selectedRoomID,
+      date: formatDateForAPI(selectedDate),
+      starting_time: selectedTime,
+      duration: getDurationNumber(selectedDuration),
+    });
+
+    if (res.data) {
+      const dataToPass = JSON.stringify({
+        availabilityData: res.data,
+        roomId: id,
+      });
+      router.push({
+        pathname: "/details/SeatPosotion/[allData]",
+        params: {
+          allData: dataToPass,
+          type,
+          id,
+        },
+      });
+    }
+  };
+
+  const handleDateChange = (event: any, date?: Date) => {
+    if (date) {
+      const formatted = `${date.getDate()}/${
+        date.getMonth() + 1
+      }/${date.getFullYear()}`;
+      setSelectedDate(formatted);
+    }
+    setDateModalVisible(false);
+  };
+  console.log("ID:", id);
+  console.log("Type:", type);
+
+  const handleTimeChange = (event: any, time?: Date) => {
+    if (time) {
+      const formatTime = moment(time).format("hh:mm A");
+
+      setSelectedTime(formatTime);
+
+      const open = details?.data?.opening_time;
+      const close = details?.data?.closing_time;
+
+      const selected = moment(formatTime, "hh:mm A");
+      const opening = moment(open, "hh:mm A");
+      const closing = moment(close, "hh:mm A");
+
+      if (selected.isBefore(opening) || selected.isAfter(closing)) {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: `Please select a time between ${open} and ${close}` },
+        });
+        return;
+      }
+
+      console.log("✅ Valid time:", formatTime);
+    }
+
+    setTimeModalVisible(false);
   };
 
   if (isLoading) {
     return (
-      <View style={tw`flex-1 justify-center items-center `}>
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
         <ActivityIndicator size="large" color="#0c8ce9" />
         <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
           Loading...
@@ -209,7 +216,7 @@ const RoomDetails = () => {
 
   if (!details?.data) {
     return (
-      <View style={tw`flex-1 justify-center items-center `}>
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
         <ActivityIndicator size="large" color="#0c8ce9" />
       </View>
     );
@@ -431,7 +438,7 @@ const RoomDetails = () => {
 
         <TouchableOpacity
           style={tw`relative mb-4`}
-          onPress={logAllSelections}
+          onPress={logAllSelectionsAsync}
           disabled={isCheckingAvailability}
         >
           <CustomButton
@@ -458,7 +465,7 @@ const RoomDetails = () => {
         <DateTimePicker
           value={new Date()}
           mode="time"
-          is24Hour={true}
+          // is24Hour={true}
           display="default"
           onChange={handleTimeChange}
         />

@@ -1,14 +1,6 @@
 import { ImgGradint } from "@/assets/images/image";
-import {
-  IconButton,
-  IconEmail,
-  IconfacebookButton,
-  IconGoogleButton,
-  IconInputBox,
-  IconPoword,
-  IconProfile,
-  IconRegisterText,
-} from "@/Icons/Icons";
+import CustomButton from "@/components/shear/CustomButton";
+import { IcoBack, IconEmail, IconPoword, IconProfile } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { useRegisterUserMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -61,6 +53,9 @@ const Register = () => {
         }}
       />
       <ScrollView contentContainerStyle={tw` px-5`}>
+        <TouchableOpacity style={tw`pt-2`} onPress={() => router.back()}>
+          <SvgXml xml={IcoBack} />
+        </TouchableOpacity>
         <AlertNotificationRoot>
           <Formik
             initialValues={{
@@ -126,14 +121,14 @@ const Register = () => {
                 >
                   <View></View>
                   <View>
-                    <View style={tw` pb-14 `}>
+                    <View style={tw` pb-10 `}>
                       <Text
-                        style={tw`font-poppinsBlack mx-auto text-3xl pt-8 text-primary`}
+                        style={tw`font-poppinsBlack mx-auto text-3xl  text-primary`}
                       >
                         Register now
                       </Text>
                       <Text
-                        style={tw`mx-auto text-secondary font-poppins text-sm py-1`}
+                        style={tw`mx-auto text-secondary text-center font-poppins text-sm py-1`}
                       >
                         Give correct information to create NEXUS account
                       </Text>
@@ -146,10 +141,11 @@ const Register = () => {
                         >
                           Full Name
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` bg-white/10 rounded-full overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw` w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconProfile} />
                             <TextInput
@@ -171,10 +167,11 @@ const Register = () => {
                         >
                           Email
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` bg-white/10 rounded-full overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw` w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconEmail} />
                             <TextInput
@@ -198,10 +195,11 @@ const Register = () => {
                         >
                           Password
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` bg-white/10 rounded-full  overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw` w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconPoword} />
                             <TextInput
@@ -235,10 +233,11 @@ const Register = () => {
                         >
                           Retype Password
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` bg-white/10 rounded-full mb-7 overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw` w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconPoword} />
                             <TextInput
@@ -268,42 +267,15 @@ const Register = () => {
                           {errors.retype_password}
                         </Text>
                       )}
-
                       <TouchableOpacity
-                        style={tw` relative mt-10`}
+                        style={tw`relative mb-4`}
                         onPress={() => {
                           handleSubmit();
                         }}
                       >
-                        <SvgXml xml={IconButton} />
-                        <Text
-                          style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
-                        >
-                          Register
-                        </Text>
+                        <CustomButton title={" Register"} />
                       </TouchableOpacity>
-
-                      <Text style={tw`text-sm text-secondary  mx-auto py-8`}>
-                        Or continue with
-                      </Text>
-
-                      <View style={tw`flex-row gap-3`}>
-                        <TouchableOpacity style={tw` `}>
-                          <SvgXml xml={IconGoogleButton} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={tw` `}>
-                          <SvgXml xml={IconfacebookButton} />
-                        </TouchableOpacity>
-                      </View>
                     </View>
-                  </View>
-                  <View style={tw`flex-row justify-center gap-3 mb-8`}>
-                    <TouchableOpacity
-                      onPress={() => router.push("/(auth)/Login")}
-                      style={tw`flex-row items-center gap-1`}
-                    >
-                      <SvgXml xml={IconRegisterText} />
-                    </TouchableOpacity>
                   </View>
                 </View>
               );

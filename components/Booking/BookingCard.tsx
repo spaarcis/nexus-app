@@ -31,26 +31,35 @@ const BookingCard = ({ data }: any) => {
           style={[tw`h-20 w-20 rounded-2xl`, {}]}
         />
         <View style={tw`flex-1 items-start  justify-center`}>
-          <Text style={tw`text-white font-bold text-base`}>
+          <Text style={tw`text-white font-bold `}>
             {data?.provider?.gaming_zone_name}
           </Text>
 
           {/* Date and Time */}
           <View style={tw`flex-row items-center mt-2 gap-1`}>
             <SvgXml xml={IconCleander} />
-            <Text style={tw`text-white font-poppins ml-1`}>
+            <Text style={tw`text-white text-xs font-poppins ml-1`}>
               {data?.booking_date}
             </Text>
             <SvgXml xml={IconTime} />
-            <Text style={tw`text-white ml-1`}> {data?.starting_time}</Text>
+            <Text style={tw`text-white text-xs font-poppins ml-1`}>
+              {" "}
+              {data?.starting_time}
+            </Text>
           </View>
 
           {/* Duration and Location */}
           <View style={tw`flex-row items-center mt-2 gap-1`}>
             <SvgXml xml={Iconhoure} />
-            <Text style={tw`text-white ml-2`}> {data?.duration} - Hour</Text>
+            <Text style={tw`text-white ml-2 text-xs font-poppins`}>
+              {" "}
+              {data?.duration} - Hour
+            </Text>
             <SvgXml xml={IconLoction} />
-            <Text style={tw`text-white ml-1`}> {data?.provider?.address}</Text>
+            <Text style={tw`text-white text-xs font-poppins ml-1`}>
+              {data?.provider?.address?.split(" ")?.slice(0, 2)?.join(" ") +
+                " ..."}
+            </Text>
           </View>
         </View>
       </BlurView>

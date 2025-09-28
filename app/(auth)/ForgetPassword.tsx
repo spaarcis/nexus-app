@@ -1,5 +1,6 @@
 import { ImgGradint } from "@/assets/images/image";
-import { IcoBack, IconButton, IconEmail, IconInputBox } from "@/Icons/Icons";
+import CustomButton from "@/components/shear/CustomButton";
+import { IcoBack, IconEmail } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { useForgotPasswordMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -112,10 +113,9 @@ const ForgetPassword = () => {
                         >
                           Email
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View style={tw` rounded-full  `}>
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw`bg-white/10 w-full rounded-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconEmail} />
                             <TextInput
@@ -137,18 +137,14 @@ const ForgetPassword = () => {
                           </Text>
                         )}
                       </View>
+
                       <TouchableOpacity
-                        style={tw` relative mt-16`}
+                        style={tw`relative mb-4 mt-9`}
                         onPress={() => {
                           handleSubmit();
                         }}
                       >
-                        <SvgXml xml={IconButton} />
-                        <Text
-                          style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
-                        >
-                          Get Code
-                        </Text>
+                        <CustomButton title={"Get Code"} />
                       </TouchableOpacity>
                     </View>
                   </View>

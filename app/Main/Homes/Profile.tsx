@@ -1,5 +1,6 @@
 import { ImgGradint } from "@/assets/images/image";
-import { IconButton, IconEdit, IconUpload } from "@/Icons/Icons";
+import CustomButton from "@/components/shear/CustomButton";
+import { IconEdit, IconUpload } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { useEdit_profile_pictureMutation } from "@/redux/apiSlices/authApiSlices";
 import {
@@ -171,16 +172,8 @@ const Profile = () => {
             </View>
           </View>
         </View>
-        <TouchableOpacity
-          style={tw` relative mx-auto mt-28`}
-          onPress={handleEditProfile}
-        >
-          <SvgXml xml={IconButton} />
-          <Text
-            style={tw`text-primary absolute flex w-full text-center text-lg py-[14px] font-poppinsBold`}
-          >
-            Edit profile
-          </Text>
+        <TouchableOpacity style={tw`relative mb-4`} onPress={handleEditProfile}>
+          <CustomButton title={"Edit profile"} />
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

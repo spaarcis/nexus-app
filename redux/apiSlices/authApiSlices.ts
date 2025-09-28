@@ -22,6 +22,11 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    tokenChecker: builder.query<any, any>({
+      query: () => ({
+        url: `/auth/check-token`,
+      }),
+    }),
     loginUser: builder.mutation<any, any>({
       query: (data) => ({
         url: `/auth/login`,
@@ -74,7 +79,7 @@ export const authSlice = api.injectEndpoints({
         },
         body: data,
       }),
-      invalidatesTags: ["profile", "user"],
+      invalidatesTags: ["profile", "user", "home"],
     }),
     logout: builder.mutation<any, void>({
       query: () => ({
@@ -112,4 +117,6 @@ export const {
   useEdit_profile_pictureMutation,
   useLogoutMutation,
   useDelete_profileMutation,
+  useTokenCheckerQuery,
+  useLazyTokenCheckerQuery,
 } = authSlice;

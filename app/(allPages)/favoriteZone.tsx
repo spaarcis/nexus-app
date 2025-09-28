@@ -116,14 +116,18 @@ const favoriteZone = () => {
                   <Text style={tw`mt-2 text-gray-500`}>Loading more ...</Text>
                 </>
               ) : !hasMore && favorite.length > 0 ? (
-                <Text style={tw`text-gray-500`}>No more Explore to load</Text>
+                <Text style={tw`text-gray-500`}>
+                  No more Favorite Zone to load
+                </Text>
               ) : null}
             </View>
           }
           ListEmptyComponent={
             !isLoading ? (
               <View style={tw`py-10 flex justify-center items-center`}>
-                <Text style={tw`text-gray-500`}>No Explore data found</Text>
+                <Text style={tw`text-gray-500`}>
+                  No Favorite Zone data found
+                </Text>
               </View>
             ) : null
           }

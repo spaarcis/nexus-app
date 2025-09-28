@@ -1,5 +1,6 @@
 import { ImgGradint } from "@/assets/images/image";
-import { IcoBack, IconButton, IconInputBox, IconPoword } from "@/Icons/Icons";
+import CustomButton from "@/components/shear/CustomButton";
+import { IcoBack, IconPoword } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
 import { useResetPasswordMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -100,11 +101,10 @@ const Createnewpassword = () => {
                     },
                   ]}
                 >
-                  <View></View>
                   <View>
-                    <View style={tw` pb-14 `}>
+                    <View style={tw`mt-28 `}>
                       <Text
-                        style={tw`font-poppinsBlack mx-auto text-3xl text-primary pb-2`}
+                        style={tw`font-poppinsBlack mx-auto text-2xl text-primary pb-2`}
                       >
                         Create New Password
                       </Text>
@@ -122,10 +122,11 @@ const Createnewpassword = () => {
                         >
                           New Password
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` rounded-full relative overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw`bg-white/10 w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconPoword} />
                             <TextInput
@@ -159,10 +160,11 @@ const Createnewpassword = () => {
                         >
                           Retype Password
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` rounded-full relative overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw`bg-white/10 w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconPoword} />
                             <TextInput
@@ -192,20 +194,14 @@ const Createnewpassword = () => {
                           {errors.retype_password}
                         </Text>
                       )}
-
                       <TouchableOpacity
-                        style={tw` relative mt-14`}
+                        style={tw`mt-7 mb-4`}
                         onPress={() => {
                           handleSubmit();
                           router.push("/(auth)/Login");
                         }}
                       >
-                        <SvgXml xml={IconButton} />
-                        <Text
-                          style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
-                        >
-                          Update
-                        </Text>
+                        <CustomButton title={"Update"} />
                       </TouchableOpacity>
                     </View>
                   </View>

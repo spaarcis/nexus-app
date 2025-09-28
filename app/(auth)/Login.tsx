@@ -1,11 +1,9 @@
 import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
 import {
-  IconButton,
   IconEmail,
-  IconfacebookButton,
   IconForgetPass,
-  IconGoogleButton,
-  IconInputBox,
+  IconGoogleIcon,
   IconPoword,
   IconRegisterText,
 } from "@/Icons/Icons";
@@ -45,7 +43,7 @@ const Login = () => {
   React.useEffect(() => {
     GoogleSignin.configure({
       webClientId:
-        "422276113024-mcqajrm3sdrm9oj1e469hekvo8reh91b.apps.googleusercontent.com",
+        "408739532193-ccqlar2l4bcmpdf03ct45aplgs7lljoc.apps.googleusercontent.com",
       offlineAccess: true,
     });
   }, []);
@@ -54,6 +52,8 @@ const Login = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
+      console.log(response);
+
       const user = response?.data?.user;
       console.log(user, "useruseruseruseruseruser");
 
@@ -86,24 +86,14 @@ const Login = () => {
 
       if (res.status) {
         AsyncStorage.setItem("token", res?.data?.access_token);
-        // Toast.show({
-        //   type: ALERT_TYPE.SUCCESS,
-        //   title: "Success",
-        //   textBody: res?.message,
-        //   autoClose: 2000,
-        // });
         setTimeout(() => {
-          router?.push(`/(auth)/Login`);
+          router?.push(`/Main/Homes/Home`);
         }, 1000);
       } else {
-        // Toast.show({
-        //   type: ALERT_TYPE.DANGER,
-        //   title: "Waring",
-        //   textBody: res?.message?.email?.[0] || "Something went wrong!",
-        //   autoClose: 2000,
-        // });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const [loginUser] = useLoginUserMutation();
@@ -136,6 +126,8 @@ const Login = () => {
                 if (res.status) {
                   router.push("/Main/Homes/Home");
                   AsyncStorage.setItem("token", res?.data?.access_token);
+                  console.log("token", res?.data?.access_token, "token");
+
                   router.push({
                     pathname: "/Toaster",
                     params: { res: res.message },
@@ -193,10 +185,11 @@ const Login = () => {
                         >
                           Email
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` rounded-full relative overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw`bg-white/10  w-[100%] flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconEmail} />
                             <TextInput
@@ -222,10 +215,11 @@ const Login = () => {
                         >
                           Password
                         </Text>
-                        <View style={tw` rounded-2xl relative overflow-hidden`}>
-                          <SvgXml xml={IconInputBox} />
+                        <View
+                          style={tw` rounded-full relative overflow-hidden`}
+                        >
                           <View
-                            style={tw`absolute w-full flex-row items-center justify-start px-4`}
+                            style={tw`bg-white/10  w-full flex-row items-center justify-start px-4`}
                           >
                             <SvgXml xml={IconPoword} />
                             <TextInput
@@ -262,32 +256,25 @@ const Login = () => {
                           <SvgXml xml={IconForgetPass} />
                         </TouchableOpacity>
                       </View>
+
                       <TouchableOpacity
-                        style={tw` relative`}
+                        style={tw`relative mb-4`}
                         onPress={() => {
                           handleSubmit();
                         }}
                       >
-                        <SvgXml xml={IconButton} />
-                        <Text
-                          style={tw`text-primary absolute flex w-full   text-center  text-lg py-[14px] font-poppinsBold`}
-                        >
-                          Sign in
-                        </Text>
+                        <CustomButton title={" Sign in"} />
                       </TouchableOpacity>
 
                       <Text style={tw`text-sm text-secondary  mx-auto py-8`}>
                         Or continue with
                       </Text>
-
-                      <View style={tw`flex-row gap-3`}>
-                        <TouchableOpacity onPress={signIn} style={tw` `}>
-                          <SvgXml xml={IconGoogleButton} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={tw` `}>
-                          <SvgXml xml={IconfacebookButton} />
-                        </TouchableOpacity>
-                      </View>
+                      <TouchableOpacity
+                        onPress={signIn}
+                        style={tw`border rounded-full  py-4 flex-row items-center justify-center border-[#5E5E5E] `}
+                      >
+                        <SvgXml xml={IconGoogleIcon} />
+                      </TouchableOpacity>
                     </View>
                   </View>
                   <View style={tw`flex-row justify-center gap-3 mb-8`}>
