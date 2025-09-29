@@ -1,22 +1,11 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
 import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { BlurView } from "expo-blur";
-import { ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-
-import moment from "moment";
-
 import {
   ActivityIndicator,
   Image,
@@ -25,6 +14,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { BlurView } from "expo-blur";
+import { ImageBackground } from "expo-image";
+import moment from "moment";
+import { useState } from "react";
 import { SvgXml } from "react-native-svg";
 
 // Define TypeScript interfaces
@@ -154,7 +153,7 @@ const RoomDetails = () => {
         roomId: id,
       });
       router.push({
-        pathname: "/details/SeatPosotion/[allData]",
+        pathname: "/details/SeatPosition/[allData]",
         params: {
           allData: dataToPass,
           type,
@@ -250,7 +249,7 @@ const RoomDetails = () => {
 
       <ScrollView style={tw`flex-1 px-4`}>
         {/* Header */}
-        <View style={tw`flex-row justify-between items-center mt-12 mb-6`}>
+        <View style={tw`flex-row justify-between items-center mt-8 mb-6`}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={tw`flex-row items-center`}

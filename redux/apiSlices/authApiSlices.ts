@@ -3,6 +3,12 @@ import { api } from "../api/baseApi";
 // authApiSlices.ts
 export const authSlice = api.injectEndpoints({
   endpoints: (builder) => ({
+    user_profile: builder.query({
+      query: () => ({
+        url: `/profile`,
+      }),
+      providesTags: ["user"],
+    }),
     registerUser: builder.mutation<any, any>({
       query: (data) => ({
         url: `/auth/register`,
@@ -79,7 +85,7 @@ export const authSlice = api.injectEndpoints({
         },
         body: data,
       }),
-      invalidatesTags: ["profile", "user", "home"],
+      invalidatesTags: ["profile", "user"],
     }),
     logout: builder.mutation<any, void>({
       query: () => ({
@@ -102,11 +108,22 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    edit_profile: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/edit-profile`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
   }),
-  overrideExisting: true,
 });
 
 export const {
+  useUser_profileQuery,
   useRegisterUserMutation,
   useVerifyOtpMutation,
   useLoginUserMutation,
@@ -119,4 +136,5 @@ export const {
   useDelete_profileMutation,
   useTokenCheckerQuery,
   useLazyTokenCheckerQuery,
+  useEdit_profileMutation,
 } = authSlice;

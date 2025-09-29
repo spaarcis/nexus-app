@@ -2,8 +2,10 @@ import { ImgGradint } from "@/assets/images/image";
 import DeleteAccountModal from "@/components/shear/DeleteAccountModal";
 import { IconLogo, IconLogoIcon, IconLogout } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
-import { useLogoutMutation } from "@/redux/apiSlices/authApiSlices";
-import { useUser_profileQuery } from "@/redux/apiSlices/home/homeSlice";
+import {
+  useLogoutMutation,
+  useUser_profileQuery,
+} from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -14,7 +16,14 @@ import { ImageBackground } from "expo-image";
 import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SvgXml } from "react-native-svg";
 
 interface CustomDrawerProps extends DrawerContentComponentProps {
@@ -24,23 +33,26 @@ interface CustomDrawerProps extends DrawerContentComponentProps {
 function CustomDrawerContent(props: CustomDrawerProps) {
   const { data: user, isLoading } = useUser_profileQuery({});
   const [logout] = useLogoutMutation();
-  if (isLoading) {
-    <View>
-      <Text>loading...</Text>
-    </View>;
-  }
+
   const handleLogout = async () => {
-    const res = await logout().unwrap();
-    console.log(res, "logout status");
-    if (res.status) {
-      router.push("/(auth)/Login");
-      AsyncStorage.removeItem("token");
-      router.push({
-        pathname: "/Toaster",
-        params: { res: res.message },
-      });
-    }
+    await logout().unwrap();
+    // console.log(res, "logout status");
+
+    AsyncStorage.removeItem("token");
+    router.replace("/(auth)/Login");
+    // router.dismissAll();
   };
+
+  if (isLoading) {
+    return (
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
   return (
     <DrawerContentScrollView
       showsVerticalScrollIndicator={false}

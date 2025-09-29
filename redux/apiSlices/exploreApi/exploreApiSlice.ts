@@ -30,7 +30,6 @@ export const exploreApiSlice = api.injectEndpoints({
       providesTags: ["booking"],
     }),
   }),
-  overrideExisting: true,
 });
 export const {
   useLazyExplore_gaming_zoneQuery,

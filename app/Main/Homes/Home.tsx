@@ -1,33 +1,40 @@
-import { ImgGradint } from "@/assets/images/image";
-import { CarouselCard } from "@/components/shear/Carousel";
-import CustomButton from "@/components/shear/CustomButton";
-import { BokCardSkeleton } from "@/components/skeleton/BokCardSkeleton";
-import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
 import {
   IconAvaterBorder,
   IconCleander,
   IconDower,
   IconHand,
-  Iconhoure,
   IconLoction,
   IconNotification,
   IconSeaall,
-  IconsExplore,
   IconTime,
+  Iconhoure,
+  IconsExplore,
 } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useNewly_addedQuery,
   useNext_stationQuery,
   usePopular_zoneQuery,
-  useUser_profileQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
+import { router, useNavigation } from "expo-router";
+import {
+  ActivityIndicator,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import { CarouselCard } from "@/components/shear/Carousel";
+import CustomButton from "@/components/shear/CustomButton";
+import { BokCardSkeleton } from "@/components/skeleton/BokCardSkeleton";
+import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
+import tw from "@/lib/tailwind";
+import { useUser_profileQuery } from "@/redux/apiSlices/authApiSlices";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { router, useNavigation } from "expo-router";
 import React from "react";
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
 
@@ -39,9 +46,14 @@ const Home = () => {
     useNext_stationQuery({});
   const { data: user, isLoading } = useUser_profileQuery({});
   if (isLoading) {
-    <View>
-      <Text>loading...</Text>
-    </View>;
+    return (
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
   }
   return (
     <View style={tw` flex-1`}>
@@ -70,7 +82,10 @@ const Home = () => {
                 <SvgXml xml={IconDower} />
               </TouchableOpacity>
               <Text style={tw`text-primary font-poppinsSemiBold text-2xl`}>
-                Hi, {user?.data?.name?.split(" ")[0] ?? "User"}
+                Hi,
+                {user?.data?.name?.length > 10
+                  ? user?.data?.name?.slice(0, 10) + "..."
+                  : user?.data?.name}
               </Text>
               <SvgXml xml={IconHand} />
             </View>

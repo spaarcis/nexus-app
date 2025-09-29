@@ -1,17 +1,13 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
+import * as ImagePicker from "expo-image-picker";
+
 import { IconEdit, IconUpload } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-import { useEdit_profile_pictureMutation } from "@/redux/apiSlices/authApiSlices";
 import {
   useEdit_profileMutation,
+  useEdit_profile_pictureMutation,
   useUser_profileQuery,
-} from "@/redux/apiSlices/home/homeSlice";
+} from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
-import { Ionicons } from "@expo/vector-icons";
 import { Image, ImageBackground } from "expo-image";
-import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -23,6 +19,11 @@ import {
   View,
 } from "react-native";
 
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
 
@@ -30,17 +31,17 @@ const Profile = () => {
   const [image, setImage] = React.useState<ImagePicker.ImagePickerAsset | null>(
     null
   );
-  const [fullName, setFullName] = useState("Siva Rohitha");
 
   const { data: user, isLoading } = useUser_profileQuery({});
   const [edit_profile] = useEdit_profileMutation();
   const [edit_profile_picture] = useEdit_profile_pictureMutation();
 
+  const [fullName, setFullName] = useState(user?.data?.name || "");
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [1, 1],
       quality: 1,
     });
 
@@ -61,7 +62,12 @@ const Profile = () => {
           pathname: "/Toaster",
           params: { res: res?.message },
         });
-      } catch (err) {}
+      } catch (err) {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: (err as any)?.message || "An error occurred" },
+        });
+      }
     }
   };
 
@@ -69,17 +75,22 @@ const Profile = () => {
     try {
       const formData = new FormData();
       formData.append("name", fullName);
-
-      if (image?.uri) {
-        formData.append("gaming_zone", {
-          uri: image?.uri,
-          name: image?.fileName || "profile.jpg",
-          type: image?.mimeType || "image/jpeg",
-        } as any);
-      }
+      // console.log(fullName);
       const res = await edit_profile(formData).unwrap();
       // alert("Profile updated successfully!");
-    } catch (err) {}
+      // console.log(res);
+      if (res.status === "success") {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: res?.message },
+        });
+      }
+    } catch (err) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: (err as any)?.message || "An error occurred" },
+      });
+    }
   };
 
   useEffect(() => {
@@ -88,12 +99,14 @@ const Profile = () => {
     }
   }, [user]);
   if (isLoading) {
-    <View style={tw`flex-1 justify-center items-center `}>
-      <ActivityIndicator size="large" color="#0c8ce9" />
-      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
-        Loading...
-      </Text>
-    </View>;
+    return (
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
   }
 
   return (
@@ -172,7 +185,7 @@ const Profile = () => {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={tw`relative mb-4`} onPress={handleEditProfile}>
+        <TouchableOpacity style={tw`relative m-4`} onPress={handleEditProfile}>
           <CustomButton title={"Edit profile"} />
         </TouchableOpacity>
       </ScrollView>

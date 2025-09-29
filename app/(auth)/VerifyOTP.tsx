@@ -1,11 +1,10 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
 import { IcoBack, IconSendText } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-import { useVerifyOtpMutation } from "@/redux/apiSlices/authApiSlices";
+import {
+  useForgotPasswordMutation,
+  useVerifyOtpMutation,
+} from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { router, useLocalSearchParams } from "expo-router";
-import React from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -15,32 +14,38 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { OtpInput } from "react-native-otp-entry";
 import { SvgXml } from "react-native-svg";
-import { useTailwind } from "tailwind-rn";
 
 const VerifyOTP = () => {
-  const [showNewPassword, setShowNewPassword] = React.useState(false);
-  const [isChecked, setChecked] = React.useState(false);
-  const tailwind = useTailwind();
   const { email, flow } = useLocalSearchParams();
-
-  const [verifyOtp] = useVerifyOtpMutation();
+  const [otp, setOtp] = React.useState<string>("");
+  const [verifyOtp, { isLoading }] = useVerifyOtpMutation();
+  const [forgetPassword, { isLoading: isLoading2 }] =
+    useForgotPasswordMutation();
   const handleOtpVerification = async (otp: string) => {
     try {
       const data = { email: email as string, otp };
       const res = await verifyOtp(data).unwrap();
-
+      // console.log(res);
       if (res) {
         router.push({
           pathname: "/Toaster",
           params: { res: res.message },
         });
 
+        AsyncStorage.setItem("token", res?.data?.access_token);
+
         setTimeout(() => {
           if (flow === "register") {
-            router.replace("/(auth)/Login");
+            router.replace("/");
           } else if (flow === "forget") {
             router.replace(`/(auth)/Createnewpassword?email=${email}`);
           }
@@ -51,6 +56,23 @@ const VerifyOTP = () => {
           params: { res: res.message || "Something went wrong" },
         });
       }
+    } catch (error: any) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: error?.message || "An error occurred" },
+      });
+    }
+  };
+
+  const handleSendOtp = async () => {
+    try {
+      const data = { email: email as string };
+      const res = await forgetPassword(data).unwrap();
+      console.log(res);
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res.message },
+      });
     } catch (error: any) {
       router.push({
         pathname: "/Toaster",
@@ -85,15 +107,15 @@ const VerifyOTP = () => {
         <AlertNotificationRoot>
           <View
             style={[
-              tw`flex-col items-center justify-between`,
+              tw`flex-col items-center justify-center`,
               {
-                height: _HIGHT,
+                height: _HIGHT * 0.8,
               },
             ]}
           >
             <View></View>
             <View>
-              <View style={tw` pb-14 `}>
+              <View style={tw``}>
                 <Text
                   style={tw`font-poppinsBlack mx-auto text-3xl text-primary`}
                 >
@@ -118,7 +140,9 @@ const VerifyOTP = () => {
                     <View style={tw`py-3  mb-2`}>
                       <OtpInput
                         numberOfDigits={6}
-                        onTextChange={async (text: any) => {}}
+                        onTextChange={async (text: any) => {
+                          setOtp(text);
+                        }}
                         onFilled={handleOtpVerification}
                         // onBlur={handleBlur("otp")}
                         theme={{
@@ -139,20 +163,30 @@ const VerifyOTP = () => {
                     </View>
                   </View>
                 </View>
-                <TouchableOpacity style={tw`flex-row justify-end mb-3`}>
-                  <SvgXml xml={IconSendText} />
+                <TouchableOpacity
+                  onPress={handleSendOtp}
+                  style={tw`flex-row justify-end mb-3`}
+                >
+                  <Text>
+                    <SvgXml xml={IconSendText} />
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={tw` mb-4`}>
-                  <CustomButton title={" Verify"} />
+                <TouchableOpacity
+                  onPress={() => {
+                    handleOtpVerification(otp);
+                  }}
+                  style={tw` mb-4`}
+                >
+                  <CustomButton
+                    title={isLoading ? "Verifying..." : " Verify"}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
-            <View></View>
           </View>
         </AlertNotificationRoot>
       </ScrollView>
-      <View></View>
     </KeyboardAvoidingView>
   );
 };

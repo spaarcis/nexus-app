@@ -1,10 +1,11 @@
+import "react-native-reanimated";
+
 import ThemeProvider from "@/context/ThemeProvider";
 import tw from "@/lib/tailwind";
 import store from "@/redux/store";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
 import { Provider } from "react-redux";
 import { useDeviceContext } from "twrnc";
 
@@ -47,9 +48,7 @@ export default function RootLayout() {
           <Stack.Screen name="(allPages)" />
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="Main" />
-          <Stack.Screen name="details/RoomDetails/[id]" />
-          <Stack.Screen name="details/SeatPosotion/[allData]" />
-          <Stack.Screen name="details/BookingsDetails/[id]" />
+          <Stack.Screen name="details" />
           <Stack.Screen
             name="Toaster"
             options={{

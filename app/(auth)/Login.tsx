@@ -1,5 +1,5 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
+import * as Yup from "yup";
+
 import {
   IconEmail,
   IconForgetPass,
@@ -7,18 +7,11 @@ import {
   IconPoword,
   IconRegisterText,
 } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useLoginUserMutation,
   useSocialLoginMutation,
 } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
-import Entypo from "@expo/vector-icons/Entypo";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import { router } from "expo-router";
-import { Formik } from "formik";
-import React from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -29,10 +22,19 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import Entypo from "@expo/vector-icons/Entypo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { router } from "expo-router";
+import { Formik } from "formik";
+import React from "react";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { SvgXml } from "react-native-svg";
 import { useTailwind } from "tailwind-rn";
-import * as Yup from "yup";
 
 const Login = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
@@ -55,7 +57,21 @@ const Login = () => {
       console.log(response);
 
       const user = response?.data?.user;
-      console.log(user, "useruseruseruseruseruser");
+      // console.log(user, "useruseruseruseruseruser");
+
+      if (!user) {
+        router.push({
+          pathname: "/Toaster",
+          params: {
+            res:
+              response?.type === "cancelled"
+                ? "You are cancelled your login request"
+                : "Something went wrong",
+          },
+        });
+
+        return;
+      }
 
       // Convert Google photo URL into file object
       let photoFile: any = null;
@@ -96,7 +112,33 @@ const Login = () => {
     }
   };
 
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
+
+  const handleLogin = async (values: any) => {
+    try {
+      const res = await loginUser(values).unwrap();
+      if (res.status === "success") {
+        router.replace("/Main/Homes/Home");
+        AsyncStorage.setItem("token", res?.data?.access_token);
+        // console.log("token", res?.data?.access_token, "token");
+      } else {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: res?.message?.email?.[0] },
+        });
+      }
+    } catch (error: any) {
+      router.push({
+        pathname: "/Toaster",
+        params: { res: error?.message },
+      });
+    }
+  };
+
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().required("Password is required"),
+  });
 
   return (
     <KeyboardAvoidingView
@@ -116,56 +158,36 @@ const Login = () => {
         }}
       />
 
-      <ScrollView contentContainerStyle={tw` px-5`}>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+        contentContainerStyle={tw` px-5`}
+      >
         <AlertNotificationRoot>
           <Formik
             initialValues={{ email: "", password: "" }}
-            onSubmit={async (values) => {
-              try {
-                const res = await loginUser(values).unwrap();
-                if (res.status) {
-                  router.push("/Main/Homes/Home");
-                  AsyncStorage.setItem("token", res?.data?.access_token);
-                  console.log("token", res?.data?.access_token, "token");
-
-                  router.push({
-                    pathname: "/Toaster",
-                    params: { res: res.message },
-                  });
-                } else {
-                  router.push({
-                    pathname: "/Toaster",
-                    params: { res: res?.message?.email?.[0] },
-                  });
-                }
-              } catch (error: any) {
-                router.push({
-                  pathname: "/Toaster",
-                  params: { res: error?.message },
-                });
-              }
-            }}
-            validationSchema={Yup.object({
-              email: Yup.string().email().required("email is required"),
-              password: Yup.string()
-                // .min(6, "Password is too sort ")
-                .required("email is required")
-                .uppercase("1 lowercase letter added"),
-            })}
+            onSubmit={handleLogin}
+            validationSchema={validationSchema}
           >
-            {({ values, setFieldValue, handleSubmit, errors }) => {
+            {({
+              values,
+              touched,
+              handleSubmit,
+              errors,
+              handleBlur,
+              handleChange,
+            }) => {
               return (
                 <View
                   style={[
                     tw`flex-col items-center justify-between`,
                     {
-                      height: _HIGHT,
+                      height: _HIGHT * 0.9,
                     },
                   ]}
                 >
                   <View></View>
                   <View>
-                    <View style={tw` pb-14 `}>
+                    <View style={tw` pb-14 gap-2`}>
                       <Text
                         style={tw`font-poppinsBlack mx-auto text-3xl text-primary`}
                       >
@@ -177,11 +199,11 @@ const Login = () => {
                         Access your account with correct information
                       </Text>
                     </View>
-                    <View style={tw`  rounded-t-[40px]`}>
+                    <View style={tw`  `}>
                       {/* login from */}
                       <View>
                         <Text
-                          style={tw`text-primary font-poppinsSemiBold text-base pl-2 pt-5 pb-2`}
+                          style={tw`text-primary font-poppinsSemiBold text-base pl-2  pb-2`}
                         >
                           Email
                         </Text>
@@ -197,21 +219,18 @@ const Login = () => {
                               placeholder="Enter your email..."
                               placeholderTextColor="#888888"
                               value={values.email}
-                              onChangeText={(txt) =>
-                                setFieldValue("email", txt)
-                              }
+                              onBlur={handleBlur("email")}
+                              onChangeText={handleChange("email")}
                             />
                           </View>
                         </View>
-                        {errors.email && (
-                          <Text
-                            style={tw`text-center text-red-700 font-poppins`}
-                          >
+                        {errors.email && touched.email && (
+                          <Text style={tw`px-4 pt-1 text-red-700 font-poppins`}>
                             {errors.email}
                           </Text>
                         )}
                         <Text
-                          style={tw`text-primary font-poppinsSemiBold text-base pl-2 pt-5 pb-2`}
+                          style={tw`text-primary font-poppinsSemiBold text-base pl-2 pt-5  pb-2`}
                         >
                           Password
                         </Text>
@@ -228,9 +247,8 @@ const Login = () => {
                               placeholderTextColor="#888888"
                               secureTextEntry={!showNewPassword}
                               value={values.password}
-                              onChangeText={(txt) =>
-                                setFieldValue("password", txt)
-                              }
+                              onBlur={handleBlur("password")}
+                              onChangeText={handleChange("password")}
                             />
                             <Entypo
                               name={showNewPassword ? "eye" : "eye-with-line"}
@@ -244,12 +262,12 @@ const Login = () => {
                           </View>
                         </View>
                       </View>
-                      {errors.password && (
-                        <Text style={tw`text-center text-red-700 font-poppins`}>
+                      {errors.password && touched.password && (
+                        <Text style={tw`px-4 pt-1 text-red-700 font-poppins`}>
                           {errors.password}
                         </Text>
                       )}
-                      <View style={tw`py-7  px-7 flex-row justify-end `}>
+                      <View style={tw`pb-7 pt-3 px-7 flex-row justify-end `}>
                         <TouchableOpacity
                           onPress={() => router.push("/(auth)/ForgetPassword")}
                         >
@@ -263,10 +281,12 @@ const Login = () => {
                           handleSubmit();
                         }}
                       >
-                        <CustomButton title={" Sign in"} />
+                        <CustomButton
+                          title={isLoading ? "Loading..." : " Sign in"}
+                        />
                       </TouchableOpacity>
 
-                      <Text style={tw`text-sm text-secondary  mx-auto py-8`}>
+                      <Text style={tw`text-sm text-secondary  mx-auto  pb-4`}>
                         Or continue with
                       </Text>
                       <TouchableOpacity
@@ -277,7 +297,7 @@ const Login = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={tw`flex-row justify-center gap-3 mb-8`}>
+                  <View style={tw`flex-row justify-center gap-3 mb-5`}>
                     <TouchableOpacity
                       onPress={() => router.push("/(auth)/Register")}
                       style={tw`flex-row items-center gap-1`}
@@ -291,7 +311,6 @@ const Login = () => {
           </Formik>
         </AlertNotificationRoot>
       </ScrollView>
-      <View></View>
     </KeyboardAvoidingView>
   );
 };

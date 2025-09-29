@@ -1,13 +1,7 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
+import * as Yup from "yup";
+
 import { IcoBack, IconEmail, IconPoword, IconProfile } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-import { useRegisterUserMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
-import Entypo from "@expo/vector-icons/Entypo";
-import { router } from "expo-router";
-import { Formik } from "formik";
-import React from "react";
 import {
   ImageBackground,
   KeyboardAvoidingView,
@@ -23,9 +17,18 @@ import {
   AlertNotificationRoot,
   Toast,
 } from "react-native-alert-notification";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { useRegisterUserMutation } from "@/redux/apiSlices/authApiSlices";
+import Entypo from "@expo/vector-icons/Entypo";
+import { router } from "expo-router";
+import { Formik } from "formik";
+import React from "react";
 import { SvgXml } from "react-native-svg";
 import { useTailwind } from "tailwind-rn";
-import * as Yup from "yup";
+
 const Register = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showNewRePassword, setShowNewRePassword] = React.useState(false);
@@ -34,7 +37,51 @@ const Register = () => {
 
   // ...........api.............//
 
-  const [registerUser] = useRegisterUserMutation();
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
+
+  const handleRegister = async (values: any) => {
+    const payload = {
+      ...values,
+      role: "USER",
+    };
+
+    try {
+      const res = await registerUser(payload).unwrap();
+
+      if (res.status === "success") {
+        setTimeout(() => {
+          router.push(`/(auth)/VerifyOTP?email=${values?.email}&flow=register`);
+        }, 1000);
+      } else {
+        Toast.show({
+          type: ALERT_TYPE.DANGER,
+          title: "Waring",
+          textBody: res?.message?.email?.[0] || "Something went wrong!",
+          autoClose: 2000,
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: ALERT_TYPE.WARNING,
+        title: "Waring",
+        textBody: error?.message,
+      });
+    }
+  };
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string().required("Name is required"),
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters ")
+      .required("Password is required"),
+    retype_password: Yup.string()
+      .oneOf([Yup.ref("password"), undefined], "Passwords must match")
+      .required("Confirm Password is required"),
+  });
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -64,64 +111,29 @@ const Register = () => {
               password: "",
               retype_password: "",
             }}
-            onSubmit={async (values) => {
-              const payload = {
-                ...values,
-                role: "USER",
-              };
-
-              try {
-                const res = await registerUser(payload).unwrap();
-
-                if (res.status === "success") {
-                  setTimeout(() => {
-                    router.push(
-                      `/(auth)/VerifyOTP?email=${values?.email}&flow=register`
-                    );
-                  }, 1000);
-                } else {
-                  Toast.show({
-                    type: ALERT_TYPE.DANGER,
-                    title: "Waring",
-                    textBody:
-                      res?.message?.email?.[0] || "Something went wrong!",
-                    autoClose: 2000,
-                  });
-                }
-              } catch (error: any) {
-                Toast.show({
-                  type: ALERT_TYPE.WARNING,
-                  title: "Waring",
-                  textBody: error?.message,
-                });
-              }
-            }}
-            validationSchema={Yup.object({
-              name: Yup.string().required("Full Name is required"),
-              email: Yup.string()
-                .email("Invalid email address")
-                .required("Email is required"),
-              password: Yup.string()
-                .min(4, "Password is too short")
-                .required("Password is required"),
-              retype_password: Yup.string()
-                .oneOf([Yup.ref("password")], "Passwords must match")
-                .required("Retype Password is required"),
-            })}
+            onSubmit={handleRegister}
+            validationSchema={validationSchema}
           >
-            {({ values, setFieldValue, handleSubmit, errors }) => {
+            {({
+              values,
+              touched,
+              handleSubmit,
+              handleBlur,
+              handleChange,
+              errors,
+            }) => {
               return (
                 <View
                   style={[
-                    tw`flex-col items-center justify-between`,
+                    tw`flex-col items-center justify-center relative`,
                     {
-                      height: _HIGHT,
+                      height: _HIGHT * 0.8,
                     },
                   ]}
                 >
-                  <View></View>
+                  {/* <View></View> */}
                   <View>
-                    <View style={tw` pb-10 `}>
+                    <View style={tw` pb-10 gap-2 `}>
                       <Text
                         style={tw`font-poppinsBlack mx-auto text-3xl  text-primary`}
                       >
@@ -153,11 +165,12 @@ const Register = () => {
                               placeholder="Enter your full name..."
                               placeholderTextColor="#888888"
                               value={values.name}
-                              onChangeText={(txt) => setFieldValue("name", txt)}
+                              onChangeText={handleChange("name")}
+                              onBlur={handleBlur("name")}
                             />
                           </View>
                         </View>
-                        {errors.name && (
+                        {errors.name && touched.name && (
                           <Text style={tw`p-2 text-red-700 font-poppins`}>
                             {errors.name}
                           </Text>
@@ -179,13 +192,12 @@ const Register = () => {
                               placeholder="Enter your email..."
                               placeholderTextColor="#888888"
                               value={values.email}
-                              onChangeText={(txt) =>
-                                setFieldValue("email", txt)
-                              }
+                              onChangeText={handleChange("email")}
+                              onBlur={handleBlur("email")}
                             />
                           </View>
                         </View>
-                        {errors.email && (
+                        {errors.email && touched.email && (
                           <Text style={tw`p-2 text-red-700 font-poppins`}>
                             {errors.email}
                           </Text>
@@ -208,9 +220,8 @@ const Register = () => {
                               placeholderTextColor="#888888"
                               secureTextEntry={!showNewPassword}
                               value={values.password}
-                              onChangeText={(txt) =>
-                                setFieldValue("password", txt)
-                              }
+                              onChangeText={handleChange("password")}
+                              onBlur={handleBlur("password")}
                             />
                             <Entypo
                               name={showNewPassword ? "eye" : "eye-with-line"}
@@ -223,7 +234,7 @@ const Register = () => {
                             />
                           </View>
                         </View>
-                        {errors.password && (
+                        {errors.password && touched.password && (
                           <Text style={tw`p-2  text-red-700 font-poppins`}>
                             {errors.password}
                           </Text>
@@ -234,7 +245,7 @@ const Register = () => {
                           Retype Password
                         </Text>
                         <View
-                          style={tw` bg-white/10 rounded-full mb-7 overflow-hidden`}
+                          style={tw` bg-white/10 rounded-full  overflow-hidden`}
                         >
                           <View
                             style={tw` w-full flex-row items-center justify-start px-4`}
@@ -246,9 +257,8 @@ const Register = () => {
                               placeholderTextColor="#888888"
                               secureTextEntry={!showNewRePassword}
                               value={values.retype_password}
-                              onChangeText={(txt) =>
-                                setFieldValue("retype_password", txt)
-                              }
+                              onChangeText={handleChange("retype_password")}
+                              onBlur={handleBlur("retype_password")}
                             />
                             <Entypo
                               name={showNewRePassword ? "eye" : "eye-with-line"}
@@ -262,18 +272,20 @@ const Register = () => {
                           </View>
                         </View>
                       </View>
-                      {errors.retype_password && (
+                      {errors.retype_password && touched.retype_password && (
                         <Text style={tw`p-2 text-red-700 font-poppins`}>
                           {errors.retype_password}
                         </Text>
                       )}
                       <TouchableOpacity
-                        style={tw`relative mb-4`}
+                        style={tw`relative pt-6`}
                         onPress={() => {
                           handleSubmit();
                         }}
                       >
-                        <CustomButton title={" Register"} />
+                        <CustomButton
+                          title={isLoading ? "Registering..." : " Register"}
+                        />
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -283,7 +295,6 @@ const Register = () => {
           </Formik>
         </AlertNotificationRoot>
       </ScrollView>
-      <View></View>
     </KeyboardAvoidingView>
   );
 };
