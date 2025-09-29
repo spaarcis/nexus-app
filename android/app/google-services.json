@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "408739532193",
+    "project_id": "nexus-b67e0",
+    "storage_bucket": "nexus-b67e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408739532193:android:e28bd13b94d259258d8fe0",
+        "android_client_info": {
+          "package_name": "com.anonymous.Nexus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408739532193-u61uufqe1m2ggsbrb1obpfcucqr0pko6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anonymous.Nexus",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "408739532193-ccqlar2l4bcmpdf03ct45aplgs7lljoc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmLdcAEFMK7Uj-w6CRxwEpSOVLUcZbdeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408739532193-ccqlar2l4bcmpdf03ct45aplgs7lljoc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "408739532193-5c5oatssp31tkppbvahdlpl6pdcg9npu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anonymous.Nexus"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

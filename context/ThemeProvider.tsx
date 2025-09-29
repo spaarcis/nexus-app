@@ -7,11 +7,14 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SafeAreaView
-      style={[tw``,{
-        flex: 1,
-        paddingTop: HI.top,
-        paddingBottom: HI.bottom,
-      }]}
+      style={[
+        {
+          flex: 1,
+          paddingTop: HI.top,
+          paddingBottom: HI.bottom,
+          backgroundColor: tw.color("base"),
+        },
+      ]}
     >
       {children}
     </SafeAreaView>

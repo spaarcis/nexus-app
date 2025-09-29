@@ -102,7 +102,6 @@ const Bookings = () => {
             </TouchableOpacity>
           ))}
         </View>
-
         {/* Animated Underline */}
         <Animated.View
           style={{
