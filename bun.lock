@@ -4,7 +4,6 @@
     "": {
       "name": "nexus",
       "dependencies": {
-        "@expo/ui": "~0.1.1-alpha.10",
         "@expo/vector-icons": "^14.1.0",
         "@react-native-community/datetimepicker": "8.4.1",
         "@react-native-masked-view/masked-view": "0.3.2",
@@ -313,8 +312,6 @@
     "@expo/spawn-async": ["@expo/spawn-async@1.7.2", "", { "dependencies": { "cross-spawn": "^7.0.3" } }, "sha512-QdWi16+CHB9JYP7gma19OVVg0BFkvU8zNj9GjWorYI8Iv8FUxjOCcYRuAmX4s/h91e4e7BPsskc8cSrZYho9Ew=="],
 
     "@expo/sudo-prompt": ["@expo/sudo-prompt@9.3.2", "", {}, "sha512-HHQigo3rQWKMDzYDLkubN5WQOYXJJE2eNqIQC2axC2iO3mHdwnIR7FgZVvHWtBwAdzBgAP0ECp8KqS8TiMKvgw=="],
-
-    "@expo/ui": ["@expo/ui@0.1.1-alpha.10", "", { "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-wop7IJKWwrupA2mhhgHF8fS51kA0X4oDWhDuXX611dbCf8kpsjQ4s1N/0NKCyOpB8EVUmlXx9sjleoL/E31i4Q=="],
 
     "@expo/vector-icons": ["@expo/vector-icons@14.1.0", "", { "peerDependencies": { "expo-font": "*", "react": "*", "react-native": "*" } }, "sha512-7T09UE9h8QDTsUeMGymB4i+iqvtEeaO5VvUjryFB4tugDTG/bkzViWA74hm5pfjjDEhYMXWaX112mcvhccmIwQ=="],
 
