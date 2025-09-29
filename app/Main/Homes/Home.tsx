@@ -69,7 +69,7 @@ const Home = () => {
         }}
       />
 
-      <ScrollView contentContainerStyle={tw` px-6 py-9 `}>
+      <ScrollView contentContainerStyle={tw` px-6 py-6 `}>
         {/* header */}
         <View>
           <View style={tw`flex-row items-center justify-between  gap-3`}>
@@ -107,12 +107,12 @@ const Home = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={tw`flex-row gap-3  items-center px-7`}>
+          {/* <View style={tw`flex-row gap-3  items-center px-7`}>
             <SvgXml xml={IconLoction} />
             <Text style={tw`text-secondary font-poppins `}>
               {user?.data?.address ?? "Location not available"}
             </Text>
-          </View>
+          </View> */}
         </View>
         {/* Explore banner */}
         <View style={tw`text-primary overflow-hidden rounded-[40px] mt-10`}>
@@ -171,63 +171,65 @@ const Home = () => {
         {populerLoading ? (
           <BokCardSkeleton />
         ) : (
-          <View style={tw`mb-4`}>
-            <TouchableOpacity
-              onPress={() =>
-                router.push({
-                  pathname: "/details/BookingsDetails/[id]",
-                  params: {
-                    id: 4,
-                    status: "Upcoming",
-                  },
-                })
-              }
-              style={tw`mb-2`}
-            >
-              <BlurView
-                style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
-                intensity={10}
-                tint="light"
+          populer?.data?.data?.length > 0 && (
+            <View style={tw`mb-4`}>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/details/BookingsDetails/[id]",
+                    params: {
+                      id: 4,
+                      status: "Upcoming",
+                    },
+                  })
+                }
+                style={tw`mb-2`}
               >
-                <Image
-                  source={nextStation?.data?.room?.photo}
-                  style={[tw`h-20 w-20 rounded-2xl`, {}]}
-                ></Image>
-                <View style={tw`flex-1 items-start  justify-center`}>
-                  <Text style={tw`text-white  font-poppinsBold text-lg`}>
-                    {nextStation?.data?.room?.name}
-                  </Text>
+                <BlurView
+                  style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
+                  intensity={10}
+                  tint="light"
+                >
+                  <Image
+                    source={nextStation?.data?.room?.photo}
+                    style={[tw`h-20 w-20 rounded-2xl`, {}]}
+                  ></Image>
+                  <View style={tw`flex-1 items-start  justify-center`}>
+                    <Text style={tw`text-white  font-poppinsBold text-lg`}>
+                      {nextStation?.data?.room?.name}
+                    </Text>
 
-                  {/* Date and Time */}
-                  <View style={tw`flex-row items-center mt-1 gap-1`}>
-                    <SvgXml xml={IconCleander} />
-                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
-                      {nextStation?.data?.booking_date}
-                    </Text>
-                    <SvgXml xml={IconTime} />
-                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
-                      {nextStation?.data?.starting_time}
-                    </Text>
-                  </View>
+                    {/* Date and Time */}
+                    <View style={tw`flex-row items-center mt-1 gap-1`}>
+                      <SvgXml xml={IconCleander} />
+                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                        {nextStation?.data?.booking_date}
+                      </Text>
+                      <SvgXml xml={IconTime} />
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                        {nextStation?.data?.starting_time}
+                      </Text>
+                    </View>
 
-                  {/* Duration and Location */}
-                  <View style={tw`flex-row items-center mt-1 gap-1`}>
-                    <SvgXml xml={Iconhoure} />
-                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
-                      {nextStation?.data?.duration} Hour
-                    </Text>
-                    <SvgXml xml={IconLoction} />
-                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
-                      {nextStation?.data?.provider?.address
-                        ?.split(" ")
-                        ?.slice(0, 2)
-                        ?.join(" ") + " ..."}
-                    </Text>
+                    {/* Duration and Location */}
+                    <View style={tw`flex-row items-center mt-1 gap-1`}>
+                      <SvgXml xml={Iconhoure} />
+                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                        {nextStation?.data?.duration} Hour
+                      </Text>
+                      <SvgXml xml={IconLoction} />
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                        {nextStation?.data?.provider?.address
+                          ?.split(" ")
+                          ?.slice(0, 2)
+                          ?.join(" ") + " ..."}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </BlurView>
-            </TouchableOpacity>
-          </View>
+                </BlurView>
+              </TouchableOpacity>
+            </View>
+          )
         )}
         {/* Carousel Newly Added */}
         <View style={tw`flex-row items-center justify-between `}>

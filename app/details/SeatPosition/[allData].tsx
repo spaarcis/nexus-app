@@ -69,6 +69,9 @@ const SeatPosition = () => {
   const { data: details, isLoading } = useGame_zone_detailsQuery({
     id: parsedData?.roomId,
   });
+
+  console.log(details, "details");
+
   const [booking_new] = useBooking_newMutation();
   const [booking_reschedule] = useBooking_rescheduleMutation();
   const { data: Check_availability, isLoading: isCheckingAvailability } =
@@ -168,7 +171,7 @@ const SeatPosition = () => {
           coupon_id: couponID,
         }
       : baseData;
-    console.log(dataWithPromo, "dataWithPromo");
+    // console.log(dataWithPromo, "dataWithPromo");
 
     // 👉 Convert to FormData
     const formData = new FormData();
@@ -191,7 +194,7 @@ const SeatPosition = () => {
       console.log(error);
     }
   };
-  console.log(id, "id ididididididididididididid");
+  // console.log(id, "id ididididididididididididid");
 
   return (
     <View style={tw`flex-1`}>
@@ -245,7 +248,7 @@ const SeatPosition = () => {
         <View style={tw`mb-6 rounded-2xl overflow-hidden h-48`}>
           <ImageBackground
             source={{
-              uri: details?.address?.gaming_zone,
+              uri: details?.data?.gaming_zone,
             }}
             style={tw`flex-1 justify-end`}
           >

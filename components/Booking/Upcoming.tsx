@@ -1,6 +1,4 @@
-import tw from "@/lib/tailwind";
-import { useLazyBookingQuery } from "@/redux/apiSlices/bookingApi/bookingSlice";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,6 +6,9 @@ import {
   Text,
   View,
 } from "react-native";
+
+import tw from "@/lib/tailwind";
+import { useLazyBookingQuery } from "@/redux/apiSlices/bookingApi/bookingSlice";
 import { BokCardSkeleton } from "../skeleton/BokCardSkeleton";
 import BookingCard from "./BookingCard";
 
@@ -23,42 +24,51 @@ const Upcoming = () => {
     useLazyBookingQuery();
 
   // --- Fetch Data Function ---
-  const fetchUpcomingBookings = async (pageNum = 1, isRefresh = false) => {
-    try {
-      if ((isLoading || isFetching || isLoadingMore) && !isRefresh) return;
-      setIsLoadingMore(true);
+  const fetchUpcomingBookings = useCallback(
+    async (pageNum = 1, isRefresh = false) => {
+      try {
+        if ((isLoading || isFetching || isLoadingMore) && !isRefresh) return;
+        setIsLoadingMore(true);
 
-      const res = await triggerBookingQuery({
-        page: pageNum,
-        type: "Upcoming",
-      }).unwrap();
+        const res = await triggerBookingQuery({
+          page: pageNum,
+          type: "Upcoming",
+        }).unwrap();
 
-      const responseData = res?.data || {};
-      const newBookings = responseData?.data || [];
-      const pagination = responseData?.pagination || {};
+        const responseData = res?.data || {};
+        const newBookings = responseData?.data || [];
+        const pagination = responseData?.pagination || {};
 
-      if (isRefresh) {
-        setUpcomingBookings(newBookings);
-      } else {
-        const existingIds = new Set(upcomingBookings.map((b) => b.id));
-        const uniqueBookings = newBookings.filter(
-          (b: any) => !existingIds.has(b.id)
-        );
-        setUpcomingBookings((prev) => [...prev, ...uniqueBookings]);
+        if (isRefresh && pageNum === 1) {
+          setUpcomingBookings(newBookings);
+        } else if (pageNum < pagination?.last_page) {
+          const existingIds = new Set(upcomingBookings.map((b) => b.id));
+          const uniqueBookings = newBookings.filter(
+            (b: any) => !existingIds.has(b.id)
+          );
+          setUpcomingBookings((prev) => [...prev, ...uniqueBookings]);
+        }
+
+        const current = pagination.current_page || pageNum;
+        const last = pagination.last_page || 1;
+
+        setHasMorePages(current < last);
+        setCurrentPage(current + 1);
+      } catch (err) {
+        // handle error silently
+      } finally {
+        setIsRefreshing(false);
+        setIsLoadingMore(false);
       }
-
-      const current = pagination.current_page || pageNum;
-      const last = pagination.last_page || 1;
-
-      setHasMorePages(current < last);
-      setCurrentPage(current + 1);
-    } catch (err) {
-      // handle error silently
-    } finally {
-      setIsRefreshing(false);
-      setIsLoadingMore(false);
-    }
-  };
+    },
+    [
+      triggerBookingQuery,
+      isLoading,
+      isFetching,
+      isLoadingMore,
+      upcomingBookings,
+    ]
+  );
 
   // --- Handle Pull-to-Refresh ---
   const handleRefresh = () => {
@@ -80,6 +90,8 @@ const Upcoming = () => {
   useEffect(() => {
     fetchUpcomingBookings(1, true);
   }, []);
+
+  console.log("Render");
 
   return (
     <View>
