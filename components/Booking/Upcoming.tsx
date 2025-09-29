@@ -91,7 +91,7 @@ const Upcoming = () => {
     fetchUpcomingBookings(1, true);
   }, []);
 
-  console.log("Render");
+  // console.log("Render");
 
   return (
     <View>
