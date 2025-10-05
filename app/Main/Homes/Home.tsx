@@ -93,14 +93,15 @@ const Home = () => {
             </View>
           </View>
           <View style={tw`flex-row gap-3  items-center px-7`}>
-            <SvgXml xml={IconLoction} />
+            {user?.data?.address ? <SvgXml xml={IconLoction} /> : ""}
+
             <Text style={tw`text-secondary font-poppins `}>
-              {user?.data?.address ?? "Location not available"}
+              {user?.data?.address ?? ""}
             </Text>
           </View>
         </View>
         {/* Explore banner */}
-        <View style={tw`text-primary overflow-hidden rounded-[40px] mt-10`}>
+        <View style={tw`text-primary overflow-hidden rounded-[40px] mt-5`}>
           <BlurView style={tw` p-5`} intensity={10} tint="light">
             <Text
               style={tw`text-primary text-lg font-poppinsSemiBold text-center`}

@@ -458,6 +458,7 @@ const RoomDetails = () => {
           mode="date"
           display="default"
           onChange={handleDateChange}
+          minimumDate={new Date()}
         />
       )}
       {/* Time Picker Modal */}

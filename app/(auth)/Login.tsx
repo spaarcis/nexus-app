@@ -149,7 +149,7 @@ const Login = () => {
               email: Yup.string().email().required("email is required"),
               password: Yup.string()
                 // .min(6, "Password is too sort ")
-                .required("email is required")
+                .required("Password is required")
                 .uppercase("1 lowercase letter added"),
             })}
           >
