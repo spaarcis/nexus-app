@@ -1,15 +1,18 @@
 import { ImgGradint, ImgLogo } from "@/assets/images/image";
 import { IconLogo } from "@/Icons/Icons";
 import tw from "@/lib/tailwind";
+
 import { useLazyTokenCheckerQuery } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Image, ImageBackground, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 export default function Index() {
+
   const [tokenChecker] = useLazyTokenCheckerQuery();
 
   const handleUserNavigate = async () => {
@@ -52,6 +55,7 @@ export default function Index() {
           left: 0,
         }}
       />
+
 
       {/* Foreground Content */}
       <View style={tw`flex-1 py-16 justify-between items-center`}>
