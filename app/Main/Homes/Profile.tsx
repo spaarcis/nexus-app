@@ -78,7 +78,10 @@ const Profile = () => {
         } as any);
       }
       const res = await edit_profile(formData).unwrap();
-      // alert("Profile updated successfully!");
+      router.push({
+        pathname: "/Toaster",
+        params: { res: res?.message },
+      });
     } catch (err) {}
   };
 

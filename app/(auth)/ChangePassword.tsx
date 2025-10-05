@@ -67,7 +67,12 @@ const ChangePassword = () => {
                   pathname: "/Toaster",
                   params: { res: res.message },
                 });
-              } catch (err) {}
+              } catch (errors: any) {
+                router.push({
+                  pathname: "/Toaster",
+                  params: { res: errors?.message },
+                });
+              }
             }}
             validationSchema={Yup.object({
               currentPassword: Yup.string()
