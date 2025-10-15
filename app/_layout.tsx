@@ -47,7 +47,7 @@ export default function RootLayout() {
           <Stack.Screen name="(allPages)" />
           <Stack.Screen name="(auth)" />
           <Stack.Screen name="Main" />
-          <Stack.Screen name="details/RoomDetails/[id]" />
+          <Stack.Screen name="details/roomDetails/[id]" />
           <Stack.Screen name="details/SeatPosotion/[allData]" />
           <Stack.Screen name="details/BookingsDetails/[id]" />
           <Stack.Screen

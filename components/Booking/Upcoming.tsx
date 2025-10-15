@@ -32,7 +32,6 @@ const Upcoming = () => {
         page: pageNum,
         type: "Upcoming",
       }).unwrap();
-
       const responseData = res?.data || {};
       const newBookings = responseData?.data || [];
       const pagination = responseData?.pagination || {};

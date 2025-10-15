@@ -11,13 +11,12 @@ import { SvgXml } from "react-native-svg";
 export const Card = ({ item }: any) => {
   if (!item) return null;
   const { rating, id, gaming_zone_name, gaming_zone, address } = item;
-
   return (
     <TouchableOpacity
       style={tw`mb-6`}
       onPress={() =>
         router.push({
-          pathname: "/details/RoomDetails/[id]",
+          pathname: "/details/roomDetails/[id]",
           params: { id: id, type: "booking" },
         })
       }

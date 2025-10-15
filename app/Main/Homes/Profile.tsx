@@ -40,7 +40,7 @@ const Profile = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [16, 9],
+      aspect: [16, 16],
       quality: 1,
     });
 
@@ -175,7 +175,10 @@ const Profile = () => {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={tw`relative mb-4`} onPress={handleEditProfile}>
+        <TouchableOpacity
+          style={tw`relative mb-4 mx-2`}
+          onPress={handleEditProfile}
+        >
           <CustomButton title={"Edit profile"} />
         </TouchableOpacity>
       </ScrollView>
