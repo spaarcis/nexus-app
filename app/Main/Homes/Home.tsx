@@ -34,9 +34,13 @@ import tw from "@/lib/tailwind";
 import { useUser_profileQuery } from "@/redux/apiSlices/authApiSlices";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
+import {
+  useLazyNotificationsQuery,
+  useNotificationsQuery,
+} from "@/redux/apiSlices/notifications/notificationsSlices";
 
 const Home = () => {
   const navigation = useNavigation();
@@ -44,9 +48,18 @@ const Home = () => {
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
   const { data: nextStation, isLoading: nextStationLoading } =
     useNext_stationQuery({});
+  const fetchNotifications = useNotificationsQuery({});
+  const notificationsCounter =
+    fetchNotifications?.data?.data?.unread_notifications_count;
+
+  // useEffect(() => {
+  //   const readNotification = async () => {
+  //     const res = await fetchNotifications({ page: 1 }).unwrap();
+  //     console.log(res, "this notification response : _________");
+  //   };
+  // }, []);
 
   const { data: user, isLoading } = useUser_profileQuery({});
-  console.log(user, "nextStation");
   if (isLoading) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-base`}>
@@ -83,10 +96,10 @@ const Home = () => {
               >
                 <SvgXml xml={IconDower} />
               </TouchableOpacity>
-              <Text style={tw`text-primary font-poppinsSemiBold text-2xl`}>
-                Hi,
-                {user?.data?.name?.length > 10
-                  ? user?.data?.name?.slice(0, 10) + "..."
+              <Text style={tw`text-primary font-poppinsSemiBold text-lg`}>
+                Hi,{" "}
+                {user?.data?.name?.length > 8
+                  ? user?.data?.name?.slice(0, 8) + "..."
                   : user?.data?.name}
               </Text>
               <SvgXml xml={IconHand} />
@@ -96,6 +109,17 @@ const Home = () => {
                 onPress={() => router.push("/(allPages)/notifications")}
               >
                 <SvgXml xml={IconNotification} />
+                {notificationsCounter > 0 && (
+                  <View
+                    style={tw`absolute top-0 right-0 w-4 h-4 rounded-full bg-red-500 flex items-center justify-center`}
+                  >
+                    <Text style={tw`text-white text-xs font-bold`}>
+                      {notificationsCounter?.length > 9
+                        ? "9+"
+                        : notificationsCounter}
+                    </Text>
+                  </View>
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => router.push("/Main/Homes/Profile")}
@@ -109,12 +133,6 @@ const Home = () => {
               </TouchableOpacity>
             </View>
           </View>
-          {/* <View style={tw`flex-row gap-3  items-center px-7`}>
-            <SvgXml xml={IconLoction} />
-            <Text style={tw`text-secondary font-poppins `}>
-              {user?.data?.address ?? ""}
-            </Text>
-          </View> */}
         </View>
         {/* Explore banner */}
         <View style={tw`text-primary overflow-hidden rounded-[40px] mt-5`}>
@@ -165,9 +183,11 @@ const Home = () => {
             },
           ]}
         ></View>
-        <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
-          Your Next Station
-        </Text>
+        {populer?.data?.data?.length > 0 && (
+          <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
+            Your Next Station
+          </Text>
+        )}
 
         {/* Your Next Station */}
         {populerLoading ? (
@@ -187,28 +207,29 @@ const Home = () => {
                 }
                 style={tw`mb-2`}
               >
-                <BlurView
-                  style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
-                  intensity={10}
-                  tint="light"
+                <View
+                  style={tw`p-4 border bg-[#5E5E5E33]  rounded-3xl  flex-row items-center gap-4`}
                 >
                   <Image
                     source={nextStation?.data?.room?.photo}
                     style={[tw`h-20 w-20 rounded-2xl`, {}]}
                   ></Image>
                   <View style={tw`flex-1 items-start  justify-center`}>
-                    <Text style={tw`text-white  font-poppinsBold text-lg`}>
+                    <Text style={tw`text-white  font-poppinsBold text-base`}>
                       {nextStation?.data?.room?.name}
                     </Text>
 
                     {/* Date and Time */}
                     <View style={tw`flex-row items-center mt-1 gap-1`}>
                       <SvgXml xml={IconCleander} />
-                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
                         {nextStation?.data?.booking_date}
                       </Text>
                       <SvgXml xml={IconTime} />
-                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                      <Text
+                        numberOfLines={1}
+                        style={tw`flex-shrink text-white text-xs font-poppins ml-1`}
+                      >
                         {nextStation?.data?.starting_time}
                       </Text>
                     </View>
@@ -216,19 +237,19 @@ const Home = () => {
                     {/* Duration and Location */}
                     <View style={tw`flex-row items-center mt-1 gap-1`}>
                       <SvgXml xml={Iconhoure} />
-                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
                         {nextStation?.data?.duration} Hour
                       </Text>
                       <SvgXml xml={IconLoction} />
-                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
-                        {nextStation?.data?.provider?.address
-                          ?.split(" ")
-                          ?.slice(0, 2)
-                          ?.join(" ") + " ..."}
+                      <Text
+                        numberOfLines={1}
+                        style={tw`flex-shrink text-white text-xs font-poppins ml-1`}
+                      >
+                        {nextStation?.data?.provider?.address}
                       </Text>
                     </View>
                   </View>
-                </BlurView>
+                </View>
               </TouchableOpacity>
             </View>
           )

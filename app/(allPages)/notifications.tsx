@@ -104,9 +104,9 @@ const Notifications = () => {
   }, []);
 
   const singleMarkFnc = async (id: string) => {
+    console.log("Marking response:", id);
     try {
-      console.log("Marking notification:", id);
-      await single_mark(id).unwrap();
+      const res = await single_mark(id).unwrap();
 
       // Update local state to mark as read
       setNotifications((prev) =>
@@ -119,9 +119,8 @@ const Notifications = () => {
 
   const hendelReadAll = async () => {
     try {
-      console.log("clicked");
       const res = await mark_all_notification().unwrap();
-      console.log("Response:", res);
+      console.log(res, "read all notifications");
 
       // Update all notifications to read in local state
       setNotifications((prev) =>
@@ -136,7 +135,10 @@ const Notifications = () => {
   };
 
   const renderNotificationItem = ({ item }: { item: NotificationItem }) => (
-    <TouchableOpacity onPress={() => singleMarkFnc(item?.id)}>
+    <TouchableOpacity
+      disabled={item.is_read}
+      onPress={() => singleMarkFnc(item?.id)}
+    >
       <View
         style={tw` ${
           item.is_read ? "" : "bg-gray-800/50"

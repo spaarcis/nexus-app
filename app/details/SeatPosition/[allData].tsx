@@ -70,8 +70,6 @@ const SeatPosition = () => {
     id: parsedData?.roomId,
   });
 
-  console.log(details, "details");
-
   const [booking_new] = useBooking_newMutation();
   const [booking_reschedule] = useBooking_rescheduleMutation();
   const { data: Check_availability, isLoading: isCheckingAvailability } =
