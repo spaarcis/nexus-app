@@ -39,6 +39,17 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["home", "favorite"],
     }),
+    edit_profile: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `/edit-profile`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: data,
+      }),
+      invalidatesTags: ["profile", "user", "home"],
+    }),
   }),
 });
 

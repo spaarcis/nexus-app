@@ -44,7 +44,9 @@ const Home = () => {
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
   const { data: nextStation, isLoading: nextStationLoading } =
     useNext_stationQuery({});
+
   const { data: user, isLoading } = useUser_profileQuery({});
+  console.log(user, "nextStation");
   if (isLoading) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-base`}>
@@ -110,12 +112,12 @@ const Home = () => {
           {/* <View style={tw`flex-row gap-3  items-center px-7`}>
             <SvgXml xml={IconLoction} />
             <Text style={tw`text-secondary font-poppins `}>
-              {user?.data?.address ?? "Location not available"}
+              {user?.data?.address ?? ""}
             </Text>
           </View> */}
         </View>
         {/* Explore banner */}
-        <View style={tw`text-primary overflow-hidden rounded-[40px] mt-10`}>
+        <View style={tw`text-primary overflow-hidden rounded-[40px] mt-5`}>
           <BlurView style={tw` p-5`} intensity={10} tint="light">
             <Text
               style={tw`text-primary text-lg font-poppinsSemiBold text-center`}

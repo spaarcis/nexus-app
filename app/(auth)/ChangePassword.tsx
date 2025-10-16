@@ -88,8 +88,34 @@ const ChangePassword = () => {
               newPassword: "",
               retypePassword: "",
             }}
-            onSubmit={handleChangePassword}
-            validationSchema={validationSchema}
+            onSubmit={async (values) => {
+              try {
+                const payload = {
+                  current_password: values.currentPassword,
+                  new_password: values.newPassword,
+                  retype_password: values.retypePassword,
+                };
+
+                const res = await change_password(payload).unwrap();
+                router.push("/Main/Homes/Home");
+                router.push({
+                  pathname: "/Toaster",
+                  params: { res: res.message },
+                });
+              } catch (err) {}
+            }}
+            validationSchema={Yup.object({
+              currentPassword: Yup.string()
+                .min(4, "Password is too short")
+                .required("Current password is required"),
+              newPassword: Yup.string()
+                .min(4, "Password is too short")
+                .required("New password is required"),
+              retypePassword: Yup.string()
+                .min(4, "Password is too short")
+                .required("Retype password is required")
+                .oneOf([Yup.ref("newPassword")], "Passwords must match"),
+            })}
           >
             {({ values, setFieldValue, handleSubmit, errors }) => {
               return (
@@ -98,7 +124,7 @@ const ChangePassword = () => {
                     tw`flex-col`,
                     {
                       height: _HIGHT,
-                      paddingTop: 40,
+                      paddingTop: 60,
                     },
                   ]}
                 >
@@ -136,7 +162,7 @@ const ChangePassword = () => {
                     >
                       Current Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden `}>
+                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}
@@ -178,7 +204,7 @@ const ChangePassword = () => {
                     >
                       New Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden `}>
+                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}
@@ -218,7 +244,7 @@ const ChangePassword = () => {
                     >
                       Retype New Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden `}>
+                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}

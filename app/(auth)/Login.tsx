@@ -103,7 +103,7 @@ const Login = () => {
       if (res.status) {
         AsyncStorage.setItem("token", res?.data?.access_token);
         setTimeout(() => {
-          router?.push(`/Main/Homes/Home`);
+          router?.replace(`/Main/Homes/Home`);
         }, 1000);
       } else {
       }
@@ -165,8 +165,38 @@ const Login = () => {
         <AlertNotificationRoot>
           <Formik
             initialValues={{ email: "", password: "" }}
-            onSubmit={handleLogin}
-            validationSchema={validationSchema}
+            onSubmit={async (values) => {
+              try {
+                const res = await loginUser(values).unwrap();
+                if (res.status) {
+                  router.push("/Main/Homes/Home");
+                  AsyncStorage.setItem("token", res?.data?.access_token);
+                  console.log("token", res?.data?.access_token, "token");
+
+                  router.push({
+                    pathname: "/Toaster",
+                    params: { res: res.message },
+                  });
+                } else {
+                  router.push({
+                    pathname: "/Toaster",
+                    params: { res: res?.message?.email?.[0] },
+                  });
+                }
+              } catch (error: any) {
+                router.push({
+                  pathname: "/Toaster",
+                  params: { res: error?.message },
+                });
+              }
+            }}
+            validationSchema={Yup.object({
+              email: Yup.string().email().required("Email is required"),
+              password: Yup.string()
+                // .min(6, "Password is too sort ")
+                .required("Password is required")
+                .uppercase("1 lowercase letter added"),
+            })}
           >
             {({
               values,
@@ -225,7 +255,7 @@ const Login = () => {
                           </View>
                         </View>
                         {errors.email && touched.email && (
-                          <Text style={tw`px-4 pt-1 text-red-700 font-poppins`}>
+                          <Text style={tw` pl-4 text-red-700 font-poppins`}>
                             {errors.email}
                           </Text>
                         )}
