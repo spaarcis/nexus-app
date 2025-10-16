@@ -87,7 +87,7 @@ const Login = () => {
       if (res.status) {
         AsyncStorage.setItem("token", res?.data?.access_token);
         setTimeout(() => {
-          router?.push(`/Main/Homes/Home`);
+          router?.replace(`/Main/Homes/Home`);
         }, 1000);
       } else {
       }
@@ -146,7 +146,7 @@ const Login = () => {
               }
             }}
             validationSchema={Yup.object({
-              email: Yup.string().email().required("email is required"),
+              email: Yup.string().email().required("Email is required"),
               password: Yup.string()
                 // .min(6, "Password is too sort ")
                 .required("Password is required")
@@ -204,9 +204,7 @@ const Login = () => {
                           </View>
                         </View>
                         {errors.email && (
-                          <Text
-                            style={tw`text-center text-red-700 font-poppins`}
-                          >
+                          <Text style={tw` pl-4 text-red-700 font-poppins`}>
                             {errors.email}
                           </Text>
                         )}
@@ -245,11 +243,11 @@ const Login = () => {
                         </View>
                       </View>
                       {errors.password && (
-                        <Text style={tw`text-center text-red-700 font-poppins`}>
+                        <Text style={tw`pl-4 text-red-700 font-poppins`}>
                           {errors.password}
                         </Text>
                       )}
-                      <View style={tw`py-7  px-7 flex-row justify-end `}>
+                      <View style={tw`pt-2 pb-6 px-2 flex-row justify-end `}>
                         <TouchableOpacity
                           onPress={() => router.push("/(auth)/ForgetPassword")}
                         >
@@ -277,6 +275,7 @@ const Login = () => {
                       </TouchableOpacity>
                     </View>
                   </View>
+
                   <View style={tw`flex-row justify-center gap-3 mb-8`}>
                     <TouchableOpacity
                       onPress={() => router.push("/(auth)/Register")}
@@ -291,7 +290,6 @@ const Login = () => {
           </Formik>
         </AlertNotificationRoot>
       </ScrollView>
-      <View></View>
     </KeyboardAvoidingView>
   );
 };

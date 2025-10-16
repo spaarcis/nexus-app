@@ -37,7 +37,9 @@ const Home = () => {
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
   const { data: nextStation, isLoading: nextStationLoading } =
     useNext_stationQuery({});
+
   const { data: user, isLoading } = useUser_profileQuery({});
+  console.log(user, "nextStation");
   if (isLoading) {
     <View>
       <Text>loading...</Text>

@@ -5,6 +5,8 @@ import tw from "@/lib/tailwind";
 import { useRegisterUserMutation } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
 import Entypo from "@expo/vector-icons/Entypo";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { Formik } from "formik";
 import React from "react";
@@ -29,12 +31,23 @@ import * as Yup from "yup";
 const Register = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showNewRePassword, setShowNewRePassword] = React.useState(false);
-  const [isChecked, setChecked] = React.useState(false);
+  // const [isChecked, setChecked] = React.useState(false);
   const tailwind = useTailwind();
+  const [checked, setIsChecked] = React.useState(false);
 
   // ...........api.............//
 
   const [registerUser] = useRegisterUserMutation();
+
+  const handleCheckBox = async () => {
+    try {
+      setIsChecked(!checked);
+      // await AsyncStorage.setItem("check", JSON.stringify(isChecked));
+    } catch (error) {
+      console.log(error, "User Info Storage not save ---->");
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -52,10 +65,7 @@ const Register = () => {
           backgroundColor: "#000000",
         }}
       />
-      <ScrollView contentContainerStyle={tw` px-5`}>
-        <TouchableOpacity style={tw`pt-2`} onPress={() => router.back()}>
-          <SvgXml xml={IcoBack} />
-        </TouchableOpacity>
+      <ScrollView contentContainerStyle={tw`px-5`}>
         <AlertNotificationRoot>
           <Formik
             initialValues={{
@@ -113,15 +123,14 @@ const Register = () => {
               return (
                 <View
                   style={[
-                    tw`flex-col items-center justify-between`,
+                    tw`flex-grow justify-between`,
                     {
                       height: _HIGHT,
                     },
                   ]}
                 >
-                  <View></View>
                   <View>
-                    <View style={tw` pb-10 `}>
+                    <View style={tw`pt-16 pb-10`}>
                       <Text
                         style={tw`font-poppinsBlack mx-auto text-3xl  text-primary`}
                       >
@@ -234,7 +243,7 @@ const Register = () => {
                           Retype Password
                         </Text>
                         <View
-                          style={tw` bg-white/10 rounded-full mb-7 overflow-hidden`}
+                          style={tw` bg-white/10 rounded-full  overflow-hidden`}
                         >
                           <View
                             style={tw` w-full flex-row items-center justify-start px-4`}
@@ -267,15 +276,87 @@ const Register = () => {
                           {errors.retype_password}
                         </Text>
                       )}
+                    </View>
+                    {/* ============= Terms and conditions ============= checkbox  */}
+
+                    <View
+                      style={tw`flex-row gap-2 items-start rounded-none pt-3 px-3`}
+                    >
                       <TouchableOpacity
-                        style={tw`relative mb-4`}
+                        onPress={() => handleCheckBox()}
+                        style={tw.style(
+                          `border border-gray-400 w-5 h-5  justify-center items-center rounded-sm`,
+                          checked ? `bg-blue-800 border-0` : `bg-transparent`
+                        )}
+                      >
+                        {checked ? (
+                          <Text style={tw`text-white text-sm`}>✔</Text>
+                        ) : null}
+                      </TouchableOpacity>
+                      <Text numberOfLines={2} style={tw`text-gray-400 text-sm`}>
+                        By create a account you agree to our{" "}
+                        <Text style={tw`font-semibold underline`}>
+                          terms of use{" "}
+                        </Text>{" "}
+                        &{" "}
+                        <Text style={tw`font-semibold underline`}>
+                          privacy policy.
+                        </Text>
+                      </Text>
+                    </View>
+                    {!checked ? (
+                      <TouchableOpacity
+                        activeOpacity={0.9}
+                        style={tw`h-14 mt-10 bg-slate-600 rounded-full`}
+                      >
+                        <Text
+                          style={tw`text-gray-400  flex w-full text-center text-lg py-[14px] font-poppinsBold`}
+                        >
+                          Register
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        style={tw`relative mt-10`}
                         onPress={() => {
                           handleSubmit();
                         }}
                       >
-                        <CustomButton title={" Register"} />
+                        <CustomButton title={"Register"} />
                       </TouchableOpacity>
-                    </View>
+                    )}
+                  </View>
+
+                  <View style={tw`flex-row items-center justify-center pb-3`}>
+                    <Text style={tw`text-white font-poppins text-sm`}>
+                      Have an account?{" "}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => router.replace("/(auth)/Login")}
+                    >
+                      <MaskedView
+                        maskElement={
+                          <Text
+                            style={[
+                              tw`text-base font-semibold`,
+                              { backgroundColor: "transparent" },
+                            ]}
+                          >
+                            Sign in
+                          </Text>
+                        }
+                      >
+                        <LinearGradient
+                          colors={["#6523E7", "#023CE3CC", "#6523E7CC"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 2 }}
+                        >
+                          <Text style={tw` font-semibold text-base opacity-0 `}>
+                            Sign in
+                          </Text>
+                        </LinearGradient>
+                      </MaskedView>
+                    </TouchableOpacity>
                   </View>
                 </View>
               );
@@ -283,7 +364,6 @@ const Register = () => {
           </Formik>
         </AlertNotificationRoot>
       </ScrollView>
-      <View></View>
     </KeyboardAvoidingView>
   );
 };

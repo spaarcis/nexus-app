@@ -209,7 +209,7 @@ const seatPosotion = () => {
 
       <ScrollView style={tw`flex-1 px-4`}>
         {/* Header */}
-        <View style={tw`flex-row justify-between items-center mt-12 mb-6`}>
+        <View style={tw`flex-row justify-between items-center mt-2 mb-6`}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={tw`flex-row items-center`}

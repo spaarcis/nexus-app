@@ -60,8 +60,8 @@ const ChangePassword = () => {
                   new_password: values.newPassword,
                   retype_password: values.retypePassword,
                 };
-
                 const res = await change_password(payload).unwrap();
+                console.log(res, "response ======================");
                 router.push("/Main/Homes/Home");
                 router.push({
                   pathname: "/Toaster",
@@ -94,7 +94,7 @@ const ChangePassword = () => {
                     tw`flex-col`,
                     {
                       height: _HIGHT,
-                      paddingTop: 60,
+                      paddingTop: 10,
                     },
                   ]}
                 >
@@ -134,7 +134,9 @@ const ChangePassword = () => {
                     >
                       Current Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
+                    <View
+                      style={tw`rounded-2xl relative overflow-hidden mb-0.5`}
+                    >
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}
@@ -176,7 +178,9 @@ const ChangePassword = () => {
                     >
                       New Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
+                    <View
+                      style={tw`rounded-2xl relative overflow-hidden mb-0.2`}
+                    >
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}
@@ -216,7 +220,9 @@ const ChangePassword = () => {
                     >
                       Retype New Password
                     </Text>
-                    <View style={tw`rounded-2xl relative overflow-hidden mb-6`}>
+                    <View
+                      style={tw`rounded-2xl relative overflow-hidden mb-0.5`}
+                    >
                       <SvgXml xml={IconInputBox} />
                       <View
                         style={tw`absolute w-full flex-row items-center justify-start px-4`}
