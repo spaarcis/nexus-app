@@ -1,21 +1,11 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
 import { IconAvailable, IconAvailableDenger } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useBooking_newMutation,
   useBooking_rescheduleMutation,
   useUser_promo_codeQuery,
 } from "@/redux/apiSlices/bookingApi/bookingSlice";
-import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
-import { useGame_zone_detailsQuery } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
-import { Ionicons } from "@expo/vector-icons";
-import MaskedView from "@react-native-masked-view/masked-view";
 import { Image, ImageBackground } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { useLocalSearchParams } from "expo-router/build/hooks";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -25,6 +15,17 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import { useGame_zone_detailsQuery } from "@/redux/apiSlices/home/homeSlice";
+import { Ionicons } from "@expo/vector-icons";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router/build/hooks";
 import { SvgXml } from "react-native-svg";
 
 interface Room {
@@ -38,7 +39,7 @@ interface Seat {
   pc_no: number;
 }
 
-const seatPosotion = () => {
+const SeatPosition = () => {
   const { allData, type, id } = useLocalSearchParams();
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
@@ -68,6 +69,9 @@ const seatPosotion = () => {
   const { data: details, isLoading } = useGame_zone_detailsQuery({
     id: parsedData?.roomId,
   });
+
+  console.log(details, "details");
+
   const [booking_new] = useBooking_newMutation();
   const [booking_reschedule] = useBooking_rescheduleMutation();
   const { data: Check_availability, isLoading: isCheckingAvailability } =
@@ -167,7 +171,7 @@ const seatPosotion = () => {
           coupon_id: couponID,
         }
       : baseData;
-    console.log(dataWithPromo, "dataWithPromo");
+    // console.log(dataWithPromo, "dataWithPromo");
 
     // 👉 Convert to FormData
     const formData = new FormData();
@@ -190,7 +194,7 @@ const seatPosotion = () => {
       console.log(error);
     }
   };
-  console.log(id, "id ididididididididididididid");
+  // console.log(id, "id ididididididididididididid");
 
   return (
     <View style={tw`flex-1`}>
@@ -244,7 +248,7 @@ const seatPosotion = () => {
         <View style={tw`mb-6 rounded-2xl overflow-hidden h-48`}>
           <ImageBackground
             source={{
-              uri: details?.address?.gaming_zone,
+              uri: details?.data?.gaming_zone,
             }}
             style={tw`flex-1 justify-end`}
           >
@@ -574,4 +578,4 @@ const seatPosotion = () => {
   );
 };
 
-export default seatPosotion;
+export default SeatPosition;

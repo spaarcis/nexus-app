@@ -1,33 +1,40 @@
-import { ImgGradint } from "@/assets/images/image";
-import { CarouselCard } from "@/components/shear/Carousel";
-import CustomButton from "@/components/shear/CustomButton";
-import { BokCardSkeleton } from "@/components/skeleton/BokCardSkeleton";
-import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
 import {
   IconAvaterBorder,
   IconCleander,
   IconDower,
   IconHand,
-  Iconhoure,
   IconLoction,
   IconNotification,
   IconSeaall,
-  IconsExplore,
   IconTime,
+  Iconhoure,
+  IconsExplore,
 } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useNewly_addedQuery,
   useNext_stationQuery,
   usePopular_zoneQuery,
-  useUser_profileQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
+import { router, useNavigation } from "expo-router";
+import {
+  ActivityIndicator,
+  ImageBackground,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import { CarouselCard } from "@/components/shear/Carousel";
+import CustomButton from "@/components/shear/CustomButton";
+import { BokCardSkeleton } from "@/components/skeleton/BokCardSkeleton";
+import { CardSkeleton } from "@/components/skeleton/CardSkeleton";
+import tw from "@/lib/tailwind";
+import { useUser_profileQuery } from "@/redux/apiSlices/authApiSlices";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import { router, useNavigation } from "expo-router";
 import React from "react";
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
 
@@ -41,9 +48,14 @@ const Home = () => {
   const { data: user, isLoading } = useUser_profileQuery({});
   console.log(user, "nextStation");
   if (isLoading) {
-    <View>
-      <Text>loading...</Text>
-    </View>;
+    return (
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
   }
   return (
     <View style={tw` flex-1`}>
@@ -59,7 +71,7 @@ const Home = () => {
         }}
       />
 
-      <ScrollView contentContainerStyle={tw` px-6 py-9 `}>
+      <ScrollView contentContainerStyle={tw` px-6 py-6 `}>
         {/* header */}
         <View>
           <View style={tw`flex-row items-center justify-between  gap-3`}>
@@ -72,7 +84,10 @@ const Home = () => {
                 <SvgXml xml={IconDower} />
               </TouchableOpacity>
               <Text style={tw`text-primary font-poppinsSemiBold text-2xl`}>
-                Hi, {user?.data?.name?.split(" ")[0] ?? "User"}
+                Hi,
+                {user?.data?.name?.length > 10
+                  ? user?.data?.name?.slice(0, 10) + "..."
+                  : user?.data?.name}
               </Text>
               <SvgXml xml={IconHand} />
             </View>
@@ -94,13 +109,12 @@ const Home = () => {
               </TouchableOpacity>
             </View>
           </View>
-          <View style={tw`flex-row gap-3  items-center px-7`}>
-            {user?.data?.address ? <SvgXml xml={IconLoction} /> : ""}
-
+          {/* <View style={tw`flex-row gap-3  items-center px-7`}>
+            <SvgXml xml={IconLoction} />
             <Text style={tw`text-secondary font-poppins `}>
               {user?.data?.address ?? ""}
             </Text>
-          </View>
+          </View> */}
         </View>
         {/* Explore banner */}
         <View style={tw`text-primary overflow-hidden rounded-[40px] mt-5`}>
@@ -159,63 +173,65 @@ const Home = () => {
         {populerLoading ? (
           <BokCardSkeleton />
         ) : (
-          <View style={tw`mb-4`}>
-            <TouchableOpacity
-              onPress={() =>
-                router.push({
-                  pathname: "/details/BookingsDetails/[id]",
-                  params: {
-                    id: 4,
-                    status: "Upcoming",
-                  },
-                })
-              }
-              style={tw`mb-2`}
-            >
-              <BlurView
-                style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
-                intensity={10}
-                tint="light"
+          populer?.data?.data?.length > 0 && (
+            <View style={tw`mb-4`}>
+              <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/details/BookingsDetails/[id]",
+                    params: {
+                      id: 4,
+                      status: "Upcoming",
+                    },
+                  })
+                }
+                style={tw`mb-2`}
               >
-                <Image
-                  source={nextStation?.data?.room?.photo}
-                  style={[tw`h-20 w-20 rounded-2xl`, {}]}
-                ></Image>
-                <View style={tw`flex-1 items-start  justify-center`}>
-                  <Text style={tw`text-white  font-poppinsBold text-lg`}>
-                    {nextStation?.data?.room?.name}
-                  </Text>
+                <BlurView
+                  style={tw` p-5 border  rounded-3xl overflow-hidden flex-row items-center gap-4`}
+                  intensity={10}
+                  tint="light"
+                >
+                  <Image
+                    source={nextStation?.data?.room?.photo}
+                    style={[tw`h-20 w-20 rounded-2xl`, {}]}
+                  ></Image>
+                  <View style={tw`flex-1 items-start  justify-center`}>
+                    <Text style={tw`text-white  font-poppinsBold text-lg`}>
+                      {nextStation?.data?.room?.name}
+                    </Text>
 
-                  {/* Date and Time */}
-                  <View style={tw`flex-row items-center mt-1 gap-1`}>
-                    <SvgXml xml={IconCleander} />
-                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
-                      {nextStation?.data?.booking_date}
-                    </Text>
-                    <SvgXml xml={IconTime} />
-                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
-                      {nextStation?.data?.starting_time}
-                    </Text>
-                  </View>
+                    {/* Date and Time */}
+                    <View style={tw`flex-row items-center mt-1 gap-1`}>
+                      <SvgXml xml={IconCleander} />
+                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                        {nextStation?.data?.booking_date}
+                      </Text>
+                      <SvgXml xml={IconTime} />
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                        {nextStation?.data?.starting_time}
+                      </Text>
+                    </View>
 
-                  {/* Duration and Location */}
-                  <View style={tw`flex-row items-center mt-1 gap-1`}>
-                    <SvgXml xml={Iconhoure} />
-                    <Text style={tw`text-white text-xs font-poppins ml-2`}>
-                      {nextStation?.data?.duration} Hour
-                    </Text>
-                    <SvgXml xml={IconLoction} />
-                    <Text style={tw`text-white text-xs font-poppins ml-1`}>
-                      {nextStation?.data?.provider?.address
-                        ?.split(" ")
-                        ?.slice(0, 2)
-                        ?.join(" ") + " ..."}
-                    </Text>
+                    {/* Duration and Location */}
+                    <View style={tw`flex-row items-center mt-1 gap-1`}>
+                      <SvgXml xml={Iconhoure} />
+                      <Text style={tw`text-white text-xs font-poppins ml-2`}>
+                        {nextStation?.data?.duration} Hour
+                      </Text>
+                      <SvgXml xml={IconLoction} />
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
+                        {nextStation?.data?.provider?.address
+                          ?.split(" ")
+                          ?.slice(0, 2)
+                          ?.join(" ") + " ..."}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              </BlurView>
-            </TouchableOpacity>
-          </View>
+                </BlurView>
+              </TouchableOpacity>
+            </View>
+          )
         )}
         {/* Carousel Newly Added */}
         <View style={tw`flex-row items-center justify-between `}>

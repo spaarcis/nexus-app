@@ -1,46 +1,36 @@
 import { ImgGradint, ImgLogo } from "@/assets/images/image";
-import { IconLogo } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-
-import { useLazyTokenCheckerQuery } from "@/redux/apiSlices/authApiSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Image, ImageBackground, View } from "react-native";
+
+import { IconLogo } from "@/Icons/Icons";
+import tw from "@/lib/tailwind";
+import { useLazyTokenCheckerQuery } from "@/redux/apiSlices/authApiSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
 export default function Index() {
-
   const [tokenChecker] = useLazyTokenCheckerQuery();
 
-  const handleUserNavigate = async () => {
+  const handleUserNavigate = React.useCallback(async () => {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       const res = await tokenChecker({});
       // console.log(res);
       if (res?.data?.metadata) {
-        router.push("/Main/Homes/Home");
+        router.replace("/Main/Homes/Home");
       } else {
-        router.push("/(auth)/Login");
+        router.replace("/(auth)/Login");
       }
     } else {
-      router.push("/(auth)/Login");
+      router.replace("/(auth)/Login");
     }
-  };
+  }, [tokenChecker]);
 
   useEffect(() => {
-    // const t = setTimeout(() => {
-    //   // router.replace("/Main/Homes/Home");
-    //   // router.replace("/(auth)/Login");
-    //   // router.replace("/(allPages)/seatPosotion")
-    //   // router.replace("/Main/home/home")
-    // }, 2000);
-    // return () => clearTimeout(t);
-
     handleUserNavigate();
-  }, []);
+  }, [handleUserNavigate]);
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
@@ -55,7 +45,6 @@ export default function Index() {
           left: 0,
         }}
       />
-
 
       {/* Foreground Content */}
       <View style={tw`flex-1 py-16 justify-between items-center`}>

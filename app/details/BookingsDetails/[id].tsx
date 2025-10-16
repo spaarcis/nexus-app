@@ -1,23 +1,19 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
 import {
   IconA1,
   IconCleander,
   IconContact,
-  Iconhoure,
   IconLoction,
   IconStar,
   IconTime,
   IconVIP,
+  Iconhoure,
 } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useBooking_cancelMutation,
   useBooking_detailsQuery,
   useRatingsMutation,
 } from "@/redux/apiSlices/bookingApi/bookingSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
-import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -32,6 +28,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { Ionicons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 
 const BookingsDetails = () => {
@@ -43,14 +44,7 @@ const BookingsDetails = () => {
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
-  if (isLoading) {
-    <View style={tw`flex-1 justify-center items-center `}>
-      <ActivityIndicator size="large" color="#0c8ce9" />
-      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
-        Loading...
-      </Text>
-    </View>;
-  }
+
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
@@ -122,7 +116,16 @@ const BookingsDetails = () => {
     const phoneNumber = booking_details?.data?.provider?.phone;
     Linking.openURL(`tel:${phoneNumber}`);
   };
-
+  if (isLoading) {
+    return (
+      <View style={tw`flex-1 justify-center items-center bg-base`}>
+        <ActivityIndicator size="large" color="#0c8ce9" />
+        <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={tw`flex-1`}>
       <ImageBackground
@@ -139,7 +142,7 @@ const BookingsDetails = () => {
 
       <ScrollView style={tw`flex-1 px-5`} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={tw`flex-row items-center justify-between mt-12 mb-6`}>
+        <View style={tw`flex-row items-center justify-between mt-8 mb-6`}>
           <View style={tw`flex-row items-center justify-between w-full`}>
             <TouchableOpacity
               onPress={() => router.back()}
@@ -278,11 +281,7 @@ const BookingsDetails = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={tw`relative mb-8`}
-              onPress={() =>
-                router.push(
-                  `/details/RoomDetails/${booking_details?.data?.provider?.id}?type=Reschedule?id=${id}`
-                )
-              }
+              // onPress={() => router.push(``)}
             >
               <CustomButton title={"Reschedule"} />
             </TouchableOpacity>

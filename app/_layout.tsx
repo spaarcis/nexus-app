@@ -1,10 +1,11 @@
+import "react-native-reanimated";
+
 import ThemeProvider from "@/context/ThemeProvider";
 import tw from "@/lib/tailwind";
 import store from "@/redux/store";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
 import { Provider } from "react-redux";
 import { useDeviceContext } from "twrnc";
 

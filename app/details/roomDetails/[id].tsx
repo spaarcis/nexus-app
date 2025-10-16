@@ -1,30 +1,30 @@
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
 import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
-import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { BlurView } from "expo-blur";
-import { ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
-
-import moment from "moment";
-
 import {
   ActivityIndicator,
   Image,
+  Linking,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
+import tw from "@/lib/tailwind";
+import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { BlurView } from "expo-blur";
+import { ImageBackground } from "expo-image";
+import moment from "moment";
+import { useState } from "react";
 import { SvgXml } from "react-native-svg";
 
 // Define TypeScript interfaces
@@ -49,7 +49,8 @@ interface CheckAvailabilityResponse {
 const RoomDetails = () => {
   const { id, type } = useLocalSearchParams();
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
-  const [add_to_favorite_zone] = useAdd_to_favorite_zoneMutation();
+  const [add_to_favorite_zone, { isLoading: isAddLoading }] =
+    useAdd_to_favorite_zoneMutation();
 
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -154,7 +155,7 @@ const RoomDetails = () => {
         roomId: id,
       });
       router.push({
-        pathname: "/details/SeatPosotion/[allData]",
+        pathname: "/details/SeatPosition/[allData]",
         params: {
           allData: dataToPass,
           type,
@@ -173,8 +174,6 @@ const RoomDetails = () => {
     }
     setDateModalVisible(false);
   };
-  console.log("ID:", id);
-  console.log("Type:", type);
 
   const handleTimeChange = (event: any, time?: Date) => {
     if (time) {
@@ -250,7 +249,7 @@ const RoomDetails = () => {
 
       <ScrollView style={tw`flex-1 px-4`}>
         {/* Header */}
-        <View style={tw`flex-row justify-between items-center mt-12 mb-6`}>
+        <View style={tw`flex-row justify-between items-center mt-8 mb-6`}>
           <TouchableOpacity
             onPress={() => router.back()}
             style={tw`flex-row items-center`}
@@ -259,7 +258,10 @@ const RoomDetails = () => {
             <Text style={tw`text-primary text-lg ml-1`}>Back</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={tw`flex-row items-center`}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL(`tel:${details?.data?.phone}`)}
+            style={tw`flex-row items-center`}
+          >
             <SvgXml xml={IconContact} />
           </TouchableOpacity>
         </View>
@@ -280,7 +282,11 @@ const RoomDetails = () => {
               style={tw`absolute top-4 right-0 bg-black bg-opacity-50 p-2 rounded-full`}
               onPress={async () => await add_to_favorite_zone({ zone_id: id })}
             >
-              {is_favorite ? (
+              {isAddLoading ? (
+                <View style={tw`w-6 h-6 items-center justify-center`}>
+                  <ActivityIndicator size="small" color="white" />
+                </View>
+              ) : is_favorite ? (
                 <MaterialIcons name="favorite" size={24} color="red" />
               ) : (
                 <Ionicons name="heart-outline" size={25} color="white" />
@@ -294,9 +300,11 @@ const RoomDetails = () => {
               {gaming_zone_name}
             </Text>
 
-            <View style={tw`flex-row items-center mb-2`}>
+            <View style={tw`flex-row items-center mb-2 flex-1`}>
               <SvgXml xml={IconLoction} />
-              <Text style={tw`text-gray-400 font-poppins ml-1`}>{address}</Text>
+              <Text style={tw`text-gray-400 font-poppins ml-1 flex-1`}>
+                {address}
+              </Text>
               <View style={tw`flex-row items-center ml-auto`}>
                 <SvgXml xml={IconStar} />
                 <Text style={tw`text-primary ml-1 font-poppins`}>{rating}</Text>
@@ -455,6 +463,8 @@ const RoomDetails = () => {
       {dateModalVisible && (
         <DateTimePicker
           value={new Date()}
+          themeVariant="dark"
+          minimumDate={new Date()}
           mode="date"
           display="default"
           onChange={handleDateChange}
@@ -464,10 +474,11 @@ const RoomDetails = () => {
       {/* Time Picker Modal */}
       {timeModalVisible && (
         <DateTimePicker
+          themeVariant="dark"
           value={new Date()}
           mode="time"
           // is24Hour={true}
-          display="default"
+          display="spinner"
           onChange={handleTimeChange}
         />
       )}

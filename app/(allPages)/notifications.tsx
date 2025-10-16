@@ -1,16 +1,10 @@
-import { ImgGradint } from "@/assets/images/image";
-import NotificationsSkeleton from "@/components/skeleton/notificationsSkeleton";
-import { IconReadAll } from "@/Icons/Icons";
-import tw from "@/lib/tailwind";
 import {
   useLazyNotificationsQuery,
   useMark_all_notificationMutation,
   useSingle_markMutation,
 } from "@/redux/apiSlices/notifications/notificationsSlices";
 import { _HIGHT, _Width } from "@/utils/utils";
-import { Ionicons } from "@expo/vector-icons";
 import { Image, ImageBackground } from "expo-image";
-import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,6 +14,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { IconReadAll } from "@/Icons/Icons";
+import { ImgGradint } from "@/assets/images/image";
+import NotificationsSkeleton from "@/components/skeleton/notificationsSkeleton";
+import tw from "@/lib/tailwind";
+import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { SvgXml } from "react-native-svg";
 
 interface NotificationItem {
@@ -172,7 +173,7 @@ const Notifications = () => {
       />
 
       {/* Header */}
-      <View style={tw`flex-row items-center justify-between mt-12 mb-6`}>
+      <View style={tw`flex-row items-center justify-between mt-8 mb-6`}>
         <TouchableOpacity
           onPress={() => router.back()}
           style={tw`flex-row items-center`}

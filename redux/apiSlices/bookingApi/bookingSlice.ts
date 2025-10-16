@@ -1,7 +1,6 @@
 import { api } from "@/redux/api/baseApi";
 
 export const bookingSlice = api.injectEndpoints({
-  overrideExisting: true,
   endpoints: (builder) => ({
     booking: builder.query<any, any>({
       query: ({ type, page }) => ({

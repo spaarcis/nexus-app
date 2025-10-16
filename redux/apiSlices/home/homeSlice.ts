@@ -3,13 +3,6 @@ import { api } from "@/redux/api/baseApi";
 // authApiSlices.ts
 export const authSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    user_profile: builder.query({
-      query: () => ({
-        url: `/profile`,
-        method: "GET",
-      }),
-      providesTags: ["home"],
-    }),
     popular_zone: builder.query({
       query: ({ page }) => ({
         url: `/popular-zone?page=${page}`,
@@ -58,11 +51,9 @@ export const authSlice = api.injectEndpoints({
       invalidatesTags: ["profile", "user", "home"],
     }),
   }),
-  overrideExisting: true,
 });
 
 export const {
-  useUser_profileQuery,
   usePopular_zoneQuery,
   useLazyPopular_zoneQuery,
   useNext_stationQuery,
@@ -70,5 +61,4 @@ export const {
   useGame_zone_detailsQuery,
   useLazyNewly_addedQuery,
   useAdd_to_favorite_zoneMutation,
-  useEdit_profileMutation,
 } = authSlice;
