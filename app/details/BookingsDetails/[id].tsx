@@ -44,7 +44,6 @@ const BookingsDetails = () => {
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
-
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
@@ -291,7 +290,11 @@ const BookingsDetails = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={tw`relative mb-8`}
-              // onPress={() => router.push(``)}
+              onPress={() =>
+                router.push(
+                  `/details/roomDetails/${booking_details?.data?.provider?.id}?type=Reschedule?id=${id}`
+                )
+              }
             >
               <CustomButton title={"Reschedule"} />
             </TouchableOpacity>

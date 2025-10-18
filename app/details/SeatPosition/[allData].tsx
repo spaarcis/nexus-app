@@ -54,6 +54,16 @@ const SeatPosition = () => {
   const [pc_No, setPc_No] = useState([]);
   const [couponID, setCouponID] = useState([]);
 
+  console.log(
+    allData,
+    "allData",
+    type,
+    "type",
+    id,
+    "id",
+    " ========================================>>>>>>>>>>>"
+  );
+
   useEffect(() => {
     if (allData) {
       try {
@@ -192,7 +202,6 @@ const SeatPosition = () => {
       console.log(error);
     }
   };
-  // console.log(id, "id ididididididididididididid");
 
   return (
     <View style={tw`flex-1`}>
