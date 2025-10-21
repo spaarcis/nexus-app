@@ -1,4 +1,10 @@
-import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
+import {
+  IconContact,
+  IconLocationDetails,
+  IconLoction,
+  IconStar,
+  IconTime,
+} from "@/Icons/Icons";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
@@ -51,7 +57,6 @@ const RoomDetails = () => {
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();
-  console.log(id, type, "hare is room details ------------------->");
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("00:00");
@@ -300,12 +305,14 @@ const RoomDetails = () => {
               {gaming_zone_name}
             </Text>
 
-            <View style={tw`flex-row items-center mb-2 flex-1`}>
-              <SvgXml xml={IconLoction} />
-              <Text style={tw`text-gray-400 font-poppins ml-1 flex-1`}>
-                {address}
-              </Text>
-              <View style={tw`flex-row items-center ml-auto`}>
+            <View style={tw`flex-row items-center justify-between mb-2`}>
+              <View style={tw`flex-row items-center gap-1 `}>
+                <SvgXml xml={IconLocationDetails} />
+                <Text style={tw`text-gray-400 font-poppins ml-1 `}>
+                  {address}
+                </Text>
+              </View>
+              <View style={tw`flex-row items-center`}>
                 <SvgXml xml={IconStar} />
                 <Text style={tw`text-primary ml-1 font-poppins`}>{rating}</Text>
               </View>
