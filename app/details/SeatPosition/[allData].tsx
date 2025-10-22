@@ -27,6 +27,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { SvgXml } from "react-native-svg";
+import { date } from "yup";
+import { IRoom } from "@/redux/interface/interface";
+
+// All Type or interface
+interface IMetadata {
+  availability_status: string;
+  date: string;
+  duration: number;
+  room_id: string;
+  room_image: string;
+  starting_time: string;
+  to_pay: number;
+}
 
 interface Room {
   id: number;
@@ -40,7 +53,7 @@ interface Seat {
 }
 
 const SeatPosition = () => {
-  const { allData, type, id } = useLocalSearchParams();
+  const { allData, type, id, selectedRoomName } = useLocalSearchParams();
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [showPromoModal, setShowPromoModal] = useState(false);
@@ -49,57 +62,58 @@ const SeatPosition = () => {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
   const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
-  const [backendSeats, setBackendSeats] = useState<Seat[]>([]);
+  // const [backendSeats, setBackendSeats] = useState<Seat[]>([]);
   const [percen, setPercen] = useState([]);
   const [pc_No, setPc_No] = useState([]);
   const [couponID, setCouponID] = useState([]);
 
-  console.log(
-    allData,
-    "allData",
-    type,
-    "type",
-    id,
-    "id",
-    " ========================================>>>>>>>>>>>"
+  const metadata = parsedData?.availabilityData?.metadata;
+
+  const { data: details, isLoading } = useGame_zone_detailsQuery({
+    id: id as string,
+  });
+
+  const [booking_new] = useBooking_newMutation();
+  const [booking_reschedule] = useBooking_rescheduleMutation();
+
+  const { data: Check_availability, isLoading: isCheckingAvailability } =
+    useCheck_availabilityQuery(
+      {
+        room_id: selectedRoomID,
+        date: metadata?.date,
+        starting_time: metadata?.starting_time,
+        duration: metadata?.duration,
+      },
+      {
+        skip: !selectedRoomID,
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true,
+      }
+    );
+
+  const { data: promoData, isLoading: promoLodding } = useUser_promo_codeQuery(
+    parsedData?.roomId
   );
 
+  // all useEffects
+
   useEffect(() => {
+    if (selectedRoomName) {
+      setSelectedRoom(selectedRoomName as string);
+    }
     if (allData) {
       try {
         const dataString = Array.isArray(allData) ? allData[0] : allData;
         const parsed = JSON.parse(dataString);
         setParsedData(parsed);
+        setSelectedRoomID(parsed?.roomId);
       } catch (error) {
         console.error("Error parsing allData:", error);
       }
     }
-  }, [allData]);
-  const metadata = parsedData?.availabilityData?.metadata;
-  const { data: details, isLoading } = useGame_zone_detailsQuery({
-    id: parsedData?.roomId,
-  });
+  }, [allData, selectedRoomName]);
 
-  const [booking_new] = useBooking_newMutation();
-  const [booking_reschedule] = useBooking_rescheduleMutation();
-  const { data: Check_availability, isLoading: isCheckingAvailability } =
-    useCheck_availabilityQuery({
-      room_id: selectedRoomID || parsedData?.roomId,
-      date: metadata?.date,
-      starting_time: metadata?.starting_time,
-      duration: metadata?.duration,
-    });
-  const { data: promoData, isLoading: promoLodding } = useUser_promo_codeQuery(
-    parsedData?.roomId
-  );
-
-  useEffect(() => {
-    if (Check_availability?.data) {
-      setBackendSeats(Check_availability?.data);
-    }
-  }, [Check_availability?.data]);
-
-  if (isCheckingAvailability || isLoading || promoLodding) {
+  if (isCheckingAvailability || promoLodding) {
     return (
       // Added return here
       <View style={tw`flex-1 justify-center items-center bg-base`}>
@@ -139,7 +153,7 @@ const SeatPosition = () => {
       starting_time: metadata?.starting_time,
       booking_date: metadata?.date,
       room_id: selectedRoomID || parsedData?.roomId,
-      provider_id: parsedData?.roomId,
+      provider_id: id,
     };
 
     const dataWithPromo = selectedPromo
@@ -179,7 +193,6 @@ const SeatPosition = () => {
           coupon_id: couponID,
         }
       : baseData;
-    // console.log(dataWithPromo, "dataWithPromo");
 
     // 👉 Convert to FormData
     const formData = new FormData();
@@ -195,7 +208,6 @@ const SeatPosition = () => {
         id: id,
       }).unwrap();
       if (res?.data) {
-        console.log("booking_reschedule", res.data);
         setSuccessModalVisible(true);
       }
     } catch (error) {
@@ -267,7 +279,7 @@ const SeatPosition = () => {
           </ImageBackground>
         </View>
 
-        {/* Select Room */}
+        {/* Select Room =+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold mb-3`}>
             Select Room
@@ -288,12 +300,12 @@ const SeatPosition = () => {
                 nestedScrollEnabled={true}
                 showsVerticalScrollIndicator={true}
               >
-                {details?.data?.rooms?.map((roomItem: Room, index: number) => (
+                {details?.data?.rooms?.map((roomItem: IRoom, index: number) => (
                   <TouchableOpacity
                     key={roomItem?.id}
                     onPress={() => {
                       setSelectedRoom(roomItem?.name);
-                      setSelectedRoomID(roomItem?.id);
+                      setSelectedRoomID(roomItem?.id as any);
                       setShowRoomDropdown(false);
                     }}
                     style={tw`p-4 ${
@@ -312,7 +324,7 @@ const SeatPosition = () => {
           )}
         </View>
 
-        {/* Available Seat */}
+        {/* Available Seat -----------------------------------------------------------------------------------------*/}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold mb-4`}>
             Available Seat
@@ -320,7 +332,7 @@ const SeatPosition = () => {
 
           {/* All seats in proper grid */}
           <View style={tw`flex-row flex-wrap justify-between`}>
-            {backendSeats.map((seat: Seat, index) => (
+            {Check_availability?.data?.map((seat: Seat, index: number) => (
               <TouchableOpacity
                 key={seat.index_id}
                 onPress={() => {

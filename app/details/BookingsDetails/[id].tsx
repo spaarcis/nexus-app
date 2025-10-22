@@ -37,6 +37,7 @@ import { SvgXml } from "react-native-svg";
 
 const BookingsDetails = () => {
   const { id, status } = useLocalSearchParams();
+  console.log(id, status);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -47,6 +48,8 @@ const BookingsDetails = () => {
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
+
+  // console.log(booking_details);
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, index) => {
@@ -292,7 +295,7 @@ const BookingsDetails = () => {
               style={tw`relative mb-8`}
               onPress={() =>
                 router.push(
-                  `/details/roomDetails/${booking_details?.data?.provider?.id}?type=Reschedule?id=${id}`
+                  `/details/roomDetails/${booking_details?.data?.provider?.id}?type=Reschedule&provider_id=${id}`
                 )
               }
             >

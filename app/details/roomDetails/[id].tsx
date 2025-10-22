@@ -35,7 +35,7 @@ import { SvgXml } from "react-native-svg";
 
 // Define TypeScript interfaces
 interface Room {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -53,7 +53,8 @@ interface CheckAvailabilityResponse {
 }
 
 const RoomDetails = () => {
-  const { id, type } = useLocalSearchParams();
+  const { id, type, provider_id } = useLocalSearchParams();
+  console.log(id, type, provider_id, "is ans");
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();
@@ -67,8 +68,7 @@ const RoomDetails = () => {
   const [showDurationDropdown, setShowDurationDropdown] =
     useState<boolean>(false);
   const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
-  const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
+  const [selectedRoomID, setSelectedRoomID] = useState<string | null>(null);
 
   const durations = [
     "1 hour",
@@ -90,16 +90,6 @@ const RoomDetails = () => {
       2,
       "0"
     )}`;
-  };
-
-  // Format time to HH:MM AM/PM format as required by API
-  const formatTimeForAPI = (timeString: string): string => {
-    if (!timeString) return "";
-    const [hours, minutes] = timeString.split(":");
-    const hourNum = parseInt(hours, 10);
-    const period = hourNum >= 12 ? "PM" : "AM";
-    const hour12 = hourNum % 12 || 12;
-    return `${hour12}:${minutes} ${period}`;
   };
 
   // Extract duration number from string (e.g., "2 hour" → 2)
@@ -157,14 +147,17 @@ const RoomDetails = () => {
     if (res.data) {
       const dataToPass = JSON.stringify({
         availabilityData: res.data,
-        roomId: id,
+        roomId: selectedRoomID,
       });
+
+      // console.log("Send to Seat screen", JSON.parse(dataToPass));
       router.push({
         pathname: "/details/SeatPosition/[allData]",
         params: {
           allData: dataToPass,
           type,
           id,
+          selectedRoomName: selectedRoom,
         },
       });
     }
@@ -358,7 +351,7 @@ const RoomDetails = () => {
                     key={roomItem.id}
                     onPress={() => {
                       setSelectedRoom(roomItem.name);
-                      setSelectedRoomID(roomItem.id);
+                      setSelectedRoomID(roomItem.id as any);
                       setShowRoomDropdown(false);
                     }}
                     style={tw`p-4 ${
@@ -475,7 +468,6 @@ const RoomDetails = () => {
           mode="date"
           display="default"
           onChange={handleDateChange}
-          minimumDate={new Date()}
         />
       )}
       {/* Time Picker Modal */}

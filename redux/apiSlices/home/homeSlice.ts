@@ -1,4 +1,5 @@
 import { api } from "@/redux/api/baseApi";
+import { IRoomDetailsResponse } from "@/redux/interface/interface";
 
 // authApiSlices.ts
 export const authSlice = api.injectEndpoints({
@@ -24,7 +25,7 @@ export const authSlice = api.injectEndpoints({
       }),
       providesTags: ["home"],
     }),
-    game_zone_details: builder.query({
+    game_zone_details: builder.query<IRoomDetailsResponse, any>({
       query: ({ id }) => ({
         url: `/game-zone-details/${id}`,
         method: "GET",

@@ -5,7 +5,6 @@ import {
   IconHand,
   IconLoction,
   IconNotification,
-  IconSeaall,
   IconTime,
   Iconhoure,
   IconsExplore,
@@ -37,10 +36,9 @@ import { Image } from "expo-image";
 import React, { useEffect } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { SvgXml } from "react-native-svg";
-import {
-  useLazyNotificationsQuery,
-  useNotificationsQuery,
-} from "@/redux/apiSlices/notifications/notificationsSlices";
+import { useNotificationsQuery } from "@/redux/apiSlices/notifications/notificationsSlices";
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Home = () => {
   const navigation = useNavigation();
@@ -51,13 +49,6 @@ const Home = () => {
   const fetchNotifications = useNotificationsQuery({});
   const notificationsCounter =
     fetchNotifications?.data?.data?.unread_notifications_count;
-
-  // useEffect(() => {
-  //   const readNotification = async () => {
-  //     const res = await fetchNotifications({ page: 1 }).unwrap();
-  //     console.log(res, "this notification response : _________");
-  //   };
-  // }, []);
 
   const { data: user, isLoading } = useUser_profileQuery({});
   if (isLoading) {
@@ -166,7 +157,28 @@ const Home = () => {
               router.push("/(allPages)/popularZone");
             }}
           >
-            <SvgXml xml={IconSeaall} />
+            <MaskedView
+              maskElement={
+                <Text
+                  style={[
+                    tw`text-base font-semibold`,
+                    { backgroundColor: "transparent" },
+                  ]}
+                >
+                  See All
+                </Text>
+              }
+            >
+              <LinearGradient
+                colors={["#6523E7", "#023CE3CC", "#6523E7CC"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 2 }}
+              >
+                <Text style={tw` font-semibold text-base opacity-0 `}>
+                  See All
+                </Text>
+              </LinearGradient>
+            </MaskedView>
           </TouchableOpacity>
         </View>
         {populerLoading ? (
@@ -200,7 +212,7 @@ const Home = () => {
                   router.push({
                     pathname: "/details/BookingsDetails/[id]",
                     params: {
-                      id: 4,
+                      id: nextStation?.data?.id,
                       status: "Upcoming",
                     },
                   })
@@ -264,7 +276,28 @@ const Home = () => {
               router.push("/(allPages)/afterFilterPage");
             }}
           >
-            <SvgXml xml={IconSeaall} />
+            <MaskedView
+              maskElement={
+                <Text
+                  style={[
+                    tw`text-base font-semibold`,
+                    { backgroundColor: "transparent" },
+                  ]}
+                >
+                  See All
+                </Text>
+              }
+            >
+              <LinearGradient
+                colors={["#6523E7", "#023CE3CC", "#6523E7CC"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 2 }}
+              >
+                <Text style={tw` font-semibold text-base opacity-0 `}>
+                  See All
+                </Text>
+              </LinearGradient>
+            </MaskedView>
           </TouchableOpacity>
         </View>
 
