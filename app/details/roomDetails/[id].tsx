@@ -53,8 +53,7 @@ interface CheckAvailabilityResponse {
 }
 
 const RoomDetails = () => {
-  const { id, type, provider_id } = useLocalSearchParams();
-  console.log(id, type, provider_id, "is ans");
+  const { id, type } = useLocalSearchParams();
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();

@@ -54,6 +54,7 @@ interface Seat {
 
 const SeatPosition = () => {
   const { allData, type, id, selectedRoomName } = useLocalSearchParams();
+
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [showPromoModal, setShowPromoModal] = useState(false);
@@ -183,7 +184,7 @@ const SeatPosition = () => {
       starting_time: metadata?.starting_time,
       booking_date: metadata?.date,
       room_id: selectedRoomID || parsedData?.roomId,
-      provider_id: parsedData?.roomId,
+      provider_id: id,
     };
 
     const dataWithPromo = selectedPromo
@@ -201,7 +202,11 @@ const SeatPosition = () => {
         formData.append(key, String(value));
       }
     });
-
+    console.log(
+      formData,
+      id,
+      "send server form fontend ------------------------"
+    );
     try {
       const res = await booking_reschedule({
         formData,

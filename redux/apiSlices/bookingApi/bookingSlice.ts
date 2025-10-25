@@ -48,14 +48,17 @@ export const bookingSlice = api.injectEndpoints({
       invalidatesTags: ["booking"],
     }),
     booking_reschedule: builder.mutation<any, any>({
-      query: ({ id, formData }) => ({
-        url: `/booking-reschedule/${id}`,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      }),
+      query: ({ id, formData }) => {
+        console.log(id, "endpoint id ");
+        return {
+          url: `/booking-reschedule/${id}`,
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
       invalidatesTags: ["booking"],
     }),
   }),

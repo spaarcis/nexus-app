@@ -37,12 +37,12 @@ import { SvgXml } from "react-native-svg";
 
 const BookingsDetails = () => {
   const { id, status } = useLocalSearchParams();
-  console.log(id, status);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [rating, setRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
   const [visible, setVisible] = useState(false);
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
+  console.log(booking_details, "hare is booking details -------------");
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
   const handleRating = (selectedRating: number) => {

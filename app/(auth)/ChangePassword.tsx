@@ -30,39 +30,6 @@ const ChangePassword = () => {
   const [showRetypePassword, setShowRetypePassword] = React.useState(false);
   const [change_password, { isLoading }] = useChange_passwordMutation();
 
-  const handleChangePassword = async (values: any) => {
-    try {
-      const payload = {
-        current_password: values.currentPassword,
-        new_password: values.newPassword,
-        retype_password: values.retypePassword,
-      };
-
-      // console.log(payload);
-
-      const res = await change_password(payload).unwrap();
-
-      console.log(res);
-
-      router.back();
-      router.push({
-        pathname: "/Toaster",
-        params: { res: res.message },
-      });
-    } catch (err) {
-      router.push({
-        pathname: "/Toaster",
-        params: { res: (err as any)?.message || "An error occurred" },
-      });
-    }
-  };
-
-  const validationSchema = Yup.object().shape({
-    currentPassword: Yup.string().required("Current Password is required"),
-    newPassword: Yup.string().required("New Password is required"),
-    retypePassword: Yup.string().required("Retype Password is required"),
-  });
-
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -106,13 +73,13 @@ const ChangePassword = () => {
             }}
             validationSchema={Yup.object({
               currentPassword: Yup.string()
-                .min(4, "Password is too short")
+                .min(8, "Password is too short")
                 .required("Current password is required"),
               newPassword: Yup.string()
-                .min(4, "Password is too short")
+                .min(8, "Password is too short")
                 .required("New password is required"),
               retypePassword: Yup.string()
-                .min(4, "Password is too short")
+                .min(8, "Password is too short")
                 .required("Retype password is required")
                 .oneOf([Yup.ref("newPassword")], "Passwords must match"),
             })}
