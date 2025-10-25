@@ -18,6 +18,7 @@ import { _HIGHT, _Width } from "@/utils/utils";
 import { router, useNavigation } from "expo-router";
 import {
   ActivityIndicator,
+  FlatList,
   ImageBackground,
   Text,
   TouchableOpacity,
@@ -39,6 +40,7 @@ import { SvgXml } from "react-native-svg";
 import { useNotificationsQuery } from "@/redux/apiSlices/notifications/notificationsSlices";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
+import { Card } from "@/components/shear/Card";
 
 const Home = () => {
   const navigation = useNavigation();
@@ -188,7 +190,6 @@ const Home = () => {
         ) : (
           <CarouselCard data={populer?.data?.data} />
         )}
-
         <View
           style={[
             tw``,
@@ -202,7 +203,6 @@ const Home = () => {
             Your Next Station
           </Text>
         )}
-
         {/* Your Next Station */}
         {populerLoading ? (
           <BokCardSkeleton />
@@ -302,14 +302,14 @@ const Home = () => {
             </MaskedView>
           </TouchableOpacity>
         </View>
-
-        <View style={tw`mb-32`}>
-          {newlyLoading ? (
-            <CardSkeleton />
-          ) : (
-            <CarouselCard data={newlyData?.data.data} />
-          )}
-        </View>
+        <FlatList
+          data={newlyData?.data?.data}
+          keyExtractor={(item, index) => `zone-${item.id}-${index}`}
+          onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => <Card item={item} />}
+          contentContainerStyle={tw`pb-10`}
+        />
       </ScrollView>
     </View>
   );
