@@ -93,7 +93,6 @@ const Register = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={{ backgroundColor: "#000" }}
     >
       {/* Background Image */}
       <ImageBackground
@@ -107,7 +106,7 @@ const Register = () => {
           backgroundColor: "#000000",
         }}
       />
-      <ScrollView contentContainerStyle={tw`px-5`}>
+      <ScrollView contentContainerStyle={tw`px-5`} style={tw``}>
         <AlertNotificationRoot>
           <Formik
             initialValues={{
@@ -130,15 +129,15 @@ const Register = () => {
               return (
                 <View
                   style={[
-                    tw`flex-grow justify-between`,
+                    tw`flex-grow justify-between pb-6`,
                     {
-                      height: _HIGHT * 0.8,
+                      // height: _HIGHT * 0.8,
                     },
                   ]}
                 >
                   {/* <View></View> */}
                   <View>
-                    <View style={tw` pb-10 gap-2 `}>
+                    <View style={tw` py-10 gap-2 `}>
                       <Text
                         style={tw`font-poppinsBlack mx-auto text-3xl  text-primary`}
                       >
@@ -340,7 +339,9 @@ const Register = () => {
                       Have an account?{" "}
                     </Text>
                     <TouchableOpacity
+                      activeOpacity={0.7}
                       onPress={() => router.replace("/(auth)/Login")}
+                      style={tw`py-4`}
                     >
                       <MaskedView
                         maskElement={

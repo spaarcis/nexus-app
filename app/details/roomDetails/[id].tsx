@@ -1,4 +1,10 @@
-import { IconContact, IconLoction, IconStar, IconTime } from "@/Icons/Icons";
+import {
+  IconContact,
+  IconLocationDetails,
+  IconLoction,
+  IconStar,
+  IconTime,
+} from "@/Icons/Icons";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
@@ -29,7 +35,7 @@ import { SvgXml } from "react-native-svg";
 
 // Define TypeScript interfaces
 interface Room {
-  id: number;
+  id: string;
   name: string;
 }
 
@@ -51,7 +57,6 @@ const RoomDetails = () => {
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();
-
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("00:00");
@@ -62,8 +67,7 @@ const RoomDetails = () => {
   const [showDurationDropdown, setShowDurationDropdown] =
     useState<boolean>(false);
   const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
-  const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
-  const [shouldFetch, setShouldFetch] = useState<boolean>(false);
+  const [selectedRoomID, setSelectedRoomID] = useState<string | null>(null);
 
   const durations = [
     "1 hour",
@@ -85,16 +89,6 @@ const RoomDetails = () => {
       2,
       "0"
     )}`;
-  };
-
-  // Format time to HH:MM AM/PM format as required by API
-  const formatTimeForAPI = (timeString: string): string => {
-    if (!timeString) return "";
-    const [hours, minutes] = timeString.split(":");
-    const hourNum = parseInt(hours, 10);
-    const period = hourNum >= 12 ? "PM" : "AM";
-    const hour12 = hourNum % 12 || 12;
-    return `${hour12}:${minutes} ${period}`;
   };
 
   // Extract duration number from string (e.g., "2 hour" → 2)
@@ -152,14 +146,17 @@ const RoomDetails = () => {
     if (res.data) {
       const dataToPass = JSON.stringify({
         availabilityData: res.data,
-        roomId: id,
+        roomId: selectedRoomID,
       });
+
+      // console.log("Send to Seat screen", JSON.parse(dataToPass));
       router.push({
         pathname: "/details/SeatPosition/[allData]",
         params: {
           allData: dataToPass,
           type,
           id,
+          selectedRoomName: selectedRoom,
         },
       });
     }
@@ -300,12 +297,14 @@ const RoomDetails = () => {
               {gaming_zone_name}
             </Text>
 
-            <View style={tw`flex-row items-center mb-2 flex-1`}>
-              <SvgXml xml={IconLoction} />
-              <Text style={tw`text-gray-400 font-poppins ml-1 flex-1`}>
-                {address}
-              </Text>
-              <View style={tw`flex-row items-center ml-auto`}>
+            <View style={tw`flex-row items-center justify-between mb-2`}>
+              <View style={tw`flex-row items-center gap-1 `}>
+                <SvgXml xml={IconLocationDetails} />
+                <Text style={tw`text-gray-400 font-poppins ml-1 `}>
+                  {address}
+                </Text>
+              </View>
+              <View style={tw`flex-row items-center`}>
                 <SvgXml xml={IconStar} />
                 <Text style={tw`text-primary ml-1 font-poppins`}>{rating}</Text>
               </View>
@@ -351,7 +350,7 @@ const RoomDetails = () => {
                     key={roomItem.id}
                     onPress={() => {
                       setSelectedRoom(roomItem.name);
-                      setSelectedRoomID(roomItem.id);
+                      setSelectedRoomID(roomItem.id as any);
                       setShowRoomDropdown(false);
                     }}
                     style={tw`p-4 ${
@@ -468,7 +467,6 @@ const RoomDetails = () => {
           mode="date"
           display="default"
           onChange={handleDateChange}
-          minimumDate={new Date()}
         />
       )}
       {/* Time Picker Modal */}

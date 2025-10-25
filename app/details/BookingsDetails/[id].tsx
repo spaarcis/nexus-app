@@ -42,12 +42,14 @@ const BookingsDetails = () => {
   const [reviewText, setReviewText] = useState("");
   const [visible, setVisible] = useState(false);
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
+  console.log(booking_details, "hare is booking details -------------");
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
-
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
+
+  // console.log(booking_details);
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, index) => {
@@ -142,7 +144,7 @@ const BookingsDetails = () => {
 
       <ScrollView style={tw`flex-1 px-5`} showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <View style={tw`flex-row items-center justify-between mt-8 mb-6`}>
+        <View style={tw`flex-row items-center justify-between mt-4 mb-6`}>
           <View style={tw`flex-row items-center justify-between w-full`}>
             <TouchableOpacity
               onPress={() => router.back()}
@@ -167,32 +169,42 @@ const BookingsDetails = () => {
                 uri: booking_details?.data?.provider?.gaming_zone,
               }}
               style={tw`w-full h-48 rounded-2xl`}
+              resizeMode="cover"
             />
           </View>
-          <View style={tw`mb-6`}>
-            <Text style={tw`text-white text-xl font-poppinsBold mb-4`}>
+          <View style={tw`pb-4 gap-2`}>
+            <Text style={tw`text-white text-xl font-poppinsBold`}>
               {booking_details?.data?.provider?.gaming_zone_name}
             </Text>
 
-            <View style={tw`flex-row items-center gap-1 mb-2`}>
-              <SvgXml xml={IconLoction} />
-              <Text style={tw`text-gray-400 font-poppins ml-1`}>
-                {booking_details?.data?.provider?.address}
-              </Text>
-              <View style={tw`flex-row items-center ml-auto`}>
+            <View style={tw`flex-row items-center justify-between pt-2`}>
+              <View style={tw`flex-row items-center gap-1`}>
+                <SvgXml xml={IconLoction} />
+                <Text style={tw`text-gray-400 font-poppins ml-1`}>
+                  {booking_details?.data?.provider?.address?.length > 25
+                    ? `${booking_details?.data?.provider?.address?.slice(
+                        0,
+                        25
+                      )}...`
+                    : booking_details?.data?.provider?.address}
+                </Text>
+              </View>
+              <View style={tw`flex-row items-center gap-1`}>
                 <SvgXml xml={IconStar} />
-                <Text style={tw`text-white font-poppins ml-1`}>
+                <Text style={tw`text-white font-poppins `}>
                   {booking_details?.data?.provider?.rating}
                 </Text>
               </View>
             </View>
 
-            <View style={tw`flex-row items-center`}>
-              <SvgXml xml={IconTime} />
-              <Text style={tw`text-gray-400 font-poppins ml-1`}>
-                Operating hours
-              </Text>
-              <Text style={tw`text-white font-poppins ml-auto`}>
+            <View style={tw`flex-row items-center justify-between`}>
+              <View style={tw`flex-row items-center gap-1`}>
+                <SvgXml xml={IconTime} />
+                <Text style={tw`text-gray-400 font-poppins `}>
+                  Operating hours
+                </Text>
+              </View>
+              <Text style={tw`text-white font-poppins `}>
                 {booking_details?.data?.provider?.opening_time} -{" "}
                 {booking_details?.data?.provider?.closing_time}
               </Text>
@@ -281,7 +293,11 @@ const BookingsDetails = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={tw`relative mb-8`}
-              // onPress={() => router.push(``)}
+              onPress={() =>
+                router.push(
+                  `/details/roomDetails/${booking_details?.data?.provider?.id}?type=Reschedule&provider_id=${id}`
+                )
+              }
             >
               <CustomButton title={"Reschedule"} />
             </TouchableOpacity>

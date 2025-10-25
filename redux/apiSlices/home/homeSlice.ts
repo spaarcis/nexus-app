@@ -1,4 +1,5 @@
 import { api } from "@/redux/api/baseApi";
+import { IRoomDetailsResponse } from "@/redux/interface/interface";
 
 // authApiSlices.ts
 export const authSlice = api.injectEndpoints({
@@ -24,7 +25,7 @@ export const authSlice = api.injectEndpoints({
       }),
       providesTags: ["home"],
     }),
-    game_zone_details: builder.query({
+    game_zone_details: builder.query<IRoomDetailsResponse, any>({
       query: ({ id }) => ({
         url: `/game-zone-details/${id}`,
         method: "GET",
@@ -39,17 +40,17 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["home", "favorite"],
     }),
-    edit_profile: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `/edit-profile`,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: data,
-      }),
-      invalidatesTags: ["profile", "user", "home"],
-    }),
+    // edit_profile: builder.mutation<any, any>({
+    //   query: (data) => ({
+    //     url: `/edit-profile`,
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //     body: data,
+    //   }),
+    //   invalidatesTags: ["profile", "user", "home"],
+    // }),
   }),
 });
 
