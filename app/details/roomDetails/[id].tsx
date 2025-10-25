@@ -172,20 +172,37 @@ const RoomDetails = () => {
     setDateModalVisible(false);
   };
 
+  const parseTime = (time: string) => {
+    return time.includes("AM") || time.includes("PM")
+      ? moment(time, "hh:mm A")
+      : moment(time, "HH:mm");
+  };
+
   const handleTimeChange = (event: any, time?: Date) => {
     if (time) {
       const formatTime = moment(time).format("hh:mm A");
-
       setSelectedTime(formatTime);
 
       const open = details?.data?.opening_time;
       const close = details?.data?.closing_time;
 
+      let opening = parseTime(open as string);
+      let closing = parseTime(close as string);
       const selected = moment(formatTime, "hh:mm A");
-      const opening = moment(open, "hh:mm A");
-      const closing = moment(close, "hh:mm A");
 
-      if (selected.isBefore(opening) || selected.isAfter(closing)) {
+      if (closing.isBefore(opening)) {
+        closing.add(1, "day");
+      }
+
+      let adjustedSelected = selected.clone();
+      if (selected.isBefore(opening)) {
+        adjustedSelected.add(1, "day");
+      }
+
+      if (
+        adjustedSelected.isBefore(opening) ||
+        adjustedSelected.isAfter(closing)
+      ) {
         router.push({
           pathname: "/Toaster",
           params: { res: `Please select a time between ${open} and ${close}` },
@@ -333,8 +350,11 @@ const RoomDetails = () => {
             // disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400 text-base font-poppins`}>
-              {selectedRoom || "Select a room"}
+              {rooms.length === 0
+                ? "no room available"
+                : selectedRoom || "Select a room"}
             </Text>
+
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 

@@ -61,6 +61,8 @@ const Home = () => {
       </View>
     );
   }
+  console.log(populer?.data?.data, "jone");
+
   return (
     <View style={tw` flex-1`}>
       <ImageBackground
@@ -195,7 +197,7 @@ const Home = () => {
             },
           ]}
         ></View>
-        {populer?.data?.data?.length > 0 && (
+        {nextStation?.data?.length > 0 && (
           <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
             Your Next Station
           </Text>
@@ -205,7 +207,7 @@ const Home = () => {
         {populerLoading ? (
           <BokCardSkeleton />
         ) : (
-          populer?.data?.data?.length > 0 && (
+          nextStation?.data?.length > 0 && (
             <View style={tw`mb-4`}>
               <TouchableOpacity
                 onPress={() =>
