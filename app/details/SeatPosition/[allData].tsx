@@ -212,6 +212,8 @@ const SeatPosition = () => {
         formData,
         id: id,
       }).unwrap();
+      console.log("res data", res, "res data");
+
       if (res?.data) {
         setSuccessModalVisible(true);
       }

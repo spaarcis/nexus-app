@@ -63,7 +63,7 @@ const Home = () => {
       </View>
     );
   }
-  console.log(populer?.data?.data, "jone");
+  console.log(nextStation, "jone");
 
   return (
     <View style={tw` flex-1`}>
@@ -198,16 +198,16 @@ const Home = () => {
             },
           ]}
         ></View>
-        {nextStation?.data?.length > 0 && (
+        {nextStation?.data && (
           <Text style={tw`text-primary py-2 text-lg font-poppinsBold`}>
             Your Next Station
           </Text>
         )}
-        {/* Your Next Station */}
-        {populerLoading ? (
+
+        {nextStationLoading ? (
           <BokCardSkeleton />
         ) : (
-          nextStation?.data?.length > 0 && (
+          nextStation?.data && (
             <View style={tw`mb-4`}>
               <TouchableOpacity
                 onPress={() =>
@@ -222,33 +222,28 @@ const Home = () => {
                 style={tw`mb-2`}
               >
                 <View
-                  style={tw`p-4 border bg-[#5E5E5E33]  rounded-3xl  flex-row items-center gap-4`}
+                  style={tw`p-4 border bg-[#5E5E5E33] rounded-3xl flex-row items-center gap-4`}
                 >
                   <Image
                     source={nextStation?.data?.room?.photo}
-                    style={[tw`h-20 w-20 rounded-2xl`, {}]}
-                  ></Image>
-                  <View style={tw`flex-1 items-start  justify-center`}>
-                    <Text style={tw`text-white  font-poppinsBold text-base`}>
+                    style={tw`h-20 w-20 rounded-2xl`}
+                  />
+                  <View style={tw`flex-1 items-start justify-center`}>
+                    <Text style={tw`text-white font-poppinsBold text-base`}>
                       {nextStation?.data?.room?.name}
                     </Text>
 
-                    {/* Date and Time */}
                     <View style={tw`flex-row items-center mt-1 gap-1`}>
                       <SvgXml xml={IconCleander} />
                       <Text style={tw`text-white text-xs font-poppins ml-1`}>
                         {nextStation?.data?.booking_date}
                       </Text>
                       <SvgXml xml={IconTime} />
-                      <Text
-                        numberOfLines={1}
-                        style={tw`flex-shrink text-white text-xs font-poppins ml-1`}
-                      >
+                      <Text style={tw`text-white text-xs font-poppins ml-1`}>
                         {nextStation?.data?.starting_time}
                       </Text>
                     </View>
 
-                    {/* Duration and Location */}
                     <View style={tw`flex-row items-center mt-1 gap-1`}>
                       <SvgXml xml={Iconhoure} />
                       <Text style={tw`text-white text-xs font-poppins ml-1`}>
