@@ -63,7 +63,6 @@ const Home = () => {
       </View>
     );
   }
-  console.log(nextStation, "jone");
 
   return (
     <View style={tw` flex-1`}>
@@ -301,6 +300,7 @@ const Home = () => {
           data={newlyData?.data?.data}
           keyExtractor={(item, index) => `zone-${item.id}-${index}`}
           onEndReachedThreshold={0.5}
+          scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <Card item={item} />}
           contentContainerStyle={tw`pb-10`}

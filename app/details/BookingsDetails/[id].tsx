@@ -42,14 +42,11 @@ const BookingsDetails = () => {
   const [reviewText, setReviewText] = useState("");
   const [visible, setVisible] = useState(false);
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
-  console.log(booking_details, "hare is booking details -------------");
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
-
-  // console.log(booking_details);
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, index) => {

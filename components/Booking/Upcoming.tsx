@@ -91,8 +91,6 @@ const Upcoming = () => {
     fetchUpcomingBookings(1, true);
   }, []);
 
-  // console.log("Render");
-
   return (
     <View>
       {isLoading && upcomingBookings.length === 0 ? (

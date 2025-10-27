@@ -17,7 +17,6 @@ export default function Index() {
     const token = await AsyncStorage.getItem("token");
     if (token) {
       const res = await tokenChecker({});
-      // console.log(res);
       if (res?.data?.metadata) {
         router.replace("/Main/Homes/Home");
       } else {

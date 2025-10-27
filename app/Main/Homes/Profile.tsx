@@ -75,10 +75,7 @@ const Profile = () => {
     try {
       const formData = new FormData();
       formData.append("name", fullName);
-      // console.log(fullName);
       const res = await edit_profile(formData).unwrap();
-      // alert("Profile updated successfully!");
-      // console.log(res);
       if (res.status === "success") {
         router.push({
           pathname: "/Toaster",

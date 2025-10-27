@@ -36,11 +36,8 @@ function CustomDrawerContent(props: CustomDrawerProps) {
 
   const handleLogout = async () => {
     await logout().unwrap();
-    // console.log(res, "logout status");
-
     AsyncStorage.removeItem("token");
     router.replace("/(auth)/Login");
-    // router.dismissAll();
   };
 
   if (isLoading) {

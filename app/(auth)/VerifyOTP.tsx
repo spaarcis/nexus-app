@@ -34,7 +34,6 @@ const VerifyOTP = () => {
     try {
       const data = { email: email as string, otp };
       const res = await verifyOtp(data).unwrap();
-      // console.log(res);
       if (res) {
         router.push({
           pathname: "/Toaster",
@@ -68,7 +67,6 @@ const VerifyOTP = () => {
     try {
       const data = { email: email as string };
       const res = await forgetPassword(data).unwrap();
-      console.log(res);
       router.push({
         pathname: "/Toaster",
         params: { res: res.message },

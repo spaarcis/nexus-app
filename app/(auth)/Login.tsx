@@ -56,11 +56,7 @@ const Login = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
-      console.log(response);
-
       const user = response?.data?.user;
-      // console.log(user, "useruseruseruseruseruser");
-
       if (!user) {
         router.push({
           pathname: "/Toaster",
@@ -100,7 +96,6 @@ const Login = () => {
 
       // Send to backend
       const res = await socialLogin(formData).unwrap();
-      console.log("res resresres", res);
 
       if (res.status) {
         AsyncStorage.setItem("token", res?.data?.access_token);
@@ -109,9 +104,7 @@ const Login = () => {
         }, 1000);
       } else {
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -122,7 +115,6 @@ const Login = () => {
       if (res.status === "success") {
         router.replace("/Main/Homes/Home");
         AsyncStorage.setItem("token", res?.data?.access_token);
-        // console.log("token", res?.data?.access_token, "token");
       } else {
         router.push({
           pathname: "/Toaster",
@@ -174,8 +166,6 @@ const Login = () => {
                     if (res.status) {
                       router.push("/Main/Homes/Home");
                       AsyncStorage.setItem("token", res?.data?.access_token);
-                      console.log("token", res?.data?.access_token, "token");
-
                       router.push({
                         pathname: "/Toaster",
                         params: { res: res.message },

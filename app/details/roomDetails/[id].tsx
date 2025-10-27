@@ -149,7 +149,6 @@ const RoomDetails = () => {
         roomId: selectedRoomID,
       });
 
-      // console.log("Send to Seat screen", JSON.parse(dataToPass));
       router.push({
         pathname: "/details/SeatPosition/[allData]",
         params: {
@@ -209,8 +208,6 @@ const RoomDetails = () => {
         });
         return;
       }
-
-      console.log("✅ Valid time:", formatTime);
     }
 
     setTimeModalVisible(false);

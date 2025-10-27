@@ -104,7 +104,6 @@ const Notifications = () => {
   }, []);
 
   const singleMarkFnc = async (id: string) => {
-    console.log("Marking response:", id);
     try {
       const res = await single_mark(id).unwrap();
 
@@ -120,8 +119,6 @@ const Notifications = () => {
   const hendelReadAll = async () => {
     try {
       const res = await mark_all_notification().unwrap();
-      console.log(res, "read all notifications");
-
       // Update all notifications to read in local state
       setNotifications((prev) =>
         prev.map((item) => ({ ...item, is_read: true }))

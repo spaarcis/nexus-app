@@ -49,7 +49,6 @@ export const bookingSlice = api.injectEndpoints({
     }),
     booking_reschedule: builder.mutation<any, any>({
       query: ({ id, formData }) => {
-        console.log(id, "endpoint id ");
         return {
           url: `/booking-reschedule/${id}`,
           method: "POST",

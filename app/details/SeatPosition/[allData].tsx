@@ -170,9 +170,7 @@ const SeatPosition = () => {
       if (res?.data) {
         setSuccessModalVisible(true);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const handelReschedule = async () => {
@@ -202,24 +200,15 @@ const SeatPosition = () => {
         formData.append(key, String(value));
       }
     });
-    console.log(
-      formData,
-      id,
-      "send server form fontend ------------------------"
-    );
     try {
       const res = await booking_reschedule({
         formData,
         id: id,
       }).unwrap();
-      console.log("res data", res, "res data");
-
       if (res?.data) {
         setSuccessModalVisible(true);
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (

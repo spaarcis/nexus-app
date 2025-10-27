@@ -30,8 +30,6 @@ const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
       },
     });
 
-    // ........Check if response data is a string and malformed.......//
-    // console.log(result?.data);
     if (result?.status === 403) {
       AsyncStorage.removeItem("token");
       AsyncStorage.removeItem("user");
