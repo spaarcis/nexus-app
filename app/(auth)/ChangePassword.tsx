@@ -73,13 +73,13 @@ const ChangePassword = () => {
             }}
             validationSchema={Yup.object({
               currentPassword: Yup.string()
-                .min(8, "Password is too short")
+                // .min(8, "Password is too short")
                 .required("Current password is required"),
               newPassword: Yup.string()
-                .min(8, "Password is too short")
+                // .min(8, "Password is too short")
                 .required("New password is required"),
               retypePassword: Yup.string()
-                .min(8, "Password is too short")
+                // .min(8, "Password is too short")
                 .required("Retype password is required")
                 .oneOf([Yup.ref("newPassword")], "Passwords must match"),
             })}

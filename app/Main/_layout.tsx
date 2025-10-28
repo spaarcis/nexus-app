@@ -12,13 +12,12 @@ import {
   type DrawerContentComponentProps,
   DrawerContentScrollView,
 } from "@react-navigation/drawer";
-import { ImageBackground } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import { router } from "expo-router";
 import { Drawer } from "expo-router/drawer";
 import { useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -90,10 +89,7 @@ function CustomDrawerContent(props: CustomDrawerProps) {
               <View
                 style={tw`w-12 h-12 rounded-full bg-gray-300 mr-3 overflow-hidden`}
               >
-                <Image
-                  source={{ uri: user?.data?.avatar }}
-                  style={tw`w-full h-full`}
-                />
+                <Image source={user?.data?.avatar} style={tw`w-full h-full`} />
               </View>
               <View>
                 <Text style={tw`text-white text-lg font-semibold`}>
