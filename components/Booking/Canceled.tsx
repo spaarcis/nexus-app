@@ -25,7 +25,7 @@ const Canceled = () => {
   const fetchCanceledBookings = async (pageNum = 1, isRefresh = false) => {
     try {
       if ((isLoading || isFetching || isLoadingMore) && !isRefresh) return;
-      setIsLoadingMore(true);
+      if (!isRefresh) setIsLoadingMore(true);
 
       const res = await fetchCanceledQuery({
         page: pageNum,
@@ -36,23 +36,22 @@ const Canceled = () => {
       const newBookings = responseData?.data || [];
       const pagination = responseData?.pagination || {};
 
-      if (isRefresh) {
-        setCanceledBookings(newBookings);
-      } else {
-        const existingIds = new Set(canceledBookings.map((b) => b.id));
+      setCanceledBookings((prev) => {
+        if (isRefresh) return newBookings;
+        const existingIds = new Set(prev.map((b) => b.id));
         const uniqueBookings = newBookings.filter(
           (b: any) => !existingIds.has(b.id)
         );
-        setCanceledBookings((prev) => [...prev, ...uniqueBookings]);
-      }
+
+        return [...prev, ...uniqueBookings];
+      });
 
       const current = pagination.current_page || pageNum;
       const last = pagination.last_page || 1;
-
       setHasMorePages(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      // handle error silently
+      console.log("fetchCanceledBookings error:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);
