@@ -40,11 +40,13 @@ const Completed = () => {
       if (isRefresh) {
         setCompletedBookings(newBookings);
       } else {
-        const existingIds = new Set(completedBookings.map((b) => b.id));
-        const uniqueBookings = newBookings.filter(
-          (b: any) => !existingIds.has(b.id)
-        );
-        setCompletedBookings((prev) => [...prev, ...uniqueBookings]);
+        setCompletedBookings((prev) => {
+          const existingIds = new Set(prev.map((b) => b.id));
+          const uniqueBookings = newBookings.filter(
+            (b) => !existingIds.has(b.id)
+          );
+          return [...prev, ...uniqueBookings];
+        });
       }
 
       const current = pagination.current_page || pageNum;
@@ -53,7 +55,7 @@ const Completed = () => {
       setHasMorePages(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      // handle error silently
+      console.log("Fetch error:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);
