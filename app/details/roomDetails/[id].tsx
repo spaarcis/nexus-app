@@ -290,7 +290,7 @@ const RoomDetails = () => {
               resizeMode="cover"
             />
             <TouchableOpacity
-              style={tw`absolute top-4 right-0 bg-black bg-opacity-50 p-2 rounded-full`}
+              style={tw`absolute top-2 right-2  bg-black bg-opacity-50 p-2 rounded-full`}
               onPress={async () => await add_to_favorite_zone({ zone_id: id })}
             >
               {isAddLoading ? (
