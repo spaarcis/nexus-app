@@ -150,7 +150,9 @@ const Explore = () => {
             renderItem={({ item }) => <Card item={item} />}
             contentContainerStyle={tw`pb-10`}
             ListFooterComponent={
-              <View style={tw`py-4 mb-44 flex justify-center items-center`}>
+              <View
+                style={tw`py-4 mb-[300px] flex justify-center items-center `}
+              >
                 {loadingMore ? (
                   <>
                     <ActivityIndicator size="small" color="#0000ff" />

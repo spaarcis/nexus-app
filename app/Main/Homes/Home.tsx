@@ -262,7 +262,7 @@ const Home = () => {
             </View>
           )
         )}
-        {/* Carousel Newly Added */}
+        {/*  Newly Added  */}
         <View style={tw`flex-row items-center justify-between `}>
           <Text style={tw`text-primary pb-3 text-lg font-poppinsBold`}>
             Newly Added
@@ -303,7 +303,7 @@ const Home = () => {
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => <Card item={item} />}
-          contentContainerStyle={tw`pb-10`}
+          contentContainerStyle={tw`pb-20`}
         />
       </ScrollView>
     </View>

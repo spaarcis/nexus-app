@@ -47,6 +47,7 @@ const BookingsDetails = () => {
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
+  console.log(id, "booking");
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, index) => {
@@ -274,7 +275,11 @@ const BookingsDetails = () => {
             style={tw` mb-8`}
             onPress={() => setIsModalVisible(true)}
           >
-            <CustomButton title={"Rating & Review"} />
+            {booking_details?.data?.has_rating ? (
+              <View></View>
+            ) : (
+              <CustomButton title={"Rating & Review"} />
+            )}
           </TouchableOpacity>
         ) : status === "Upcoming" ? (
           <View>
@@ -291,9 +296,13 @@ const BookingsDetails = () => {
             <TouchableOpacity
               style={tw`relative mb-8`}
               onPress={() =>
-                router.push(
-                  `/details/roomDetails/${booking_details?.data?.provider?.id}?type=Reschedule&provider_id=${id}`
-                )
+                router.push({
+                  pathname: `/details/roomDetails/${booking_details?.data?.provider?.id}`,
+                  params: {
+                    type: "Reschedule",
+                    booking_id: id,
+                  },
+                })
               }
             >
               <CustomButton title={"Reschedule"} />

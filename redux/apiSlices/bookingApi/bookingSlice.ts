@@ -7,7 +7,7 @@ export const bookingSlice = api.injectEndpoints({
         url: `/booking-list?type=${type}&page=${page}`,
         method: "GET",
       }),
-      providesTags: ["booking"],
+      providesTags: ["cancel"],
     }),
     booking_details: builder.query<any, any>({
       query: (id) => ({
@@ -28,7 +28,7 @@ export const bookingSlice = api.injectEndpoints({
         url: `/booking-cancel/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["booking"],
+      invalidatesTags: ["cancel"],
     }),
     // review
     ratings: builder.mutation<any, any>({

@@ -53,7 +53,7 @@ interface CheckAvailabilityResponse {
 }
 
 const RoomDetails = () => {
-  const { id, type } = useLocalSearchParams();
+  const { id, type, booking_id } = useLocalSearchParams();
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();
@@ -90,6 +90,7 @@ const RoomDetails = () => {
       "0"
     )}`;
   };
+  console.log("roomD", booking_id, "roomD");
 
   // Extract duration number from string (e.g., "2 hour" → 2)
   const getDurationNumber = (durationString: string): number => {
@@ -135,7 +136,6 @@ const RoomDetails = () => {
       return;
     }
 
-    // Lazy query trigger করা হচ্ছে
     const res = await triggerCheckAvailability({
       room_id: selectedRoomID,
       date: formatDateForAPI(selectedDate),
@@ -155,6 +155,7 @@ const RoomDetails = () => {
           allData: dataToPass,
           type,
           id,
+          booking_id,
           selectedRoomName: selectedRoom,
         },
       });
@@ -434,7 +435,6 @@ const RoomDetails = () => {
             <Text style={tw`text-gray-400`}>{selectedDuration}</Text>
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
-
           {/* Dropdown */}
           {showDurationDropdown && (
             <View style={tw`bg-white/10  mt-2 rounded-lg`}>

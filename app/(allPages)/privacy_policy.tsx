@@ -1,4 +1,5 @@
 import { ImgGradint } from "@/assets/images/image";
+import tw from "@/lib/tailwind";
 import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/DowerAllApi/authTermsConPrivacyPol";
 
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -13,7 +14,6 @@ import {
 } from "react-native";
 import RenderHtml from "react-native-render-html";
 import { SvgXml } from "react-native-svg";
-import tw from "twrnc";
 
 // Back arrow icon
 const BackIcon = `
@@ -69,6 +69,7 @@ const PrivacyPolicy = () => {
       />
 
       {/* Header */}
+
       <View style={tw`pt-12 px-6 pb-6`}>
         <TouchableOpacity
           onPress={() => router.back()}
@@ -87,7 +88,7 @@ const PrivacyPolicy = () => {
           </Text>
         </View>
 
-        <Text style={tw`text-gray-400 text-sm font-poppinsRegular mb-4`}>
+        <Text style={tw`text-gray-400 text-sm font-poppins mb-4`}>
           Updated{" "}
           {termsData?.data[0]?.updated_at
             ? formatDate(termsData?.data[0]?.updated_at)

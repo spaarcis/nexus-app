@@ -84,6 +84,7 @@ export const api = createApi({
     "booking",
     "notification",
     "profile",
+    "cancel",
   ],
 });
 

@@ -53,7 +53,8 @@ interface Seat {
 }
 
 const SeatPosition = () => {
-  const { allData, type, id, selectedRoomName } = useLocalSearchParams();
+  const { allData, type, id, selectedRoomName, booking_id } =
+    useLocalSearchParams();
 
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
@@ -97,6 +98,7 @@ const SeatPosition = () => {
   );
 
   // all useEffects
+  console.log(id, "id allData");
 
   useEffect(() => {
     if (selectedRoomName) {
@@ -203,12 +205,17 @@ const SeatPosition = () => {
     try {
       const res = await booking_reschedule({
         formData,
-        id: id,
+        id: booking_id,
       }).unwrap();
+      console.log(res);
+
       if (res?.data) {
         setSuccessModalVisible(true);
       }
-    } catch (error) {}
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    }
   };
 
   return (

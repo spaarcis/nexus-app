@@ -1,4 +1,5 @@
 import { ImgGradint } from "@/assets/images/image";
+import tw from "@/lib/tailwind";
 import { useTermsConPrivacyPolQuery } from "@/redux/apiSlices/DowerAllApi/authTermsConPrivacyPol";
 
 import { _HIGHT, _Width } from "@/utils/utils";
@@ -13,7 +14,6 @@ import {
 } from "react-native";
 import RenderHtml from "react-native-render-html";
 import { SvgXml } from "react-native-svg";
-import tw from "twrnc";
 
 // Back arrow icon
 const BackIcon = `
@@ -49,7 +49,7 @@ const TermsConditions = () => {
   if (isLoading) {
     <View style={tw`flex-1 justify-center items-center `}>
       <ActivityIndicator size="large" color="#0c8ce9" />
-      <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
+      <Text style={tw`mt-4 text-lg font-poppinsLight text-gray-700`}>
         Loading...
       </Text>
     </View>;
@@ -75,9 +75,7 @@ const TermsConditions = () => {
           style={tw`flex-row items-center mb-6`}
         >
           <SvgXml xml={BackIcon} width={24} height={24} />
-          <Text style={tw`text-white text-lg ml-2 font-poppinsMedium`}>
-            Back
-          </Text>
+          <Text style={tw`text-white text-lg ml-2 font-p`}>Back</Text>
         </TouchableOpacity>
 
         <View style={tw`flex-row items-center mb-2`}>
@@ -87,7 +85,7 @@ const TermsConditions = () => {
           </Text>
         </View>
 
-        <Text style={tw`text-gray-400 text-sm font-poppinsRegular mb-4`}>
+        <Text style={tw`text-gray-400 text-sm font-poppins mb-4`}>
           Updated{" "}
           {termsData?.data[0]?.updated_at
             ? formatDate(termsData?.data[0]?.updated_at)

@@ -12,7 +12,7 @@ import { BokCardSkeleton } from "../skeleton/BokCardSkeleton";
 import BookingCard from "./BookingCard";
 
 const Completed = () => {
-  // --- Pagination States ---
+  // --- Pagination States --- //
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
