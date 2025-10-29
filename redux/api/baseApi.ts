@@ -29,6 +29,7 @@ const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
         Authorization: token ? `Bearer ${token}` : "",
       },
     });
+    console.log(token);
 
     if (result?.status === 403) {
       AsyncStorage.removeItem("token");
@@ -85,6 +86,7 @@ export const api = createApi({
     "notification",
     "profile",
     "cancel",
+    "addFavorite",
   ],
 });
 

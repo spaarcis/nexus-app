@@ -243,6 +243,7 @@ const RoomDetails = () => {
     closing_time,
     address,
   } = details.data;
+  console.log(is_favorite);
 
   return (
     <View style={tw`flex-1`}>

@@ -98,17 +98,26 @@ const BookingsDetails = () => {
   const handleConfirm = async () => {
     try {
       const res = await booking_cancel(Number(id)).unwrap();
-      router.push({
+
+      // First hide modal
+      setVisible(false);
+
+      // Replace current page with Toaster, then go to bookings
+      router.replace({
         pathname: "/Toaster",
         params: { res: res.message },
       });
-      setVisible(false);
+
+      // After toast, go to bookings page
+      setTimeout(() => {
+        router.replace("/Main/Homes/bookings");
+      }, 2000);
     } catch (error) {
+      setVisible(false);
       router.push({
         pathname: "/Toaster",
         params: { res: (error as any)?.message || "An error occurred" },
       });
-      setVisible(false);
     }
   };
 

@@ -38,7 +38,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["home", "favorite"],
+      invalidatesTags: ["home", "addFavorite"],
     }),
     // edit_profile: builder.mutation<any, any>({
     //   query: (data) => ({
