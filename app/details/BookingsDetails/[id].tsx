@@ -276,7 +276,7 @@ const BookingsDetails = () => {
           >
             <CustomButton title={"Rating & Review"} />
           </TouchableOpacity>
-        ) : status === "Confirmed" ? (
+        ) : status === "Upcoming" ? (
           <View>
             <TouchableOpacity
               style={tw`bg-[#171823] mb-4 rounded-full`}
