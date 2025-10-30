@@ -61,7 +61,7 @@ const TermsConditions = () => {
           style={tw`flex-row items-center mb-6`}
         >
           <SvgXml xml={BackIcon} width={24} height={24} />
-          <Text style={tw`text-white text-lg ml-2 font-p`}>Back</Text>
+          <Text style={tw`text-white text-lg ml-2 font-poppins`}>Back</Text>
         </TouchableOpacity>
 
         <View style={tw`flex-row items-center mb-2`}>

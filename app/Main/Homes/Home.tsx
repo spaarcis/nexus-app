@@ -225,12 +225,12 @@ const Home = () => {
                   style={tw`p-4 border bg-[#5E5E5E33] rounded-3xl flex-row items-center gap-4`}
                 >
                   <Image
-                    source={nextStation?.data?.room?.photo}
+                    source={nextStation?.data?.provider?.gaming_zone}
                     style={tw`h-20 w-20 rounded-2xl`}
                   />
                   <View style={tw`flex-1 items-start justify-center`}>
                     <Text style={tw`text-white font-poppinsBold text-base`}>
-                      {nextStation?.data?.room?.name}
+                      {nextStation?.data?.provider?.gaming_zone_name}
                     </Text>
 
                     <View style={tw`flex-row items-center mt-1 gap-1`}>

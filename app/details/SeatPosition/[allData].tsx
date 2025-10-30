@@ -211,10 +211,7 @@ const SeatPosition = () => {
       if (res?.data) {
         setSuccessModalVisible(true);
       }
-    } catch (error) {
-      alert(error);
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   return (
