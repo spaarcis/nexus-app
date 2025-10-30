@@ -18,7 +18,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   ImageBackground,
   Linking,
   Modal,
@@ -34,6 +33,7 @@ import CustomButton from "@/components/shear/CustomButton";
 import tw from "@/lib/tailwind";
 import { Ionicons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
+import { Image } from "expo-image";
 
 const BookingsDetails = () => {
   const { id, status } = useLocalSearchParams();
@@ -172,9 +172,7 @@ const BookingsDetails = () => {
         <View style={tw`bg-gray-800/50 rounded-2xl p-4 mb-6`}>
           <View style={tw`mb-6`}>
             <Image
-              source={{
-                uri: booking_details?.data?.provider?.gaming_zone,
-              }}
+              source={booking_details?.data?.provider?.gaming_zone}
               style={tw`w-full h-48 rounded-2xl`}
               resizeMode="cover"
             />

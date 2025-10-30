@@ -14,7 +14,6 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   ActivityIndicator,
-  Image,
   Linking,
   ScrollView,
   Text,
@@ -28,7 +27,7 @@ import tw from "@/lib/tailwind";
 import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { BlurView } from "expo-blur";
-import { ImageBackground } from "expo-image";
+import { Image, ImageBackground } from "expo-image";
 import moment from "moment";
 import { useState } from "react";
 import { SvgXml } from "react-native-svg";
@@ -287,7 +286,7 @@ const RoomDetails = () => {
           {/* Gaming Room Image */}
           <View style={tw`mb-6`}>
             <Image
-              source={{ uri: gaming_zone }}
+              source={gaming_zone}
               style={tw`w-full h-48 rounded-xl`}
               resizeMode="cover"
             />

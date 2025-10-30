@@ -273,11 +273,11 @@ const SeatPosition = () => {
             }}
             style={tw`flex-1 justify-end`}
           >
-            <View style={tw`bg-black/60 p-4`}>
+            {/* <View style={tw`bg-black/60 p-4`}>
               <Text style={tw`text-white text-xl font-poppinsBold`}>
                 Gaming Lounge
               </Text>
-            </View>
+            </View> */}
           </ImageBackground>
         </View>
 
