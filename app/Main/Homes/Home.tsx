@@ -53,6 +53,7 @@ const Home = () => {
     fetchNotifications?.data?.data?.unread_notifications_count;
 
   const { data: user, isLoading } = useUser_profileQuery({});
+
   if (isLoading) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-base`}>

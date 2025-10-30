@@ -16,7 +16,7 @@ export const authSlice = api.injectEndpoints({
         url: `/next-station`,
         method: "GET",
       }),
-      providesTags: ["home"],
+      providesTags: ["home", "booking", "cancel", "next_station"],
     }),
     newly_added: builder.query({
       query: ({ page }) => ({

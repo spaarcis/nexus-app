@@ -28,7 +28,7 @@ export const bookingSlice = api.injectEndpoints({
         url: `/booking-cancel/${id}`,
         method: "POST",
       }),
-      invalidatesTags: ["cancel"],
+      invalidatesTags: ["cancel", "next_station"],
     }),
     // review
     ratings: builder.mutation<any, any>({
