@@ -583,7 +583,7 @@ const SeatPosition = () => {
                 style={tw`mb-4 w-full`}
                 onPress={() => {
                   setSuccessModalVisible(false);
-                  router.push("/");
+                  router.replace("/Main/Homes/Home");
                 }}
               >
                 <CustomButton title="Back to Home" />

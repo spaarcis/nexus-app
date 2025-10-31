@@ -15,7 +15,7 @@ import {
   usePopular_zoneQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
-import { router, useNavigation } from "expo-router";
+import { router, useFocusEffect, useNavigation } from "expo-router";
 import {
   ActivityIndicator,
   FlatList,
@@ -46,13 +46,26 @@ const Home = () => {
   const navigation = useNavigation();
   const { data: populer, isLoading: populerLoading } = usePopular_zoneQuery({});
   const { data: newlyData, isLoading: newlyLoading } = useNewly_addedQuery({});
-  const { data: nextStation, isLoading: nextStationLoading } =
-    useNext_stationQuery({});
+  // Home.ts e ei change korun
+  const {
+    data: nextStation,
+    isLoading: nextStationLoading,
+    refetch: refetchNextStation,
+  } = useNext_stationQuery(undefined, {
+    refetchOnMountOrArgChange: true, // ei line add korun
+  });
+
   const fetchNotifications = useNotificationsQuery({});
   const notificationsCounter =
     fetchNotifications?.data?.data?.unread_notifications_count;
 
   const { data: user, isLoading } = useUser_profileQuery({});
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchNextStation();
+    }, [refetchNextStation])
+  );
 
   if (isLoading) {
     return (

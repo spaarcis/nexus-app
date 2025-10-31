@@ -34,6 +34,7 @@ import tw from "@/lib/tailwind";
 import { Ionicons } from "@expo/vector-icons";
 import { SvgXml } from "react-native-svg";
 import { Image } from "expo-image";
+import { useNext_stationQuery } from "@/redux/apiSlices/home/homeSlice";
 
 const BookingsDetails = () => {
   const { id, status } = useLocalSearchParams();
@@ -44,6 +45,7 @@ const BookingsDetails = () => {
   const { data: booking_details, isLoading } = useBooking_detailsQuery(id);
   const [booking_cancel] = useBooking_cancelMutation();
   const [ratings] = useRatingsMutation();
+  // const { refetch } = useNext_stationQuery({});
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
@@ -95,23 +97,19 @@ const BookingsDetails = () => {
     }
   }, [isModalVisible]);
 
+  // BookingsDetails.ts e ei change korun
   const handleConfirm = async () => {
     try {
       const res = await booking_cancel(Number(id)).unwrap();
-
-      // First hide modal
       setVisible(false);
-
-      // Replace current page with Toaster, then go to bookings
-      router.replace({
-        pathname: "/Toaster",
-        params: { res: res.message },
-      });
-
-      // After toast, go to bookings page
-      setTimeout(() => {
+      if (res.status === "success") {
         router.replace("/Main/Homes/bookings");
-      }, 2000);
+      } else {
+        router.push({
+          pathname: "/Toaster",
+          params: { res: res.message },
+        });
+      }
     } catch (error) {
       setVisible(false);
       router.push({
@@ -120,7 +118,6 @@ const BookingsDetails = () => {
       });
     }
   };
-
   const handleCall = () => {
     const phoneNumber = booking_details?.data?.provider?.phone;
     Linking.openURL(`tel:${phoneNumber}`);
