@@ -1,17 +1,25 @@
+import { ImgGradint } from "@/assets/images/image";
+import CustomButton from "@/components/shear/CustomButton";
 import {
   IconContact,
   IconLocationDetails,
-  IconLoction,
   IconStar,
   IconTime,
 } from "@/Icons/Icons";
+import tw from "@/lib/tailwind";
+import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import {
   useAdd_to_favorite_zoneMutation,
   useGame_zone_detailsQuery,
 } from "@/redux/apiSlices/home/homeSlice";
 import { _HIGHT, _Width } from "@/utils/utils";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { BlurView } from "expo-blur";
+import { Image, ImageBackground } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
+import moment from "moment";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Linking,
@@ -20,120 +28,119 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
-import { ImgGradint } from "@/assets/images/image";
-import CustomButton from "@/components/shear/CustomButton";
-import tw from "@/lib/tailwind";
-import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { BlurView } from "expo-blur";
-import { Image, ImageBackground } from "expo-image";
-import moment from "moment";
-import { useState } from "react";
 import { SvgXml } from "react-native-svg";
 
-// Define TypeScript interfaces
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface Room {
   id: string;
   name: string;
 }
 
-interface PCAvailability {
-  pc_no: number;
-  is_book: boolean;
-  booking_id: number | null;
-}
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const formatDateForAPI = (dateString: string): string => {
+  if (!dateString) return "";
+  const [day, month, year] = dateString.split("/");
+  if (!day || !month || !year) return "";
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+};
 
-interface CheckAvailabilityResponse {
-  status: string;
-  status_code: number;
-  message: string;
-  data: PCAvailability[];
-}
+const getDurationNumber = (durationString: string): number => {
+  if (!durationString || durationString === "Select Duration") return 0;
+  return parseInt(durationString, 10);
+};
 
+const parseTime = (time: string) =>
+  time.includes("AM") || time.includes("PM")
+    ? moment(time, "hh:mm A")
+    : moment(time, "HH:mm");
+
+const DURATIONS = [
+  "1 hour",
+  "2 hour",
+  "3 hour",
+  "4 hour",
+  "5 hour",
+  "6 hour",
+  "7 hour",
+  "8 hour",
+];
+
+// ─── Component ────────────────────────────────────────────────────────────────
 const RoomDetails = () => {
   const { id, type, booking_id } = useLocalSearchParams();
   const { data: details, isLoading } = useGame_zone_detailsQuery({ id });
   const [add_to_favorite_zone, { isLoading: isAddLoading }] =
     useAdd_to_favorite_zoneMutation();
+  const [triggerCheckAvailability, { isFetching: isCheckingAvailability }] =
+    useLazyCheck_availabilityQuery();
+
+  // ── Form state
   const [selectedRoom, setSelectedRoom] = useState<string>("");
+  const [selectedRoomID, setSelectedRoomID] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("00:00");
-  const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
-  const [timeModalVisible, setTimeModalVisible] = useState<boolean>(false);
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [isTimeValid, setIsTimeValid] = useState<boolean>(true);
   const [selectedDuration, setSelectedDuration] =
     useState<string>("Select Duration");
+
+  // ── UI toggles
+  const [dateModalVisible, setDateModalVisible] = useState<boolean>(false);
+  const [timeModalVisible, setTimeModalVisible] = useState<boolean>(false);
   const [showDurationDropdown, setShowDurationDropdown] =
     useState<boolean>(false);
   const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
-  const [selectedRoomID, setSelectedRoomID] = useState<string | null>(null);
 
-  const durations = [
-    "1 hour",
-    "2 hour",
-    "3 hour",
-    "4 hour",
-    "5 hour",
-    "6 hour",
-    "7 hour",
-    "8 hour",
-  ];
+  // ─── Toast helper ───────────────────────────────────────────────────────────
+  const showToast = (message: string) =>
+    router.push({ pathname: "/Toaster", params: { res: message } });
 
-  // Format date to YYYY-MM-DD format as required by API
-  const formatDateForAPI = (dateString: string): string => {
-    if (!dateString) return "";
-    const parts = dateString.split("/");
-    if (parts.length !== 3) return "";
-    return `${parts[2]}-${parts[1].padStart(2, "0")}-${parts[0].padStart(
-      2,
-      "0"
-    )}`;
-  };
-  console.log("roomD", booking_id, "roomD");
-
-  // Extract duration number from string (e.g., "2 hour" → 2)
-  const getDurationNumber = (durationString: string): number => {
-    if (!durationString || durationString === "Select Duration") return 0;
-    return parseInt(durationString, 10);
+  // ─── Date picker ────────────────────────────────────────────────────────────
+  const handleDateChange = (_event: any, date?: Date) => {
+    setDateModalVisible(false);
+    if (!date) return;
+    const formatted = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    setSelectedDate(formatted);
   };
 
-  // Call the API with all required parameters - moved to top level
-  const [
-    triggerCheckAvailability,
-    { data: Check_availability, isFetching: isCheckingAvailability },
-  ] = useLazyCheck_availabilityQuery();
+  // ─── Time picker ────────────────────────────────────────────────────────────
+  const handleTimeChange = (_event: any, time?: Date) => {
+    setTimeModalVisible(false);
+    if (!time) return;
 
-  const logAllSelectionsAsync = async () => {
-    if (!selectedRoomID) {
-      router.push({
-        pathname: "/Toaster",
-        params: { res: "Please select a room" },
-      });
-      return;
-    }
+    const formatTime = moment(time).format("hh:mm A");
+    const open = details?.data?.opening_time as string;
+    const close = details?.data?.closing_time as string;
 
-    if (!selectedDate) {
-      router.push({
-        pathname: "/Toaster",
-        params: { res: "Please select a date" },
-      });
-      return;
-    }
+    const opening = parseTime(open);
+    const closing = parseTime(close);
+    const selected = moment(formatTime, "hh:mm A");
 
-    if (selectedDuration === "Select Duration") {
-      router.push({
-        pathname: "/Toaster",
-        params: { res: "Please select a duration" },
-      });
-      return;
+    // handle overnight ranges (e.g. 08:30 AM → 08:30 PM next day)
+    if (closing.isBefore(opening)) closing.add(1, "day");
+
+    const adjustedSelected = selected.clone();
+    if (selected.isBefore(opening)) adjustedSelected.add(1, "day");
+
+    const withinHours =
+      !adjustedSelected.isBefore(opening) && !adjustedSelected.isAfter(closing);
+
+    setSelectedTime(formatTime);
+    setIsTimeValid(withinHours);
+
+    if (!withinHours) {
+      showToast(`Please select a time between ${open} and ${close}`);
     }
-    if (selectedTime === "Select time") {
-      router.push({
-        pathname: "/Toaster",
-        params: { res: "Please select a time" },
-      });
-      return;
-    }
+  };
+
+  // ─── Submit ─────────────────────────────────────────────────────────────────
+  const handleCheckAvailability = async () => {
+    if (!selectedRoomID) return showToast("Please select a room");
+    if (!selectedDate) return showToast("Please select a date");
+    if (selectedDuration === "Select Duration")
+      return showToast("Please select a duration");
+    if (!selectedTime) return showToast("Please select a time");
+    if (!isTimeValid)
+      return showToast("Selected time is outside operating hours");
 
     const res = await triggerCheckAvailability({
       room_id: selectedRoomID,
@@ -143,15 +150,16 @@ const RoomDetails = () => {
     });
 
     if (res.data) {
-      const dataToPass = JSON.stringify({
-        availabilityData: res.data,
-        roomId: selectedRoomID,
-      });
-
       router.push({
         pathname: "/details/SeatPosition/[allData]",
         params: {
-          allData: dataToPass,
+          allData: JSON.stringify({
+            availabilityData: res.data,
+            roomId: selectedRoomID,
+            date: formatDateForAPI(selectedDate), // এটা add করো
+            starting_time: selectedTime, // এটা add করো
+            duration: getDurationNumber(selectedDuration), // এটা add করো
+          }),
           type,
           id,
           booking_id,
@@ -161,73 +169,14 @@ const RoomDetails = () => {
     }
   };
 
-  const handleDateChange = (event: any, date?: Date) => {
-    if (date) {
-      const formatted = `${date.getDate()}/${
-        date.getMonth() + 1
-      }/${date.getFullYear()}`;
-      setSelectedDate(formatted);
-    }
-    setDateModalVisible(false);
-  };
-
-  const parseTime = (time: string) => {
-    return time.includes("AM") || time.includes("PM")
-      ? moment(time, "hh:mm A")
-      : moment(time, "HH:mm");
-  };
-
-  const handleTimeChange = (event: any, time?: Date) => {
-    if (time) {
-      const formatTime = moment(time).format("hh:mm A");
-      setSelectedTime(formatTime);
-
-      const open = details?.data?.opening_time;
-      const close = details?.data?.closing_time;
-
-      let opening = parseTime(open as string);
-      let closing = parseTime(close as string);
-      const selected = moment(formatTime, "hh:mm A");
-
-      if (closing.isBefore(opening)) {
-        closing.add(1, "day");
-      }
-
-      let adjustedSelected = selected.clone();
-      if (selected.isBefore(opening)) {
-        adjustedSelected.add(1, "day");
-      }
-
-      if (
-        adjustedSelected.isBefore(opening) ||
-        adjustedSelected.isAfter(closing)
-      ) {
-        router.push({
-          pathname: "/Toaster",
-          params: { res: `Please select a time between ${open} and ${close}` },
-        });
-        return;
-      }
-    }
-
-    setTimeModalVisible(false);
-  };
-
-  if (isLoading) {
+  // ─── Loading / empty guards ─────────────────────────────────────────────────
+  if (isLoading || !details?.data) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-base`}>
         <ActivityIndicator size="large" color="#0c8ce9" />
         <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
           Loading...
         </Text>
-      </View>
-    );
-  }
-
-  if (!details?.data) {
-    return (
-      <View style={tw`flex-1 justify-center items-center bg-base`}>
-        <ActivityIndicator size="large" color="#0c8ce9" />
       </View>
     );
   }
@@ -242,11 +191,10 @@ const RoomDetails = () => {
     closing_time,
     address,
   } = details.data;
-  console.log(is_favorite);
 
+  // ─── Render ──────────────────────────────────────────────────────────────────
   return (
     <View style={tw`flex-1`}>
-      {/* Background Image */}
       <ImageBackground
         source={ImgGradint}
         style={{
@@ -260,7 +208,7 @@ const RoomDetails = () => {
       />
 
       <ScrollView style={tw`flex-1 px-4`}>
-        {/* Header */}
+        {/* ── Header ── */}
         <View style={tw`flex-row justify-between items-center mt-8 mb-6`}>
           <TouchableOpacity
             onPress={() => router.back()}
@@ -272,18 +220,17 @@ const RoomDetails = () => {
 
           <TouchableOpacity
             onPress={() => Linking.openURL(`tel:${details?.data?.phone}`)}
-            style={tw`flex-row items-center`}
           >
             <SvgXml xml={IconContact} />
           </TouchableOpacity>
         </View>
 
+        {/* ── Zone info card ── */}
         <BlurView
           style={tw`p-4 rounded-3xl overflow-hidden gap-4`}
           intensity={10}
           tint="light"
         >
-          {/* Gaming Room Image */}
           <View style={tw`mb-6`}>
             <Image
               source={gaming_zone}
@@ -291,8 +238,8 @@ const RoomDetails = () => {
               resizeMode="cover"
             />
             <TouchableOpacity
-              style={tw`absolute top-2 right-2  bg-black bg-opacity-50 p-2 rounded-full`}
-              onPress={async () => await add_to_favorite_zone({ zone_id: id })}
+              style={tw`absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full`}
+              onPress={() => add_to_favorite_zone({ zone_id: id })}
             >
               {isAddLoading ? (
                 <View style={tw`w-6 h-6 items-center justify-center`}>
@@ -306,16 +253,15 @@ const RoomDetails = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Room Info */}
           <View style={tw`mb-6`}>
             <Text style={tw`text-primary text-2xl font-poppinsBold mb-4`}>
               {gaming_zone_name}
             </Text>
 
             <View style={tw`flex-row items-center justify-between mb-2`}>
-              <View style={tw`flex-row items-center gap-1 `}>
+              <View style={tw`flex-row items-center gap-1`}>
                 <SvgXml xml={IconLocationDetails} />
-                <Text style={tw`text-gray-400 font-poppins ml-1 `}>
+                <Text style={tw`text-gray-400 font-poppins ml-1`}>
                   {address}
                 </Text>
               </View>
@@ -337,7 +283,7 @@ const RoomDetails = () => {
           </View>
         </BlurView>
 
-        {/* Select Room */}
+        {/* ── Select Room ── */}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold my-3`}>
             Select Room
@@ -345,14 +291,12 @@ const RoomDetails = () => {
           <TouchableOpacity
             onPress={() => setShowRoomDropdown(!showRoomDropdown)}
             style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
-            // disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400 text-base font-poppins`}>
               {rooms.length === 0
-                ? "no room available"
+                ? "No room available"
                 : selectedRoom || "Select a room"}
             </Text>
-
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
 
@@ -360,25 +304,21 @@ const RoomDetails = () => {
             <View style={tw`bg-white/10 mt-2 rounded-lg`}>
               <ScrollView
                 style={tw`max-h-60`}
-                nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator
               >
-                {rooms.map((roomItem: Room, index: number) => (
+                {rooms.map((room: Room, index: number) => (
                   <TouchableOpacity
-                    key={roomItem.id}
+                    key={room.id}
                     onPress={() => {
-                      setSelectedRoom(roomItem.name);
-                      setSelectedRoomID(roomItem.id as any);
+                      setSelectedRoom(room.name);
+                      setSelectedRoomID(room.id);
                       setShowRoomDropdown(false);
                     }}
-                    style={tw`p-4 ${
-                      index !== rooms.length - 1
-                        ? "border-b border-gray-700"
-                        : ""
-                    }`}
+                    style={tw`p-4 ${index !== rooms.length - 1 ? "border-b border-gray-700" : ""}`}
                   >
                     <Text style={tw`text-white text-base font-poppins`}>
-                      {roomItem.name}
+                      {room.name}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -387,8 +327,8 @@ const RoomDetails = () => {
           )}
         </View>
 
-        {/* Date Selection */}
-        <View style={tw`mb-4 `}>
+        {/* ── Date ── */}
+        <View style={tw`mb-4`}>
           <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>
             Date
           </Text>
@@ -398,35 +338,47 @@ const RoomDetails = () => {
             disabled={isCheckingAvailability}
           >
             <Text style={tw`text-gray-400`}>
-              {selectedDate ? selectedDate : "DD/MM/YYYY"}
+              {selectedDate || "DD/MM/YYYY"}
             </Text>
             <Ionicons name="calendar-outline" size={20} color="#9CA3AF" />
           </TouchableOpacity>
         </View>
 
-        {/* Starting Time */}
+        {/* ── Starting Time ── */}
         <View style={tw`mb-4`}>
           <Text style={tw`text-primary text-lg font-poppinsSemiBold mb-3`}>
             Starting time
           </Text>
           <TouchableOpacity
-            style={tw`bg-gray-800 bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
+            style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center border ${
+              !isTimeValid ? "border-red-500" : "border-transparent"
+            }`}
             onPress={() => setTimeModalVisible(true)}
             disabled={isCheckingAvailability}
           >
-            <Text style={tw`text-gray-400`}>
-              {selectedTime ? selectedTime : "00:00"}
+            <Text
+              style={tw`${!isTimeValid ? "text-red-400" : "text-gray-400"}`}
+            >
+              {selectedTime || "Select time"}
             </Text>
-            <Ionicons name="time-outline" size={20} color="#9CA3AF" />
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color={!isTimeValid ? "#EF4444" : "#9CA3AF"}
+            />
           </TouchableOpacity>
+          {!isTimeValid && (
+            <Text style={tw`text-red-400 text-xs mt-1 ml-2`}>
+              Must be within {opening_time} – {closing_time}
+            </Text>
+          )}
         </View>
 
-        {/* Duration */}
-        <View style={tw`mb-8 `}>
+        {/* ── Duration ── */}
+        <View style={tw`mb-8`}>
           <Text style={tw`text-primary text-lg font-semibold mb-3`}>
             Duration
           </Text>
-
           <TouchableOpacity
             style={tw`bg-white/10 p-4 rounded-full flex-row justify-between items-center`}
             onPress={() => setShowDurationDropdown(!showDurationDropdown)}
@@ -435,24 +387,24 @@ const RoomDetails = () => {
             <Text style={tw`text-gray-400`}>{selectedDuration}</Text>
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
-          {/* Dropdown */}
+
           {showDurationDropdown && (
-            <View style={tw`bg-white/10  mt-2 rounded-lg`}>
+            <View style={tw`bg-white/10 mt-2 rounded-lg`}>
               <ScrollView
                 style={tw`max-h-60`}
-                nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator
               >
-                {durations.map((duration) => (
+                {DURATIONS.map((d) => (
                   <TouchableOpacity
-                    key={duration}
+                    key={d}
                     style={tw`p-3 border-b border-gray-700`}
                     onPress={() => {
-                      setSelectedDuration(duration);
+                      setSelectedDuration(d);
                       setShowDurationDropdown(false);
                     }}
                   >
-                    <Text style={tw`text-white`}>{duration}</Text>
+                    <Text style={tw`text-white`}>{d}</Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -460,9 +412,10 @@ const RoomDetails = () => {
           )}
         </View>
 
+        {/* ── Submit ── */}
         <TouchableOpacity
           style={tw`relative mb-4`}
-          onPress={logAllSelectionsAsync}
+          onPress={handleCheckAvailability}
           disabled={isCheckingAvailability}
         >
           <CustomButton
@@ -475,7 +428,7 @@ const RoomDetails = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Date Picker Modal */}
+      {/* ── Date Picker ── */}
       {dateModalVisible && (
         <DateTimePicker
           value={new Date()}
@@ -486,13 +439,13 @@ const RoomDetails = () => {
           onChange={handleDateChange}
         />
       )}
-      {/* Time Picker Modal */}
+
+      {/* ── Time Picker ── */}
       {timeModalVisible && (
         <DateTimePicker
           themeVariant="dark"
           value={new Date()}
           mode="time"
-          // is24Hour={true}
           display="spinner"
           onChange={handleTimeChange}
         />

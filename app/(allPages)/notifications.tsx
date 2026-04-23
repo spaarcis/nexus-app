@@ -111,9 +111,7 @@ const Notifications = () => {
       setNotifications((prev) =>
         prev.map((item) => (item.id === id ? { ...item, is_read: true } : item))
       );
-    } catch (error: any) {
-      console.error("Error marking notification:", error);
-    }
+    } catch (error: any) {}
   };
 
   const hendelReadAll = async () => {

@@ -44,6 +44,9 @@ export const bookingSlice = api.injectEndpoints({
         url: `/booking-new`,
         method: "POST",
         body: data,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }),
       invalidatesTags: ["booking"],
     }),

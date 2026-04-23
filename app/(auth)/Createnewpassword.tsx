@@ -26,7 +26,7 @@ const Createnewpassword = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showNewRePassword, setShowNewRePassword] = React.useState(false);
   //-----------get email----------
-  const { email } = useLocalSearchParams();
+  const { email, reset_token } = useLocalSearchParams();
   const tailwind = useTailwind();
   const [resetPassword] = useResetPasswordMutation();
   return (
@@ -59,6 +59,7 @@ const Createnewpassword = () => {
                 email: email,
                 password: values.password,
                 retype_password: values.retype_password,
+                reset_token: reset_token,
               };
               try {
                 const res = await resetPassword(data).unwrap();

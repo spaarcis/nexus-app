@@ -19,18 +19,17 @@ import {
 import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import tw from "@/lib/tailwind";
-import { useCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
+import { useLazyCheck_availabilityQuery } from "@/redux/apiSlices/exploreApi/exploreApiSlice";
 import { useGame_zone_detailsQuery } from "@/redux/apiSlices/home/homeSlice";
+import { IRoom } from "@/redux/interface/interface";
 import { Ionicons } from "@expo/vector-icons";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { SvgXml } from "react-native-svg";
-import { date } from "yup";
-import { IRoom } from "@/redux/interface/interface";
 
-// All Type or interface
+// ─── Types ────────────────────────────────────────────────────────────────────
 interface IMetadata {
   availability_status: string;
   date: string;
@@ -41,84 +40,111 @@ interface IMetadata {
   to_pay: number;
 }
 
-interface Room {
-  id: number;
-  name: string;
-}
 interface Seat {
   index_id: number;
-  booking_id: number;
+  booking_id: number | null;
   is_book: boolean;
   pc_no: number;
 }
 
+interface PromoItem {
+  coupon: {
+    id: number;
+    promo_code: string;
+    percentage: number;
+    validate_date: string;
+  };
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
 const SeatPosition = () => {
   const { allData, type, id, selectedRoomName, booking_id } =
     useLocalSearchParams();
 
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
-  const [showPromoModal, setShowPromoModal] = useState(false);
-  const [showRoomDropdown, setShowRoomDropdown] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState("Select");
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
+  const [selectedPcNo, setSelectedPcNo] = useState<number | null>(null);
+  const [showPromoModal, setShowPromoModal] = useState<boolean>(false);
+  const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>("Select");
   const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
-  // const [backendSeats, setBackendSeats] = useState<Seat[]>([]);
-  const [percen, setPercen] = useState([]);
-  const [pc_No, setPc_No] = useState([]);
-  const [couponID, setCouponID] = useState([]);
+  const [successModalVisible, setSuccessModalVisible] =
+    useState<boolean>(false);
+  const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
+  const [promoPercent, setPromoPercent] = useState<number>(0);
+  const [couponID, setCouponID] = useState<number | null>(null);
 
-  const metadata = parsedData?.availabilityData?.metadata;
+  const [seatData, setSeatData] = useState<Seat[]>([]);
+  const [availabilityStatus, setAvailabilityStatus] = useState<string>("");
 
-  const { data: details, isLoading } = useGame_zone_detailsQuery({
-    id: id as string,
-  });
-
+  // ─── API hooks ───────────────────────────────────────────────────────────────
+  const { data: details } = useGame_zone_detailsQuery({ id: id as string });
   const [booking_new] = useBooking_newMutation();
   const [booking_reschedule] = useBooking_rescheduleMutation();
 
-  const { data: Check_availability, isLoading: isCheckingAvailability } =
-    useCheck_availabilityQuery(
-      {
-        room_id: selectedRoomID,
-        date: metadata?.date,
-        starting_time: metadata?.starting_time,
-        duration: metadata?.duration,
-      },
-      {
-        skip: !selectedRoomID,
-        refetchOnFocus: true,
-        refetchOnMountOrArgChange: true,
-      }
-    );
+  const [triggerCheckAvailability, { isFetching: isRoomChangeFetching }] =
+    useLazyCheck_availabilityQuery();
 
-  const { data: promoData, isLoading: promoLodding } = useUser_promo_codeQuery(
-    parsedData?.roomId
+  const metadata: IMetadata | undefined =
+    parsedData?.availabilityData?.metadata;
+
+  const { data: promoData, isLoading: promoLoading } = useUser_promo_codeQuery(
+    parsedData?.roomId,
   );
 
-  // all useEffects
-  console.log(id, "id allData");
+  // ─── Toast helper ────────────────────────────────────────────────────────────
+  const showToast = (message: string) =>
+    router.push({ pathname: "/Toaster", params: { res: message } });
 
+  // ─── Parse params + initial seat data set ────────────────────────────────────
   useEffect(() => {
-    if (selectedRoomName) {
-      setSelectedRoom(selectedRoomName as string);
-    }
+    if (selectedRoomName) setSelectedRoom(selectedRoomName as string);
+
     if (allData) {
       try {
-        const dataString = Array.isArray(allData) ? allData[0] : allData;
-        const parsed = JSON.parse(dataString);
+        const raw = Array.isArray(allData) ? allData[0] : allData;
+        const parsed = JSON.parse(raw);
         setParsedData(parsed);
-        setSelectedRoomID(parsed?.roomId);
-      } catch (error) {
-        console.error("Error parsing allData:", error);
+        setSelectedRoomID(parsed?.roomId ?? null);
+        setSeatData(parsed?.availabilityData?.data ?? []);
+        setAvailabilityStatus(
+          parsed?.availabilityData?.metadata?.availability_status ?? "",
+        );
+      } catch {
+        showToast("Failed to load seat data. Please go back and try again.");
       }
     }
   }, [allData, selectedRoomName]);
 
-  if (isCheckingAvailability || promoLodding) {
+  // ─── Room change → re-fetch seat data ────────────────────────────────────────
+  const handleRoomChange = async (room: IRoom) => {
+    setSelectedRoom(room?.name);
+    setSelectedRoomID(room?.id as any);
+    setShowRoomDropdown(false);
+    setSelectedSeat(null);
+    setSelectedPcNo(null);
+
+    if (!metadata?.date || !metadata?.starting_time || !metadata?.duration)
+      return;
+
+    try {
+      const res = await triggerCheckAvailability({
+        room_id: room?.id,
+        date: metadata.date,
+        starting_time: metadata.starting_time,
+        duration: metadata.duration,
+      }).unwrap();
+
+      setSeatData(res?.data ?? []);
+      setAvailabilityStatus(res?.metadata?.availability_status ?? "");
+    } catch {
+      showToast("Could not fetch seats for this room. Please try again.");
+    }
+  };
+
+  // ─── Loading guard ────────────────────────────────────────────────────────────
+  if (promoLoading) {
     return (
-      // Added return here
       <View style={tw`flex-1 justify-center items-center bg-base`}>
         <ActivityIndicator size="large" color="#0c8ce9" />
         <Text style={tw`mt-4 text-lg font-poppins text-gray-700`}>
@@ -127,96 +153,97 @@ const SeatPosition = () => {
       </View>
     );
   }
-  const handleSeatPress = (seatId: string, available: boolean) => {
-    if (available) {
-      setSelectedSeat(selectedSeat === seatId ? null : seatId);
+
+  // ─── Seat press ───────────────────────────────────────────────────────────────
+  const handleSeatPress = (
+    seatLabel: string,
+    pcNo: number,
+    available: boolean,
+  ) => {
+    if (!available) return;
+    if (selectedSeat === seatLabel) {
+      setSelectedSeat(null);
+      setSelectedPcNo(null);
+    } else {
+      setSelectedSeat(seatLabel);
+      setSelectedPcNo(pcNo);
     }
   };
 
-  const calculateTotalAmount = () => {
-    const originalAmount = parseFloat(metadata?.to_pay) || 0;
+  // ─── Amount calculation ───────────────────────────────────────────────────────
+  const originalAmount = parseFloat(String(metadata?.to_pay)) || 0;
+  const totalAmount =
+    selectedPromo && promoPercent
+      ? originalAmount - (originalAmount * promoPercent) / 100
+      : originalAmount;
 
-    if (selectedPromo && percen) {
-      const discountAmount = (originalAmount * parseInt(percen as any)) / 100;
-      return originalAmount - discountAmount;
+  // ─── Build booking payload ────────────────────────────────────────────────────
+  const buildBaseData = () => ({
+    duration: parsedData?.duration,
+    pc_no: selectedPcNo,
+    total: totalAmount.toFixed(2),
+    starting_time: parsedData?.starting_time,
+    booking_date: parsedData?.date,
+    room_id: selectedRoomID ?? parsedData?.roomId,
+    provider_id: id,
+    ...(selectedPromo && { promo_code: selectedPromo, coupon_id: couponID }),
+  });
+
+  const validateBeforeBooking = (): boolean => {
+    if (!selectedPcNo) {
+      showToast("Please select a seat first");
+      return false;
     }
-
-    return originalAmount;
+    return true;
   };
 
-  const totalAmount = calculateTotalAmount();
-  const originalAmount = parseFloat(metadata?.to_pay) || 0;
-  // -----------booking------------//
-  const handelConfirmBokking = async () => {
-    //----------- Base data object ------------//
-    const baseData = {
-      duration: metadata?.duration,
-      pc_no: pc_No,
-      total: totalAmount.toFixed(2),
-      starting_time: metadata?.starting_time,
-      booking_date: metadata?.date,
-      room_id: selectedRoomID || parsedData?.roomId,
-      provider_id: id,
-    };
+  const handleConfirmBooking = async () => {
+    if (!validateBeforeBooking()) return;
 
-    const dataWithPromo = selectedPromo
-      ? {
-          ...baseData,
-          promo_code: selectedPromo,
-          coupon_id: couponID,
-        }
-      : baseData;
-
-    try {
-      const res = await booking_new(dataWithPromo).unwrap();
-      if (res?.data) {
-        setSuccessModalVisible(true);
-      }
-    } catch (error) {}
-  };
-
-  const handelReschedule = async () => {
-    const baseData = {
-      _method: "PUT",
-      duration: metadata?.duration,
-      pc_no: pc_No,
-      total: totalAmount.toFixed(2),
-      starting_time: metadata?.starting_time,
-      booking_date: metadata?.date,
-      room_id: selectedRoomID || parsedData?.roomId,
-      provider_id: id,
-    };
-
-    const dataWithPromo = selectedPromo
-      ? {
-          ...baseData,
-          promo_code: selectedPromo,
-          coupon_id: couponID,
-        }
-      : baseData;
-
-    // 👉 Convert to FormData
+    const baseData = buildBaseData();
     const formData = new FormData();
-    Object.entries(dataWithPromo).forEach(([key, value]) => {
+
+    Object.entries(baseData).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, String(value));
       }
     });
+
+    try {
+      const res = await booking_new(formData).unwrap();
+      if (res?.data || res?.status === "success") setSuccessModalVisible(true);
+    } catch (error: any) {
+      showToast(error?.data?.message ?? "Booking failed. Please try again.");
+    }
+  };
+  // ─── Reschedule ───────────────────────────────────────────────────────────────
+  const handleReschedule = async () => {
+    if (!validateBeforeBooking()) return;
+
+    const formData = new FormData();
+    Object.entries({ _method: "PUT", ...buildBaseData() }).forEach(
+      ([key, value]) => {
+        if (value !== undefined && value !== null)
+          formData.append(key, String(value));
+      },
+    );
+
     try {
       const res = await booking_reschedule({
         formData,
         id: booking_id,
       }).unwrap();
-
-      if (res?.data) {
-        setSuccessModalVisible(true);
-      }
-    } catch (error) {}
+      if (res?.data || res?.status === "success") setSuccessModalVisible(true);
+    } catch (error: any) {
+      showToast(error?.data?.message ?? "Reschedule failed. Please try again.");
+    }
   };
 
+  const isAvailable = availabilityStatus === "Available Now";
+
+  // ─── Render ───────────────────────────────────────────────────────────────────
   return (
     <View style={tw`flex-1`}>
-      {/* Background Image */}
       <ImageBackground
         source={ImgGradint}
         style={{
@@ -230,7 +257,7 @@ const SeatPosition = () => {
       />
 
       <ScrollView style={tw`flex-1 px-4`}>
-        {/* Header */}
+        {/* ── Header ── */}
         <View style={tw`flex-row justify-between items-center mt-2 mb-6`}>
           <TouchableOpacity
             onPress={() => router.back()}
@@ -240,45 +267,29 @@ const SeatPosition = () => {
             <Text style={tw`text-primary font-poppins text-lg ml-1`}>Back</Text>
           </TouchableOpacity>
 
-          {Check_availability?.metadata?.availability_status ==
-          "Available Now" ? (
-            <TouchableOpacity
-              style={tw` flex-row items-center justify-center gap-2 px-4 py-2 rounded-full`}
+          {availabilityStatus ? (
+            <View
+              style={tw`flex-row items-center gap-2 px-4 py-2 rounded-full`}
             >
-              <Text style={tw`text-green-600 font-poppinsMedium`}>
-                {Check_availability?.metadata?.availability_status}
+              <Text
+                style={tw`${isAvailable ? "text-green-600" : "text-red-500"} font-poppinsMedium`}
+              >
+                {availabilityStatus}
               </Text>
-              <SvgXml xml={IconAvailable} />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={tw` flex-row items-center justify-center gap-2 px-4 py-2 rounded-full`}
-            >
-              <Text style={tw`text-red-500 font-poppinsMedium`}>
-                {Check_availability?.metadata?.availability_status}
-              </Text>
-              <SvgXml xml={IconAvailableDenger} />
-            </TouchableOpacity>
-          )}
+              <SvgXml xml={isAvailable ? IconAvailable : IconAvailableDenger} />
+            </View>
+          ) : null}
         </View>
 
-        {/* Gaming Lounge Banner */}
+        {/* ── Banner ── */}
         <View style={tw`mb-6 rounded-2xl overflow-hidden h-48`}>
           <ImageBackground
-            source={{
-              uri: details?.data?.gaming_zone,
-            }}
-            style={tw`flex-1 justify-end`}
-          >
-            {/* <View style={tw`bg-black/60 p-4`}>
-              <Text style={tw`text-white text-xl font-poppinsBold`}>
-                Gaming Lounge
-              </Text>
-            </View> */}
-          </ImageBackground>
+            source={{ uri: details?.data?.gaming_zone }}
+            style={tw`flex-1`}
+          />
         </View>
 
-        {/* Select Room =+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */}
+        {/* ── Select Room ── */}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold mb-3`}>
             Select Room
@@ -286,27 +297,29 @@ const SeatPosition = () => {
           <TouchableOpacity
             onPress={() => setShowRoomDropdown(!showRoomDropdown)}
             style={tw`bg-white/10 mt-2 rounded-full p-4 flex-row justify-between items-center border border-gray-700`}
+            disabled={isRoomChangeFetching}
           >
-            <Text style={tw`text-gray-400 text-base font-poppins`}>
-              {selectedRoom}
-            </Text>
+            {isRoomChangeFetching ? (
+              <ActivityIndicator size="small" color="#9CA3AF" />
+            ) : (
+              <Text style={tw`text-gray-400 text-base font-poppins`}>
+                {selectedRoom}
+              </Text>
+            )}
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
+
           {showRoomDropdown && (
             <View style={tw`bg-white/10 mt-2 rounded-lg`}>
               <ScrollView
                 style={tw`max-h-60`}
-                nestedScrollEnabled={true}
-                showsVerticalScrollIndicator={true}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator
               >
-                {details?.data?.rooms?.map((roomItem: IRoom, index: number) => (
+                {details?.data?.rooms?.map((room: IRoom, index: number) => (
                   <TouchableOpacity
-                    key={roomItem?.id}
-                    onPress={() => {
-                      setSelectedRoom(roomItem?.name);
-                      setSelectedRoomID(roomItem?.id as any);
-                      setShowRoomDropdown(false);
-                    }}
+                    key={room?.id}
+                    onPress={() => handleRoomChange(room)}
                     style={tw`p-4 ${
                       index !== details?.data?.rooms?.length - 1
                         ? "border-b border-gray-700"
@@ -314,7 +327,7 @@ const SeatPosition = () => {
                     }`}
                   >
                     <Text style={tw`text-white text-base font-poppins`}>
-                      {roomItem?.name}
+                      {room?.name}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -323,68 +336,71 @@ const SeatPosition = () => {
           )}
         </View>
 
-        {/* Available Seat -----------------------------------------------------------------------------------------*/}
+        {/* ── Seat Grid ── */}
         <View style={tw`mb-6`}>
           <Text style={tw`text-white text-lg font-poppinsBold mb-4`}>
             Available Seat
           </Text>
 
-          {/* All seats in proper grid */}
-          <View style={tw`flex-row flex-wrap justify-between`}>
-            {Check_availability?.data?.map((seat: Seat, index: number) => (
-              <TouchableOpacity
-                key={seat.index_id}
-                onPress={() => {
-                  handleSeatPress(`PC ${seat.pc_no}`, !seat.is_book);
-                  setPc_No(seat.pc_no as any);
-                }}
-                style={tw`items-center mb-4 ${index >= 6 ? "w-1/5" : "w-1/6"}`}
-                disabled={seat.is_book}
-              >
-                <View
-                  style={tw`w-12 h-12 rounded-full border-2 items-center justify-center mb-2 ${
-                    seat.is_book
-                      ? "border-red-500"
-                      : selectedSeat === `PC ${seat.pc_no}`
-                      ? " border-secondaryGreen"
-                      : "bg-gray-800/80 border-gray-600"
-                  }`}
-                >
-                  <Ionicons
-                    name="desktop-outline"
-                    size={18}
-                    color={
-                      seat.is_book
-                        ? "#EF4444"
-                        : selectedSeat === `PC ${seat.pc_no}`
-                        ? "#FFFFFF"
-                        : "#FFFFFF"
+          {seatData.length === 0 ? (
+            <Text style={tw`text-gray-500 text-center py-4`}>
+              No seats available
+            </Text>
+          ) : (
+            <View style={tw`flex-row flex-wrap justify-between`}>
+              {seatData.map((seat: Seat, index: number) => {
+                const seatLabel = `PC ${seat.pc_no}`;
+                const isSelected = selectedSeat === seatLabel;
+
+                return (
+                  <TouchableOpacity
+                    key={seat.index_id ?? index}
+                    onPress={() =>
+                      handleSeatPress(seatLabel, seat.pc_no, !seat.is_book)
                     }
-                  />
-                </View>
-                <Text
-                  style={tw`text-xs font-poppinsMedium ${
-                    seat.is_book
-                      ? "text-red-400"
-                      : selectedSeat === `PC ${seat.pc_no}`
-                      ? "text-secondaryGreen"
-                      : "text-gray-400"
-                  }`}
-                >
-                  PC {seat.pc_no}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+                    style={tw`items-center mb-4 ${index >= 6 ? "w-1/5" : "w-1/6"}`}
+                    disabled={seat.is_book}
+                  >
+                    <View
+                      style={tw`w-12 h-12 rounded-full border-2 items-center justify-center mb-2 ${
+                        seat.is_book
+                          ? "border-red-500"
+                          : isSelected
+                            ? "border-secondaryGreen"
+                            : "bg-gray-800/80 border-gray-600"
+                      }`}
+                    >
+                      <Ionicons
+                        name="desktop-outline"
+                        size={18}
+                        color={seat.is_book ? "#EF4444" : "#FFFFFF"}
+                      />
+                    </View>
+                    <Text
+                      style={tw`text-xs font-poppinsMedium ${
+                        seat.is_book
+                          ? "text-red-400"
+                          : isSelected
+                            ? "text-secondaryGreen"
+                            : "text-gray-400"
+                      }`}
+                    >
+                      {seatLabel}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
         </View>
 
-        {/* Payment Details */}
+        {/* ── Payment Details ── */}
         <View style={tw`mb-8`}>
           <View style={tw`flex-row justify-between items-center mb-4`}>
             <Text style={tw`text-white text-lg font-poppinsBold`}>
               Payment Details
             </Text>
-            {promoData?.data.length > 0 && (
+            {(promoData?.data?.length ?? 0) > 0 && (
               <TouchableOpacity onPress={() => setShowPromoModal(true)}>
                 <MaskedView
                   maskElement={
@@ -414,155 +430,141 @@ const SeatPosition = () => {
             )}
           </View>
 
-          <View>
-            <View style={tw`flex-row justify-between items-center mb-3`}>
-              <Text style={tw`text-gray-300 text-base font-poppins`}>
-                To pay:
-              </Text>
-              <Text style={tw`text-white text-base font-poppinsBold`}>
-                € {originalAmount.toFixed(2)}
-              </Text>
-            </View>
+          <View style={tw`flex-row justify-between items-center mb-3`}>
+            <Text style={tw`text-gray-300 text-base font-poppins`}>
+              To pay:
+            </Text>
+            <Text style={tw`text-white text-base font-poppinsBold`}>
+              € {originalAmount.toFixed(2)}
+            </Text>
+          </View>
 
-            {/* Show discount details if promo is applied */}
-            {selectedPromo && percen && (
-              <>
-                <View style={tw`flex-row justify-between items-center mb-1`}>
-                  <Text style={tw`text-gray-300 text-base font-poppins`}>
-                    Discount ({percen}%):
-                  </Text>
-                  <Text style={tw`text-green-400 text-base font-poppinsBold`}>
-                    -€{" "}
-                    {((originalAmount * parseInt(percen as any)) / 100).toFixed(
-                      2
-                    )}
-                  </Text>
-                </View>
-                <View style={tw`flex-row justify-between items-center mb-3`}>
-                  <Text style={tw`text-gray-300 text-base font-poppins`}>
-                    Promo Code:
-                  </Text>
-                  <Text style={tw`text-white text-base font-poppinsBold`}>
-                    {selectedPromo}
-                  </Text>
-                </View>
-              </>
-            )}
+          {selectedPromo && promoPercent > 0 && (
+            <>
+              <View style={tw`flex-row justify-between items-center mb-1`}>
+                <Text style={tw`text-gray-300 text-base font-poppins`}>
+                  Discount ({promoPercent}%):
+                </Text>
+                <Text style={tw`text-green-400 text-base font-poppinsBold`}>
+                  -€ {((originalAmount * promoPercent) / 100).toFixed(2)}
+                </Text>
+              </View>
+              <View style={tw`flex-row justify-between items-center mb-3`}>
+                <Text style={tw`text-gray-300 text-base font-poppins`}>
+                  Promo Code:
+                </Text>
+                <Text style={tw`text-white text-base font-poppinsBold`}>
+                  {selectedPromo}
+                </Text>
+              </View>
+            </>
+          )}
 
-            <View style={tw`h-px bg-gray-700 mb-4`} />
+          <View style={tw`h-px bg-gray-700 mb-4`} />
 
-            <View style={tw`flex-row justify-between items-center`}>
-              <Text style={tw`text-white text-lg font-poppinsBold`}>
-                Total:
-              </Text>
-              <Text style={tw`text-white text-xl font-poppinsBold`}>
-                € {totalAmount.toFixed(2)}
-              </Text>
-            </View>
+          <View style={tw`flex-row justify-between items-center`}>
+            <Text style={tw`text-white text-lg font-poppinsBold`}>Total:</Text>
+            <Text style={tw`text-white text-xl font-poppinsBold`}>
+              € {totalAmount.toFixed(2)}
+            </Text>
           </View>
         </View>
 
-        {/* Promo Code Modal */}
-        {showPromoModal && (
-          <View
-            style={tw`absolute inset-0 bg-black/80 flex-1 justify-center items-center px-4`}
-          >
-            <View
-              style={tw`bg-primaryBlack border border-[#0c8ce9] rounded-2xl p-6 w-full max-w-sm`}
-            >
-              <View style={tw`flex-row justify-between items-center mb-6`}>
-                <Text style={tw`text-white text-lg font-poppinsBold`}>
-                  Your promo code
-                </Text>
-                <TouchableOpacity onPress={() => setShowPromoModal(false)}>
-                  <Ionicons name="close" size={24} color="white" />
-                </TouchableOpacity>
-              </View>
-              {/* Promo Code Options */}
-              <View style={tw`mb-6`}>
-                {promoData?.data?.map((promo: any, index: any) => {
-                  const isSelected =
-                    selectedPromo === promo?.coupon?.promo_code;
-                  return (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => {
-                        setSelectedPromo(promo?.coupon?.promo_code);
-                        setPercen(promo?.coupon?.percentage);
-                        setCouponID(promo?.coupon?.id);
-                      }}
-                      style={tw`flex-row items-center justify-between py-3 ${
-                        index !== promoData?.data?.length - 1
-                          ? "border-b border-gray-700"
-                          : ""
-                      }`}
-                    >
-                      <View style={tw`flex-row items-center`}>
-                        {/* Radio Circle */}
-                        <View
-                          style={tw`w-5 h-5 rounded-full border-2 mr-3 ${
-                            isSelected
-                              ? "border-[#0c8ce9] bg-[#0c8ce9]"
-                              : "border-gray-500"
-                          }`}
-                        />
-                        <Text style={tw`text-white text-base font-poppins`}>
-                          {promo?.coupon?.promo_code}
-                        </Text>
-                      </View>
-                      <Text style={tw`text-gray-400 text-sm font-poppins`}>
-                        Exp in {promo?.coupon?.validate_date}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-
-              {/* Modal Buttons */}
-              <View style={tw`flex-row gap-3`}>
-                <TouchableOpacity
-                  onPress={() => setShowPromoModal(false)}
-                  style={tw`flex-1 py-3 rounded-full border border-gray-600`}
-                >
-                  <Text
-                    style={tw`text-white text-center text-lg font-poppinsBlack`}
-                  >
-                    Cancel
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={tw`flex-1`}
-                  onPress={() => {
-                    if (selectedPromo) {
-                    }
-                    setShowPromoModal(false);
-                  }}
-                >
-                  <CustomButton title={"Apply"} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        )}
-
-        {/* footer confirm btn */}
+        {/* ── Confirm Button ── */}
         <TouchableOpacity
-          style={tw` mb-8 mt-16`}
-          onPress={type == "booking" ? handelConfirmBokking : handelReschedule}
+          style={tw`mb-8 mt-16`}
+          onPress={type === "booking" ? handleConfirmBooking : handleReschedule}
         >
-          <CustomButton title={"Confirm Booking"} />
+          <CustomButton title="Confirm Booking" />
         </TouchableOpacity>
       </ScrollView>
-      {/* Success Modal */}
+
+      {/* ── Promo Modal ── */}
+      {showPromoModal && (
+        <View
+          style={tw`absolute inset-0 bg-black/80 flex-1 justify-center items-center px-4`}
+        >
+          <View
+            style={tw`bg-primaryBlack border border-[#0c8ce9] rounded-2xl p-6 w-full max-w-sm`}
+          >
+            <View style={tw`flex-row justify-between items-center mb-6`}>
+              <Text style={tw`text-white text-lg font-poppinsBold`}>
+                Your promo code
+              </Text>
+              <TouchableOpacity onPress={() => setShowPromoModal(false)}>
+                <Ionicons name="close" size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={tw`mb-6`}>
+              {promoData?.data?.map((promo: PromoItem, index: number) => {
+                const isSelected = selectedPromo === promo?.coupon?.promo_code;
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      setSelectedPromo(promo?.coupon?.promo_code);
+                      setPromoPercent(promo?.coupon?.percentage);
+                      setCouponID(promo?.coupon?.id);
+                    }}
+                    style={tw`flex-row items-center justify-between py-3 ${
+                      index !== promoData?.data?.length - 1
+                        ? "border-b border-gray-700"
+                        : ""
+                    }`}
+                  >
+                    <View style={tw`flex-row items-center`}>
+                      <View
+                        style={tw`w-5 h-5 rounded-full border-2 mr-3 ${
+                          isSelected
+                            ? "border-[#0c8ce9] bg-[#0c8ce9]"
+                            : "border-gray-500"
+                        }`}
+                      />
+                      <Text style={tw`text-white text-base font-poppins`}>
+                        {promo?.coupon?.promo_code}
+                      </Text>
+                    </View>
+                    <Text style={tw`text-gray-400 text-sm font-poppins`}>
+                      Exp {promo?.coupon?.validate_date}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            <View style={tw`flex-row gap-3`}>
+              <TouchableOpacity
+                onPress={() => setShowPromoModal(false)}
+                style={tw`flex-1 py-3 rounded-full border border-gray-600`}
+              >
+                <Text
+                  style={tw`text-white text-center text-lg font-poppinsBlack`}
+                >
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={tw`flex-1`}
+                onPress={() => setShowPromoModal(false)}
+              >
+                <CustomButton title="Apply" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* ── Success Modal ── */}
       <Modal
         visible={successModalVisible}
-        transparent={true}
+        transparent
         animationType="fade"
         onRequestClose={() => setSuccessModalVisible(false)}
       >
         <View style={tw`flex-1 justify-center items-center bg-black/70 p-5`}>
           <View
-            style={tw`bg-primaryBlack rounded-2xl border border-[#0c8ce9]  p-6 w-full max-w-md`}
+            style={tw`bg-primaryBlack rounded-2xl border border-[#0c8ce9] p-6 w-full max-w-md`}
           >
             <View style={tw`absolute top-0 left-0 right-0 items-center`}>
               <Image
@@ -570,15 +572,13 @@ const SeatPosition = () => {
                 style={tw`w-44 h-44`}
               />
             </View>
-            {/* Success Content */}
             <View style={tw`mt-40 items-center`}>
               <Text style={tw`text-white text-2xl font-bold mb-2`}>
                 Successful
               </Text>
               <Text style={tw`text-gray-300 text-center mb-6`}>
-                Your successfully confirm the booking.
+                Your booking has been confirmed successfully.
               </Text>
-
               <TouchableOpacity
                 style={tw`mb-4 w-full`}
                 onPress={() => {

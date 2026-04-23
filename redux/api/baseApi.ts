@@ -10,15 +10,13 @@ interface BaseQueryArgs extends AxiosRequestConfig {
   headers?: Record<string, string>;
 }
 
-// Type for the args that will be passed to axios (base query arguments)
-
 const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
-  args
+  args,
 ) => {
   try {
     const token = await AsyncStorage.getItem("token");
     const result: AxiosResponse = await axios({
-      baseURL: "http://103.186.20.114:8011/api",
+      baseURL: "http://103.186.20.114:8001/api",
       ...args,
       url: args.url,
       method: args.method,
@@ -28,7 +26,6 @@ const baseQueryWithRath: BaseQueryFn<BaseQueryArgs, unknown, unknown> = async (
         Authorization: token ? `Bearer ${token}` : "",
       },
     });
-    console.log(token);
 
     if (result?.status === 403) {
       AsyncStorage.removeItem("token");

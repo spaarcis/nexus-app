@@ -58,7 +58,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
     >
       <View>
         <BlurView
-          style={tw`flex-row justify-between w-80 p-5 rounded-full overflow-hidden gap-6`}
+          style={tw`flex-row justify-between w-80 p-3 rounded-full overflow-hidden gap-6`}
           intensity={100}
           tint="dark"
         >

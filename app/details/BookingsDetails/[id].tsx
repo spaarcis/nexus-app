@@ -49,7 +49,6 @@ const BookingsDetails = () => {
   const handleRating = (selectedRating: number) => {
     setRating(selectedRating === rating ? 0 : selectedRating);
   };
-  console.log(id, "booking");
 
   const renderStars = () => {
     return Array.from({ length: 5 }, (_, index) => {

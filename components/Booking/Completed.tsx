@@ -55,7 +55,6 @@ const Completed = () => {
       setHasMorePages(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      console.log("Fetch error:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);

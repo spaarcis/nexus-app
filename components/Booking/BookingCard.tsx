@@ -8,9 +8,6 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { SvgXml } from "react-native-svg";
 
 const BookingCard = ({ data }: any) => {
-  console.log(data?.status);
-  // console.log(data.id);
-
   return (
     <TouchableOpacity
       onPress={() =>

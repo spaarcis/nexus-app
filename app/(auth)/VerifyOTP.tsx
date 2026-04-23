@@ -32,21 +32,26 @@ const VerifyOTP = () => {
     useForgotPasswordMutation();
   const handleOtpVerification = async (otp: string) => {
     try {
-      const data = { email: email as string, otp };
+      const data = { email: email as string, otp, action: "reset_password" };
       const res = await verifyOtp(data).unwrap();
+
       if (res) {
         router.push({
           pathname: "/Toaster",
           params: { res: res.message },
         });
 
-        AsyncStorage.setItem("token", res?.data?.access_token);
-
         setTimeout(() => {
           if (flow === "register") {
             router.replace("/");
           } else if (flow === "forget") {
-            router.replace(`/(auth)/Createnewpassword?email=${email}`);
+            router.replace({
+              pathname: "/(auth)/Createnewpassword",
+              params: {
+                email: email,
+                reset_token: res?.data?.reset_token,
+              },
+            });
           }
         }, 1000);
       } else {

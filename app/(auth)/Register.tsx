@@ -35,7 +35,6 @@ import { useTailwind } from "tailwind-rn";
 const Register = () => {
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showNewRePassword, setShowNewRePassword] = React.useState(false);
-  // const [isChecked, setChecked] = React.useState(false);
   const tailwind = useTailwind();
   const [checked, setIsChecked] = React.useState(false);
 
@@ -291,7 +290,7 @@ const Register = () => {
                         onPress={() => handleCheckBox()}
                         style={tw.style(
                           `border border-gray-400 w-5 h-5  justify-center items-center rounded-sm`,
-                          checked ? `bg-blue-800 border-0` : `bg-transparent`
+                          checked ? `bg-blue-800 border-0` : `bg-transparent`,
                         )}
                       >
                         {checked ? (

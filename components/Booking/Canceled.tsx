@@ -51,7 +51,6 @@ const Canceled = () => {
       setHasMorePages(current < last);
       setCurrentPage(current + 1);
     } catch (err) {
-      console.log("fetchCanceledBookings error:", err);
     } finally {
       setIsRefreshing(false);
       setIsLoadingMore(false);
