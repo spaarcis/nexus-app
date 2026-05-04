@@ -156,9 +156,9 @@ const RoomDetails = () => {
           allData: JSON.stringify({
             availabilityData: res.data,
             roomId: selectedRoomID,
-            date: formatDateForAPI(selectedDate), // এটা add করো
-            starting_time: selectedTime, // এটা add করো
-            duration: getDurationNumber(selectedDuration), // এটা add করো
+            date: formatDateForAPI(selectedDate),
+            starting_time: selectedTime,
+            duration: getDurationNumber(selectedDuration),
           }),
           type,
           id,

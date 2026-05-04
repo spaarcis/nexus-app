@@ -68,12 +68,14 @@ const SeatPosition = () => {
   const [showRoomDropdown, setShowRoomDropdown] = useState<boolean>(false);
   const [selectedRoom, setSelectedRoom] = useState<string>("Select");
   const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
+  const [selectedRoomPrice, setSelectedRoomPrice] = useState<number | null>(
+    null,
+  ); // ✅ room price
   const [successModalVisible, setSuccessModalVisible] =
     useState<boolean>(false);
   const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
   const [promoPercent, setPromoPercent] = useState<number>(0);
   const [couponID, setCouponID] = useState<number | null>(null);
-
   const [seatData, setSeatData] = useState<Seat[]>([]);
   const [availabilityStatus, setAvailabilityStatus] = useState<string>("");
 
@@ -96,7 +98,7 @@ const SeatPosition = () => {
   const showToast = (message: string) =>
     router.push({ pathname: "/Toaster", params: { res: message } });
 
-  // ─── Parse params + initial seat data set ────────────────────────────────────
+  // ─── Parse params + initial seat data + initial room price ───────────────────
   useEffect(() => {
     if (selectedRoomName) setSelectedRoom(selectedRoomName as string);
 
@@ -116,10 +118,21 @@ const SeatPosition = () => {
     }
   }, [allData, selectedRoomName]);
 
-  // ─── Room change → re-fetch seat data ────────────────────────────────────────
+  useEffect(() => {
+    if (!details?.data?.rooms || !parsedData?.roomId) return;
+    const currentRoom = details.data.rooms.find(
+      (r: IRoom) => r.id === parsedData.roomId,
+    );
+    if (currentRoom?.price != null) {
+      setSelectedRoomPrice(currentRoom.price);
+    }
+  }, [details, parsedData]);
+
+  // ─── Room change → re-fetch seat data + update price ─────────────────────────
   const handleRoomChange = async (room: IRoom) => {
     setSelectedRoom(room?.name);
     setSelectedRoomID(room?.id as any);
+    setSelectedRoomPrice(room?.price ?? null);
     setShowRoomDropdown(false);
     setSelectedSeat(null);
     setSelectedPcNo(null);
@@ -143,6 +156,7 @@ const SeatPosition = () => {
   };
 
   // ─── Loading guard ────────────────────────────────────────────────────────────
+
   if (promoLoading) {
     return (
       <View style={tw`flex-1 justify-center items-center bg-base`}>
@@ -171,11 +185,16 @@ const SeatPosition = () => {
   };
 
   // ─── Amount calculation ───────────────────────────────────────────────────────
-  const originalAmount = parseFloat(String(metadata?.to_pay)) || 0;
-  const totalAmount =
-    selectedPromo && promoPercent
-      ? originalAmount - (originalAmount * promoPercent) / 100
-      : originalAmount;
+  const duration = parsedData?.duration ?? metadata?.duration ?? 1;
+  const originalAmount =
+    selectedRoomPrice != null
+      ? selectedRoomPrice * duration
+      : parseFloat(String(metadata?.to_pay)) || 0;
+
+  const discountAmount =
+    selectedPromo && promoPercent ? (originalAmount * promoPercent) / 100 : 0;
+
+  const totalAmount = originalAmount - discountAmount;
 
   // ─── Build booking payload ────────────────────────────────────────────────────
   const buildBaseData = () => ({
@@ -197,16 +216,15 @@ const SeatPosition = () => {
     return true;
   };
 
+  // ─── Confirm booking ──────────────────────────────────────────────────────────
   const handleConfirmBooking = async () => {
     if (!validateBeforeBooking()) return;
 
     const baseData = buildBaseData();
     const formData = new FormData();
-
     Object.entries(baseData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (value !== undefined && value !== null)
         formData.append(key, String(value));
-      }
     });
 
     try {
@@ -216,6 +234,7 @@ const SeatPosition = () => {
       showToast(error?.data?.message ?? "Booking failed. Please try again.");
     }
   };
+
   // ─── Reschedule ───────────────────────────────────────────────────────────────
   const handleReschedule = async () => {
     if (!validateBeforeBooking()) return;
@@ -302,9 +321,17 @@ const SeatPosition = () => {
             {isRoomChangeFetching ? (
               <ActivityIndicator size="small" color="#9CA3AF" />
             ) : (
-              <Text style={tw`text-gray-400 text-base font-poppins`}>
-                {selectedRoom}
-              </Text>
+              <View style={tw`flex-row items-center justify-between flex-1`}>
+                <Text style={tw`text-gray-400 text-base font-poppins`}>
+                  {selectedRoom}
+                </Text>
+                {/* ✅ Selected room এর price দেখাও */}
+                {selectedRoomPrice != null && (
+                  <Text style={tw`text-white text-sm font-poppinsMedium mr-2`}>
+                    € {selectedRoomPrice.toFixed(2)} / hr
+                  </Text>
+                )}
+              </View>
             )}
             <Ionicons name="chevron-down" size={20} color="#9CA3AF" />
           </TouchableOpacity>
@@ -320,7 +347,7 @@ const SeatPosition = () => {
                   <TouchableOpacity
                     key={room?.id}
                     onPress={() => handleRoomChange(room)}
-                    style={tw`p-4 ${
+                    style={tw`p-4 flex-row justify-between items-center ${
                       index !== details?.data?.rooms?.length - 1
                         ? "border-b border-gray-700"
                         : ""
@@ -329,6 +356,11 @@ const SeatPosition = () => {
                     <Text style={tw`text-white text-base font-poppins`}>
                       {room?.name}
                     </Text>
+                    {room?.price != null && (
+                      <Text style={tw`text-gray-400 text-sm font-poppins`}>
+                        € {Number(room.price).toFixed(2)} / hr
+                      </Text>
+                    )}
                   </TouchableOpacity>
                 ))}
               </ScrollView>
@@ -430,6 +462,18 @@ const SeatPosition = () => {
             )}
           </View>
 
+          {/* ✅ Room price × duration breakdown */}
+          {selectedRoomPrice != null && (
+            <View style={tw`flex-row justify-between items-center mb-2`}>
+              <Text style={tw`text-gray-400 text-sm font-poppins`}>
+                € {selectedRoomPrice.toFixed(2)} × {duration} hr
+              </Text>
+              <Text style={tw`text-gray-300 text-sm font-poppins`}>
+                € {originalAmount.toFixed(2)}
+              </Text>
+            </View>
+          )}
+
           <View style={tw`flex-row justify-between items-center mb-3`}>
             <Text style={tw`text-gray-300 text-base font-poppins`}>
               To pay:
@@ -446,7 +490,7 @@ const SeatPosition = () => {
                   Discount ({promoPercent}%):
                 </Text>
                 <Text style={tw`text-green-400 text-base font-poppinsBold`}>
-                  -€ {((originalAmount * promoPercent) / 100).toFixed(2)}
+                  -€ {discountAmount.toFixed(2)}
                 </Text>
               </View>
               <View style={tw`flex-row justify-between items-center mb-3`}>

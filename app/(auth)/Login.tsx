@@ -223,7 +223,6 @@ const Login = () => {
                           </Text>
                         </View>
                         <View style={tw`  `}>
-                          {/* login from */}
                           <View>
                             <Text
                               style={tw`text-primary font-poppinsSemiBold text-base pl-2  pb-2`}
@@ -353,3 +352,8 @@ const Login = () => {
 
 export default Login;
 // new app
+
+// git remote rename origin old-origin
+// git remote add origin https://github.com/spaarcis/nexus-frontend.git
+// git push -u origin --all
+// git push origin --tags

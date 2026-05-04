@@ -12,17 +12,14 @@ export const notificationsSlices = api.injectEndpoints({
     single_mark: builder.mutation<any, any>({
       query: (id) => ({
         url: `/mark-notification/${id}`,
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        method: "GET",
       }),
-      invalidatesTags: ["notification"],
     }),
+
     mark_all_notification: builder.mutation<any, void>({
       query: () => ({
         url: `/mark-all-notification`,
-        method: "POST",
+        method: "GET",
       }),
       invalidatesTags: ["notification"],
     }),

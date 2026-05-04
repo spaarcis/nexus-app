@@ -50,15 +50,14 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const tabWidth = width / tabCount;
 
   const translateX = useRef(new Animated.Value(0)).current;
-  const [uploadModalVisible, setUploadModalVisible] = useState(false); // Fixed state initialization
-
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
   return (
     <View
-      style={tw`flex-row absolute bottom-10 w-full justify-center items-center  bg-transparent `}
+      style={tw`flex-row absolute bottom-3 w-full justify-center items-center  bg-transparent `}
     >
       <View>
         <BlurView
-          style={tw`flex-row justify-between w-80 p-3 rounded-full overflow-hidden gap-6`}
+          style={tw`flex-row justify-between w-70 p-3 rounded-full overflow-hidden gap-6`}
           intensity={100}
           tint="dark"
         >

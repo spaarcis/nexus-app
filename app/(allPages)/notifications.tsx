@@ -33,7 +33,6 @@ interface NotificationItem {
 }
 
 const Notifications = () => {
-  // Pagination state
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -65,10 +64,10 @@ const Notifications = () => {
         setNotifications(newNotifications);
       } else {
         const existingIds = new Set(
-          notifications.map((notification) => notification.id)
+          notifications.map((notification) => notification.id),
         );
         const uniqueNewNotifications = newNotifications.filter(
-          (notification: any) => !existingIds.has(notification.id)
+          (notification: any) => !existingIds.has(notification.id),
         );
         setNotifications((prev) => [...prev, ...uniqueNewNotifications]);
       }
@@ -106,10 +105,12 @@ const Notifications = () => {
   const singleMarkFnc = async (id: string) => {
     try {
       const res = await single_mark(id).unwrap();
+      console.log(res, "single_mark");
 
-      // Update local state to mark as read
       setNotifications((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, is_read: true } : item))
+        prev.map((item) =>
+          item.id === id ? { ...item, is_read: true } : item,
+        ),
       );
     } catch (error: any) {}
   };
@@ -117,9 +118,9 @@ const Notifications = () => {
   const hendelReadAll = async () => {
     try {
       const res = await mark_all_notification().unwrap();
-      // Update all notifications to read in local state
+      console.log(res, "mark_all_notification");
       setNotifications((prev) =>
-        prev.map((item) => ({ ...item, is_read: true }))
+        prev.map((item) => ({ ...item, is_read: true })),
       );
     } catch (error: any) {
       router.push({
@@ -184,6 +185,7 @@ const Notifications = () => {
       </View>
 
       {/* Notifications List */}
+
       <FlatList
         data={notifications}
         keyExtractor={(item, index) => `notification-${item.id}-${index}`}
