@@ -37,7 +37,7 @@ const Explore = () => {
 
       const res = await fetchExploreData({
         page: pageNum,
-        search: text,
+        location: text,
       }).unwrap();
       const responseData = res?.data || {};
       const newPosts = responseData?.data || [];
@@ -47,7 +47,7 @@ const Explore = () => {
       } else {
         const existingIds = new Set(explore.map((post) => post.id));
         const uniqueNewPosts = newPosts.filter(
-          (post: any) => !existingIds.has(post.id)
+          (post: any) => !existingIds.has(post.id),
         );
         setExplore((prev) => [...prev, ...uniqueNewPosts]);
       }

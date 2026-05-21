@@ -32,7 +32,14 @@ const VerifyOTP = () => {
     useForgotPasswordMutation();
   const handleOtpVerification = async (otp: string) => {
     try {
-      const data = { email: email as string, otp, action: "reset_password" };
+      const action = flow === "register" ? "login" : "reset_password";
+
+      const data = {
+        email: email as string,
+        otp,
+        action,
+      };
+
       const res = await verifyOtp(data).unwrap();
 
       if (res) {
