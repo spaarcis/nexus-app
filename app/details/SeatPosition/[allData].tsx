@@ -60,7 +60,6 @@ interface PromoItem {
 const SeatPosition = () => {
   const { allData, type, id, selectedRoomName, booking_id } =
     useLocalSearchParams();
-
   const [parsedData, setParsedData] = useState<any>(null);
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
   const [selectedPcNo, setSelectedPcNo] = useState<number | null>(null);
@@ -70,7 +69,7 @@ const SeatPosition = () => {
   const [selectedRoomID, setSelectedRoomID] = useState<number | null>(null);
   const [selectedRoomPrice, setSelectedRoomPrice] = useState<number | null>(
     null,
-  ); // ✅ room price
+  ); //  room price
   const [successModalVisible, setSuccessModalVisible] =
     useState<boolean>(false);
   const [selectedPromo, setSelectedPromo] = useState<string | null>(null);
