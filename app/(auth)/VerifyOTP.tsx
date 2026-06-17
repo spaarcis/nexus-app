@@ -18,7 +18,6 @@ import {
 import { ImgGradint } from "@/assets/images/image";
 import CustomButton from "@/components/shear/CustomButton";
 import tw from "@/lib/tailwind";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import { AlertNotificationRoot } from "react-native-alert-notification";
 import { OtpInput } from "react-native-otp-entry";
